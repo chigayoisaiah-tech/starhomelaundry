@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starhome Laundry - Professional Laundry & Dry Cleaning Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #0A4D68;
+            --color-secondary: #088395;
+            --color-accent: #05BFDB;
+            --color-light: #F8FAFC;
+            --color-cream: #FFF8F0;
+            --color-dark: #1E293B;
+            --color-text: #334155;
+            --font-display: 'Fraunces', serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text);
+            line-height: 1.6;
+            background: var(--color-cream);
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(255, 248, 240, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--color-primary);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--color-accent);
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--color-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--color-secondary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: var(--color-primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(10, 77, 104, 0.2);
+        }
+
+        .cta-button:hover {
+            background: var(--color-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 77, 104, 0.3);
+        }
+
+        .cta-button::after {
+            display: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 90px;
+            padding: 6rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(5, 191, 219, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-20px, 20px) rotate(5deg); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--color-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--color-primary);
+        }
+
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 0.8s ease-out 0.4s backwards;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-image-placeholder {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.25rem;
+            color: var(--color-text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 3px solid var(--color-primary);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(10, 77, 104, 0.15);
+        }
+
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: var(--color-text);
+            line-height: 1.7;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .steps-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 5px 15px rgba(10, 77, 104, 0.3);
+        }
+
+        .step h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 6rem 2rem;
+            background: var(--color-cream);
+        }
+
+        .pricing-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .pricing-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-category {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            border: 3px solid var(--color-primary);
+            box-shadow: 0 5px 20px rgba(10, 77, 104, 0.1);
+        }
+
+        .pricing-category h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            color: var(--color-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--color-accent);
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
+        }
+
+        .price-item-name {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .price-item-cost {
+            color: var(--color-secondary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .price-note {
+            background: var(--color-light);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--color-text);
+            font-style: italic;
+        }
+
+        .laundry-services {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border-color: var(--color-secondary);
+        }
+
+        .laundry-services h3 {
+            color: white;
+            border-bottom-color: var(--color-accent);
+        }
+
+        .laundry-services .price-item {
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .laundry-services .price-item-name {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .laundry-services .price-item-cost {
+            color: var(--color-accent);
+        }
+
+        .laundry-services .price-note {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        /* Service Areas Section */
+        .service-areas {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .areas-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .areas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .area-tag {
+            background: var(--color-light);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+            transition: all 0.3s;
+        }
+
+        .area-tag:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(10, 77, 104, 0.2);
+        }
+
+        /* Booking Section */
+        .booking {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, var(--color-light) 0%, var(--color-cream) 100%);
+        }
+
+        .booking-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            border: 3px solid var(--color-primary);
+            box-shadow: 0 10px 40px rgba(10, 77, 104, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            padding: 1rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--color-light);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .service-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-card {
+            position: relative;
+        }
+
+        .checkbox-card input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .checkbox-card label {
+            display: block;
+            padding: 1rem;
+            background: var(--color-light);
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0;
+        }
+
+        .checkbox-card input[type="checkbox"]:checked + label {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .booking-method-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-card {
+            position: relative;
+        }
+
+        .radio-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-card label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--color-light);
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .radio-card input[type="radio"]:checked + label {
+            background: var(--color-secondary);
+            color: white;
+            border-color: var(--color-secondary);
+        }
+
+        .radio-card label .icon {
+            font-size: 1.5rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(10, 77, 104, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 77, 104, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Contact Info */
+        .contact-info {
+            padding: 4rem 2rem;
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .contact-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .contact-item h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--color-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .success-message {
+            display: none;
+            background: #10B981;
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* WhatsApp Floating Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+        }
+
+        .whatsapp-button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #25D366;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            animation: popIn 0.5s ease-out 1s backwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .whatsapp-button:hover {
+            background: #128C7E;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.5);
+        }
+
+        .whatsapp-icon {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .whatsapp-text {
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-image {
+                display: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header h2 {
+                font-size: 2.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .cta-button {
+                font-size: 0.9rem;
+                padding: 0.6rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            nav ul {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .cta-button {
+                display: inline-block;
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero {
+                margin-top: 280px;
+            }
+
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .booking-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .whatsapp-text {
+                display: none;
+            }
+
+            .whatsapp-button {
+                padding: 1rem;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                justify-content: center;
+            }
+
+            .whatsapp-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#" class="logo">Star<span>Home Laundry</span></a>
+            <ul>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#pricing">Price List</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#booking">Book Now</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#booking" class="cta-button">Book Pickup</a>
+            <a href="https://www.starhomecleaner.co.za" target="_blank" class="cta-button" style="background: var(--color-accent); margin-left: 0.5rem;">🏠 Cleaning Services</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Your Home, Cleaned & Laundered Properly</h1>
+                <p>Starhome Laundry — professional laundry and dry cleaning with convenient pickup and delivery across Johannesburg South & East Rand. Trusted cleaners, outstanding results.</p>
+                <div class="hero-buttons">
+                    <a href="#booking" class="btn-primary">Schedule Pickup</a>
+                    <a href="#services" class="btn-secondary">Our Services</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-image-placeholder">🧺</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="section-header">
+            <h2>Our Services</h2>
+            <p>Premium laundry solutions tailored to your needs</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">👕</div>
+                <h3>Laundry Services</h3>
+                <p>Expert washing, drying, and folding of your everyday garments. Fresh, clean, and perfectly folded every time.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🎩</div>
+                <h3>Dry Cleaning</h3>
+                <p>Professional dry cleaning for delicate fabrics, suits, dresses, and special occasion wear with care and precision.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🪟</div>
+                <h3>Curtain Cleaning</h3>
+                <p>Specialized cleaning service for curtains and drapes. We handle all types of fabrics with expert care to keep them fresh and beautiful.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🏨</div>
+                <h3>Hotel & Airbnb Laundry</h3>
+                <p>Specialized laundry services for hotels, Airbnb properties, and hospitality businesses. Bulk handling with quick turnaround.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🧹</div>
+                <h3>Carpet Cleaning</h3>
+                <p>Professional deep cleaning for carpets and rugs. Stain removal, odor elimination, and thorough sanitization for a fresh home.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🏠</div>
+                <h3>House Cleaning</h3>
+                <p>Professional home cleaning services by Starhome Cleaners — standard cleans, deep cleans, end of tenancy, and after-builders cleaning across Johannesburg.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🧼</div>
+                <h3>Laundromat Services</h3>
+                <p>Full-service launderette for self-service or drop-off options. Modern facilities with professional results.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">⚡</div>
+                <h3>Express Service</h3>
+                <p>Need it urgently? Our express same-day service gets your laundry cleaned and returned on the same day.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="pricing-container">
+            <div class="section-header">
+                <h2>Our Pricing</h2>
+                <p>Transparent, affordable pricing for quality service</p>
+            </div>
+
+            <div class="pricing-categories">
+                <!-- Laundry Services -->
+                <div class="pricing-category laundry-services">
+                    <h3>Laundry Services</h3>
+                    <div class="price-item">
+                        <span class="price-item-name">Wash, Dry & Iron</span>
+                        <span class="price-item-cost">R50/kg</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Wash, Dry & Fold</span>
+                        <span class="price-item-cost">R40/kg</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Ironing Only</span>
+                        <span class="price-item-cost">R45/kg</span>
+                    </div>
+                    <div class="price-note">
+                        ⚖️ Minimum charge: R400
+                    </div>
+                </div>
+
+                <!-- Dry Cleaning - Clothing -->
+                <div class="pricing-category">
+                    <h3>Dry Cleaning - Clothing</h3>
+                    <div class="price-item">
+                        <span class="price-item-name">Shirt / Blouse</span>
+                        <span class="price-item-cost">R120</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Trouser / Skirt</span>
+                        <span class="price-item-cost">R140</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Suit (2-Piece)</span>
+                        <span class="price-item-cost">R295</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Suit (3-Piece)</span>
+                        <span class="price-item-cost">R350</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Suit Jacket / Blazer</span>
+                        <span class="price-item-cost">R190</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">School Blazer</span>
+                        <span class="price-item-cost">R170</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Sweater / Cardigan</span>
+                        <span class="price-item-cost">R190</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Vest / Waist Coat</span>
+                        <span class="price-item-cost">R190</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Jersey / Tracksuit</span>
+                        <span class="price-item-cost">R200</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Tie</span>
+                        <span class="price-item-cost">R95</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Bow Tie</span>
+                        <span class="price-item-cost">R80</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Berets</span>
+                        <span class="price-item-cost">R100</span>
+                    </div>
+                </div>
+
+                <!-- Dry Cleaning - Coats & Dresses -->
+                <div class="pricing-category">
+                    <h3>Coats & Dresses</h3>
+                    <div class="price-item">
+                        <span class="price-item-name">Coat - Short (Above Knee)</span>
+                        <span class="price-item-cost">R235</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Coat - Medium</span>
+                        <span class="price-item-cost">R265</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Coat - Long (Ankle Length)</span>
+                        <span class="price-item-cost">R310</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Dress - Plain Short</span>
+                        <span class="price-item-cost">R240</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Dress - Plain Medium</span>
+                        <span class="price-item-cost">R260</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Dress - Plain Long</span>
+                        <span class="price-item-cost">R400</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Wedding Dress</span>
+                        <span class="price-item-cost">From R1,500</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Outerwear</span>
+                        <span class="price-item-cost">R170</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Fur Jacket</span>
+                        <span class="price-item-cost">R440</span>
+                    </div>
+                </div>
+
+                <!-- Leather & Suede -->
+                <div class="pricing-category">
+                    <h3>Leather & Suede</h3>
+                    <div class="price-item">
+                        <span class="price-item-name">Suede/Leather Jacket - Short</span>
+                        <span class="price-item-cost">R570</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Suede/Leather Jacket - Above Knee</span>
+                        <span class="price-item-cost">R720</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Suede/Leather Jacket - Above Ankle</span>
+                        <span class="price-item-cost">R870</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Leather / Suede Shoes</span>
+                        <span class="price-item-cost">R250</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Sneakers (Canvas/Synthetic)</span>
+                        <span class="price-item-cost">R110</span>
+                    </div>
+                </div>
+
+                <!-- Handbags -->
+                <div class="pricing-category">
+                    <h3>Handbags</h3>
+                    <div class="price-item">
+                        <span class="price-item-name">Small Handbag (&lt;25cm)</span>
+                        <span class="price-item-cost">R280</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Medium Handbag (26-34cm)</span>
+                        <span class="price-item-cost">R350</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Large Handbag (35-45cm)</span>
+                        <span class="price-item-cost">R490</span>
+                    </div>
+                </div>
+
+                <!-- Bedding & Home -->
+                <div class="pricing-category">
+                    <h3>Bedding & Home</h3>
+                    <div class="price-item">
+                        <span class="price-item-name">Single Down Duvet</span>
+                        <span class="price-item-cost">R200</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Duvet / Blanket - Double</span>
+                        <span class="price-item-cost">R250</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Duvet / Blanket - Queen</span>
+                        <span class="price-item-cost">R270</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Duvet / Blanket - King</span>
+                        <span class="price-item-cost">R300</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Pillow - Medium</span>
+                        <span class="price-item-cost">R60</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Curtains - Normal</span>
+                        <span class="price-item-cost">R90/kg</span>
+                    </div>
+                    <div class="price-item">
+                        <span class="price-item-name">Curtains - Blockout</span>
+                        <span class="price-item-cost">R120/kg</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Areas Section -->
+    <section class="service-areas">
+        <div class="areas-container">
+            <div class="section-header">
+                <h2>Service Areas</h2>
+                <p>We proudly serve the following areas across Johannesburg South & East Rand</p>
+            </div>
+            <div class="areas-grid">
+                <!-- Johannesburg South -->
+                <div class="area-tag">Johannesburg South</div>
+                <div class="area-tag">Turffontein</div>
+                <div class="area-tag">Glenvista</div>
+                <div class="area-tag">Mulbarton</div>
+                <div class="area-tag">Mondeor</div>
+                <div class="area-tag">Lenasia</div>
+                <div class="area-tag">Kibler Park</div>
+                <div class="area-tag">Bassonia</div>
+                <!-- Johannesburg North -->
+                <div class="area-tag">Johannesburg North</div>
+                <div class="area-tag">Sandton</div>
+                <div class="area-tag">Midrand</div>
+                <!-- East Rand -->
+                <div class="area-tag">Boksburg</div>
+                <div class="area-tag">Benoni</div>
+                <div class="area-tag">Germiston</div>
+                <div class="area-tag">Edenvale</div>
+                <div class="area-tag">Kempton Park</div>
+                <div class="area-tag">Bedfordview</div>
+                <div class="area-tag">Alberton</div>
+                <div class="area-tag">Brakpan</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="steps-container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Simple, convenient, and hassle-free laundry service</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Book Online</h3>
+                    <p>Schedule your pickup time through our easy online booking system</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>We Collect</h3>
+                    <p>Our team picks up your laundry at your doorstep at the scheduled time</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>We Clean</h3>
+                    <p>Professional cleaning with eco-friendly products and expert care</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>We Deliver</h3>
+                    <p>Fresh, clean laundry delivered back to you within 24 hours or same day with express service</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+        <div class="booking-container">
+            <div class="section-header" style="margin-bottom: 2rem;">
+                <h2>Book Your Pickup</h2>
+                <p>Fill in your details and we'll be there</p>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                ✓ Booking submitted! WhatsApp & emails have been opened — please send each one. We'll confirm your booking shortly.
+            </div>
+
+            <form id="bookingForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pickup-date">Pickup Date *</label>
+                        <input type="date" id="pickup-date" name="pickup-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pickup-time">Pickup Time *</label>
+                        <select id="pickup-time" name="pickup-time" required>
+                            <option value="">Select time</option>
+                            <option value="08:00-10:00">8:00 AM - 10:00 AM</option>
+                            <option value="10:00-12:00">10:00 AM - 12:00 PM</option>
+                            <option value="12:00-14:00">12:00 PM - 2:00 PM</option>
+                            <option value="14:00-16:00">2:00 PM - 4:00 PM</option>
+                            <option value="16:00-18:00">4:00 PM - 6:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="delivery-option">Delivery Preference *</label>
+                        <select id="delivery-option" name="delivery-option" required>
+                            <option value="">Select option</option>
+                            <option value="standard">Standard (24 hours)</option>
+                            <option value="express">Express (Same Day - +50%)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="address">Pickup Address *</label>
+                        <textarea id="address" name="address" required placeholder="Street address, suburb, city, postal code"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Services Required *</label>
+                    <div class="service-options">
+                        <div class="checkbox-card">
+                            <input type="checkbox" id="wash-fold" name="services" value="wash-fold">
+                            <label for="wash-fold">Wash & Fold</label>
+                        </div>
+                        <div class="checkbox-card">
+                            <input type="checkbox" id="dry-clean" name="services" value="dry-clean">
+                            <label for="dry-clean">Dry Cleaning</label>
+                        </div>
+                        <div class="checkbox-card">
+                            <input type="checkbox" id="ironing" name="services" value="ironing">
+                            <label for="ironing">Ironing</label>
+                        </div>
+                        <div class="checkbox-card">
+                            <input type="checkbox" id="bedding" name="services" value="bedding">
+                            <label for="bedding">Bedding</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="notes">Special Instructions (Optional)</label>
+                    <textarea id="notes" name="notes" placeholder="Any special care instructions or preferences?"></textarea>
+                </div>
+
+                <div class="form-group full-width" style="background: var(--color-light); padding: 1rem; border-radius: 12px; border: 2px solid var(--color-accent);">
+                    <p style="color: var(--color-primary); font-weight: 600; text-align: center;">📲 On submit, your booking will be sent via <strong>WhatsApp</strong> and <strong>Email</strong> to Starhome, and a <strong>confirmation email</strong> will be prepared for you.</p>
+                </div>
+
+                <button type="submit" class="submit-btn">Confirm Booking</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Info -->
+    <section id="contact" class="contact-info">
+        <div class="contact-container">
+            <div class="contact-item">
+                <h3>📍 Service Areas</h3>
+                <p>Johannesburg South, East Rand<br>& Surrounding Areas</p>
+            </div>
+            <div class="contact-item">
+                <h3>🏢 Address</h3>
+                <p>82 Philip Street<br>Rosettenville, JHB 2190</p>
+            </div>
+            <div class="contact-item">
+                <h3>💬 WhatsApp</h3>
+                <p>+27 62 496 1315<br>Fast Response</p>
+            </div>
+            <div class="contact-item">
+                <h3>✉️ Email</h3>
+                <p><a href="mailto:info@starhomecleaner.co.za" style="color:white;">info@starhomecleaner.co.za</a></p>
+            </div>
+            <div class="contact-item">
+                <h3>🕐 Hours</h3>
+                <p>Mon-Fri: 7am - 5pm<br>Sat: 8am - 4pm</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/27624961315" target="_blank" class="whatsapp-button" aria-label="Chat on WhatsApp">
+            <span class="whatsapp-icon">💬</span>
+            <span class="whatsapp-text">Chat with us</span>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Starhome Laundry. All rights reserved. | starhomecleaner.co.za</p>
+    </footer>
+
+    <script>
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('pickup-date').setAttribute('min', today);
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate at least one service is selected
+            const services = document.querySelectorAll('input[name="services"]:checked');
+            if (services.length === 0) {
+                alert('Please select at least one service');
+                return;
+            }
+
+            // Get form data
+            const formData = new FormData(this);
+            const data = {};
+            
+            // Process regular fields
+            for (let [key, value] of formData.entries()) {
+                if (key !== 'services') {
+                    data[key] = value;
+                }
+            }
+            
+            // Process services checkboxes
+            const selectedServices = Array.from(services).map(cb => {
+                const label = document.querySelector(`label[for="${cb.id}"]`).textContent;
+                return label;
+            });
+            data.services = selectedServices;
+
+            // Create WhatsApp message (to Starhome)
+            const whatsappMessage = `🧺 *NEW STARHOME LAUNDRY BOOKING*
+
+📋 *Customer Details:*
+Name: ${data.name}
+Phone: ${data.phone}
+Email: ${data.email}
+
+📍 *Pickup Information:*
+Address: ${data.address}
+Date: ${data['pickup-date']}
+Time: ${data['pickup-time']}
+
+🧼 *Services Requested:*
+${selectedServices.map(s => '• ' + s).join('\n')}
+
+🚚 *Delivery:* ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
+
+${data.notes ? '📝 *Special Instructions:*\n' + data.notes : ''}`;
+
+            const whatsappNumber = '27624961315';
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+            // Create email to Starhome
+            const starhomeEmailSubject = encodeURIComponent('New Laundry Booking - ' + data.name);
+            const starhomeEmailBody = encodeURIComponent(`NEW STARHOME LAUNDRY BOOKING
+
+CUSTOMER DETAILS:
+Name: ${data.name}
+Phone: ${data.phone}
+Email: ${data.email}
+
+PICKUP INFORMATION:
+Address: ${data.address}
+Date: ${data['pickup-date']}
+Time: ${data['pickup-time']}
+
+SERVICES REQUESTED:
+${selectedServices.map(s => '• ' + s).join('\n')}
+
+DELIVERY: ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
+
+${data.notes ? 'SPECIAL INSTRUCTIONS:\n' + data.notes : 'No special instructions'}
+
+---
+Booking submitted via starhomecleaner.co.za`);
+
+            const starhomeEmailURL = `mailto:info@starhomecleaner.co.za?subject=${starhomeEmailSubject}&body=${starhomeEmailBody}`;
+
+            // Create confirmation email to customer
+            const customerEmailSubject = encodeURIComponent('Your Starhome Laundry Booking Confirmation');
+            const customerEmailBody = encodeURIComponent(`Dear ${data.name},
+
+Thank you for booking with Starhome Laundry! Here is a summary of your booking:
+
+PICKUP INFORMATION:
+Address: ${data.address}
+Date: ${data['pickup-date']}
+Time: ${data['pickup-time']}
+
+SERVICES REQUESTED:
+${selectedServices.map(s => '• ' + s).join('\n')}
+
+DELIVERY: ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
+
+${data.notes ? 'SPECIAL INSTRUCTIONS:\n' + data.notes + '\n' : ''}
+Our team will be in touch shortly to confirm your booking.
+
+For any queries, please contact us:
+📞 WhatsApp: +27 62 496 1315
+✉️ Email: info@starhomecleaner.co.za
+
+Thank you for choosing Starhome Laundry!
+— The Starhome Team`);
+
+            const customerEmailURL = `mailto:${data.email}?subject=${customerEmailSubject}&body=${customerEmailBody}`;
+
+            // Step 1: Always open WhatsApp to Starhome
+            window.open(whatsappURL, '_blank');
+
+            // Step 2: Send email to Starhome + customer confirmation with slight delay to avoid popup blockers
+            setTimeout(() => {
+                window.open(starhomeEmailURL, '_blank');
+            }, 800);
+            setTimeout(() => {
+                window.open(customerEmailURL, '_blank');
+            }, 1600);
+
+            // Show success message
+            document.getElementById('successMessage').classList.add('show');
+
+            // Reset form
+            this.reset();
+
+            // Scroll to success message
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 5000);
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 80;
+                    const targetPosition = target.offsetTop 
