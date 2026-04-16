@@ -1,4 +1,4 @@
-A<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1204,31 +1204,29 @@ A<!DOCTYPE html>
         <div class="areas-container">
             <div class="section-header">
                 <h2>Service Areas</h2>
-                <p>We proudly serve the following areas across Johannesburg South & East Rand</p>
+                <p>We proudly serve the following areas across Johannesburg South & surrounds</p>
             </div>
             <div class="areas-grid">
                 <!-- Johannesburg South -->
                 <div class="area-tag">Johannesburg South</div>
-                <div class="area-tag">Turffontein</div>
-                <div class="area-tag">Glenvista</div>
-                <div class="area-tag">Mulbarton</div>
-                <div class="area-tag">Mondeor</div>
-                <div class="area-tag">Lenasia</div>
-                <div class="area-tag">Kibler Park</div>
                 <div class="area-tag">Bassonia</div>
-                <!-- Johannesburg North -->
-                <div class="area-tag">Johannesburg North</div>
-                <div class="area-tag">Sandton</div>
-                <div class="area-tag">Midrand</div>
+                <div class="area-tag">Crown Gardens</div>
+                <div class="area-tag">Elandspark</div>
+                <div class="area-tag">Glenanda</div>
+                <div class="area-tag">Glenvista</div>
+                <div class="area-tag">Kibler Park</div>
+                <div class="area-tag">Mondeor</div>
+                <div class="area-tag">Mulbarton</div>
+                <div class="area-tag">Oakdene</div>
+                <div class="area-tag">Turffontein</div>
+                <div class="area-tag">Winchester Hills</div>
                 <!-- East Rand -->
-                <div class="area-tag">Boksburg</div>
-                <div class="area-tag">Benoni</div>
-                <div class="area-tag">Germiston</div>
-                <div class="area-tag">Edenvale</div>
-                <div class="area-tag">Kempton Park</div>
-                <div class="area-tag">Bedfordview</div>
                 <div class="area-tag">Alberton</div>
-                <div class="area-tag">Brakpan</div>
+                <div class="area-tag">Bedfordview</div>
+                <div class="area-tag">Benoni</div>
+                <div class="area-tag">Edenvale</div>
+                <div class="area-tag">Germiston</div>
+                <div class="area-tag">Kempton Park</div>
             </div>
         </div>
     </section>
@@ -1361,7 +1359,7 @@ A<!DOCTYPE html>
         <div class="contact-container">
             <div class="contact-item">
                 <h3>📍 Service Areas</h3>
-                <p>Johannesburg South, East Rand<br>& Surrounding Areas</p>
+                <p>Johannesburg South & East Rand<br>& Surrounding Areas</p>
             </div>
             <div class="contact-item">
                 <h3>🏢 Address</h3>
@@ -1506,30 +1504,41 @@ Thank you for choosing Starhome Laundry!
 
             const customerEmailURL = `mailto:${data.email}?subject=${customerEmailSubject}&body=${customerEmailBody}`;
 
-            // Step 1: Always open WhatsApp to Starhome
-            window.open(whatsappURL, '_blank');
-
-            // Step 2: Send email to Starhome + customer confirmation with slight delay to avoid popup blockers
-            setTimeout(() => {
-                window.open(starhomeEmailURL, '_blank');
-            }, 800);
-            setTimeout(() => {
-                window.open(customerEmailURL, '_blank');
-            }, 1600);
-
-            // Show success message
-            document.getElementById('successMessage').classList.add('show');
+            // Show success message FIRST so user sees feedback immediately
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             // Reset form
             this.reset();
 
-            // Scroll to success message
-            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Step 1: Open WhatsApp using location.href (most reliable, not blocked)
+            window.location.href = whatsappURL;
 
-            // Hide success message after 5 seconds
+            // Step 2: Trigger email to Starhome via hidden link click (bypasses popup blocker)
             setTimeout(() => {
-                document.getElementById('successMessage').classList.remove('show');
-            }, 5000);
+                const starhomeLink = document.createElement('a');
+                starhomeLink.href = starhomeEmailURL;
+                starhomeLink.style.display = 'none';
+                document.body.appendChild(starhomeLink);
+                starhomeLink.click();
+                document.body.removeChild(starhomeLink);
+            }, 1500);
+
+            // Step 3: Trigger confirmation email to customer
+            setTimeout(() => {
+                const customerLink = document.createElement('a');
+                customerLink.href = customerEmailURL;
+                customerLink.style.display = 'none';
+                document.body.appendChild(customerLink);
+                customerLink.click();
+                document.body.removeChild(customerLink);
+            }, 3000);
+
+            // Hide success message after 10 seconds
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 10000);
         });
 
         // Smooth scrolling for navigation links
