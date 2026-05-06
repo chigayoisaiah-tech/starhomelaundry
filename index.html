@@ -913,7 +913,6 @@
             }
         }
     </style>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -1205,27 +1204,31 @@
         <div class="areas-container">
             <div class="section-header">
                 <h2>Service Areas</h2>
-                <p>We proudly serve the following areas across Johannesburg South & surrounds</p>
+                <p>We proudly serve the following areas across Johannesburg South & East Rand</p>
             </div>
             <div class="areas-grid">
+                <!-- Johannesburg South -->
                 <div class="area-tag">Johannesburg South</div>
-                <div class="area-tag">Bassonia</div>
-                <div class="area-tag">Crown Gardens</div>
-                <div class="area-tag">Elandspark</div>
-                <div class="area-tag">Glenanda</div>
-                <div class="area-tag">Glenvista</div>
-                <div class="area-tag">Kibler Park</div>
-                <div class="area-tag">Mondeor</div>
-                <div class="area-tag">Mulbarton</div>
-                <div class="area-tag">Oakdene</div>
                 <div class="area-tag">Turffontein</div>
-                <div class="area-tag">Winchester Hills</div>
-                <div class="area-tag">Alberton</div>
-                <div class="area-tag">Bedfordview</div>
+                <div class="area-tag">Glenvista</div>
+                <div class="area-tag">Mulbarton</div>
+                <div class="area-tag">Mondeor</div>
+                <div class="area-tag">Lenasia</div>
+                <div class="area-tag">Kibler Park</div>
+                <div class="area-tag">Bassonia</div>
+                <!-- Johannesburg North -->
+                <div class="area-tag">Johannesburg North</div>
+                <div class="area-tag">Sandton</div>
+                <div class="area-tag">Midrand</div>
+                <!-- East Rand -->
+                <div class="area-tag">Boksburg</div>
                 <div class="area-tag">Benoni</div>
-                <div class="area-tag">Edenvale</div>
                 <div class="area-tag">Germiston</div>
+                <div class="area-tag">Edenvale</div>
                 <div class="area-tag">Kempton Park</div>
+                <div class="area-tag">Bedfordview</div>
+                <div class="area-tag">Alberton</div>
+                <div class="area-tag">Brakpan</div>
             </div>
         </div>
     </section>
@@ -1271,9 +1274,7 @@
             </div>
             
             <div id="successMessage" class="success-message">
-                <div style="font-size:1.5rem;margin-bottom:0.4rem;">✅ Booking Submitted!</div>
-                <p style="font-weight:400;margin-bottom:0.3rem;">Confirmation emails have been sent to you and Starhome.</p>
-                <p style="font-weight:400;">WhatsApp is opening — just tap <strong>Send</strong> to complete your booking.</p>
+                ✓ Booking submitted! WhatsApp & emails have been opened — please send each one. We'll confirm your booking shortly.
             </div>
 
             <form id="bookingForm">
@@ -1333,10 +1334,6 @@
                         <div class="checkbox-card">
                             <input type="checkbox" id="ironing" name="services" value="ironing">
                             <label for="ironing">Ironing</label>
-                        </div>               
-                            <div class="checkbox-card">
-                            <input type="checkbox" id="wash-dry-fold" name="services" value="wash-dry-fold">
-                            <label for="bedding">wash-dry-fold</label>
                         </div>
                         <div class="checkbox-card">
                             <input type="checkbox" id="bedding" name="services" value="bedding">
@@ -1398,14 +1395,7 @@
         <p>&copy; 2026 Starhome Laundry. All rights reserved. | starhomecleaner.co.za</p>
     </footer>
 
-    <script type="text/javascript">
-        // Init EmailJS  — replace these with your real EmailJS IDs
-        emailjs.init("PdnvIkCPHLPdZlOeS");
-
-        const EMAILJS_SERVICE  = "service_ps9h94n";
-        const EMAILJS_TEMPLATE_STARHOME  = "template_u75u2n4";
-        const EMAILJS_TEMPLATE_CUSTOMER  = "template_pup00cd";
-
+    <script>
         // Set minimum date to today
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('pickup-date').setAttribute('min', today);
@@ -1413,53 +1403,34 @@
         // Form submission
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Validate at least one service selected
+            
+            // Validate at least one service is selected
             const services = document.querySelectorAll('input[name="services"]:checked');
             if (services.length === 0) {
                 alert('Please select at least one service');
                 return;
             }
 
-            // Collect form data
+            // Get form data
             const formData = new FormData(this);
             const data = {};
+            
+            // Process regular fields
             for (let [key, value] of formData.entries()) {
-                if (key !== 'services') data[key] = value;
+                if (key !== 'services') {
+                    data[key] = value;
+                }
             }
-            const selectedServices = Array.from(services).map(cb =>
-                document.querySelector(`label[for="${cb.id}"]`).textContent.trim()
-            );
+            
+            // Process services checkboxes
+            const selectedServices = Array.from(services).map(cb => {
+                const label = document.querySelector(`label[for="${cb.id}"]`).textContent;
+                return label;
+            });
+            data.services = selectedServices;
 
-            const delivery = data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)';
-            const servicesList = selectedServices.map(s => '• ' + s).join('\n');
-
-            // ── Shared template params ──────────────────────────────────────
-            const templateParams = {
-                customer_name:  data.name,
-                customer_phone: data.phone,
-                customer_email: data.email,
-                pickup_address: data.address,
-                pickup_date:    data['pickup-date'],
-                pickup_time:    data['pickup-time'],
-                services:       servicesList,
-                delivery:       delivery,
-                notes:          data.notes || 'None',
-            };
-
-            // ── Send email to Starhome ──────────────────────────────────────
-            emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_STARHOME, templateParams)
-                .then(() => console.log('Starhome email sent ✓'))
-                .catch(err => console.error('Starhome email error:', err));
-
-            // ── Send confirmation to customer ───────────────────────────────
-            emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_CUSTOMER, templateParams)
-                .then(() => console.log('Customer confirmation sent ✓'))
-                .catch(err => console.error('Customer email error:', err));
-
-            // ── Open WhatsApp with pre-filled message ───────────────────────
-            const whatsappMessage =
-`🧺 *NEW STARHOME LAUNDRY BOOKING*
+            // Create WhatsApp message (to Starhome)
+            const whatsappMessage = `🧺 *NEW STARHOME LAUNDRY BOOKING*
 
 📋 *Customer Details:*
 Name: ${data.name}
@@ -1472,37 +1443,100 @@ Date: ${data['pickup-date']}
 Time: ${data['pickup-time']}
 
 🧼 *Services Requested:*
-${servicesList}
+${selectedServices.map(s => '• ' + s).join('\n')}
 
-🚚 *Delivery:* ${delivery}
-${data.notes ? '\n📝 *Special Instructions:*\n' + data.notes : ''}`;
+🚚 *Delivery:* ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
 
-            window.open('https://wa.me/27624961315?text=' + encodeURIComponent(whatsappMessage), '_blank');
+${data.notes ? '📝 *Special Instructions:*\n' + data.notes : ''}`;
 
-            // ── Show success banner ─────────────────────────────────────────
-            const successMsg = document.getElementById('successMessage');
-            successMsg.classList.add('show');
-            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const whatsappNumber = '27624961315';
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+            // Create email to Starhome
+            const starhomeEmailSubject = encodeURIComponent('New Laundry Booking - ' + data.name);
+            const starhomeEmailBody = encodeURIComponent(`NEW STARHOME LAUNDRY BOOKING
+
+CUSTOMER DETAILS:
+Name: ${data.name}
+Phone: ${data.phone}
+Email: ${data.email}
+
+PICKUP INFORMATION:
+Address: ${data.address}
+Date: ${data['pickup-date']}
+Time: ${data['pickup-time']}
+
+SERVICES REQUESTED:
+${selectedServices.map(s => '• ' + s).join('\n')}
+
+DELIVERY: ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
+
+${data.notes ? 'SPECIAL INSTRUCTIONS:\n' + data.notes : 'No special instructions'}
+
+---
+Booking submitted via starhomecleaner.co.za`);
+
+            const starhomeEmailURL = `mailto:info@starhomecleaner.co.za?subject=${starhomeEmailSubject}&body=${starhomeEmailBody}`;
+
+            // Create confirmation email to customer
+            const customerEmailSubject = encodeURIComponent('Your Starhome Laundry Booking Confirmation');
+            const customerEmailBody = encodeURIComponent(`Dear ${data.name},
+
+Thank you for booking with Starhome Laundry! Here is a summary of your booking:
+
+PICKUP INFORMATION:
+Address: ${data.address}
+Date: ${data['pickup-date']}
+Time: ${data['pickup-time']}
+
+SERVICES REQUESTED:
+${selectedServices.map(s => '• ' + s).join('\n')}
+
+DELIVERY: ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
+
+${data.notes ? 'SPECIAL INSTRUCTIONS:\n' + data.notes + '\n' : ''}
+Our team will be in touch shortly to confirm your booking.
+
+For any queries, please contact us:
+📞 WhatsApp: +27 62 496 1315
+✉️ Email: info@starhomecleaner.co.za
+
+Thank you for choosing Starhome Laundry!
+— The Starhome Team`);
+
+            const customerEmailURL = `mailto:${data.email}?subject=${customerEmailSubject}&body=${customerEmailBody}`;
+
+            // Step 1: Always open WhatsApp to Starhome
+            window.open(whatsappURL, '_blank');
+
+            // Step 2: Send email to Starhome + customer confirmation with slight delay to avoid popup blockers
+            setTimeout(() => {
+                window.open(starhomeEmailURL, '_blank');
+            }, 800);
+            setTimeout(() => {
+                window.open(customerEmailURL, '_blank');
+            }, 1600);
+
+            // Show success message
+            document.getElementById('successMessage').classList.add('show');
 
             // Reset form
             this.reset();
 
-            // Hide banner after 10s
-            setTimeout(() => successMsg.classList.remove('show'), 10000);
+            // Scroll to success message
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 5000);
         });
 
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+            anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     const offset = 80;
-                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
-                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                    const targetPosition = target.offsetTop 
