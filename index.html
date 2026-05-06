@@ -959,6 +959,8 @@
             }
         }
     </style>
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -1360,6 +1362,7 @@
                         <label for="pickup-time">Pickup Time *</label>
                         <select id="pickup-time" name="pickup-time" required>
                             <option value="">Select time</option>
+                            <option value="06:00-08:00">6:00 AM - 8:00 AM</option>
                             <option value="08:00-10:00">8:00 AM - 10:00 AM</option>
                             <option value="10:00-12:00">10:00 AM - 12:00 PM</option>
                             <option value="12:00-14:00">12:00 PM - 2:00 PM</option>
@@ -1435,7 +1438,7 @@
             </div>
             <div class="contact-item">
                 <h3>🏢 Address</h3>
-                <p>82 Philip Street<br>Rosettenville, JHB 2190</p>
+                <p>Main Street<br>Rosettenville, JHB 2190</p>
             </div>
             <div class="contact-item">
                 <h3>💬 WhatsApp</h3>
@@ -1466,162 +1469,186 @@
     </footer>
 
     <script>
-        // Set minimum date to today
+        // ─── EmailJS Configuration ─────────────────────────────────────────────
+        // SETUP INSTRUCTIONS:
+        // 1. Sign up free at https://www.emailjs.com
+        // 2. Add Email Service (connect your Gmail/Outlook) → copy Service ID
+        // 3. Create TWO email templates (see template variables below) → copy Template IDs
+        // 4. Go to Account → API Keys → copy your Public Key
+        // 5. Replace the four placeholder values below with your real IDs
+        const EMAILJS_PUBLIC_KEY   = 'PdnvIkCPHLPdZlOeS';       // e.g. 'abc123XYZ'
+        const EMAILJS_SERVICE_ID   = 'service_ps9h94n';       // e.g. 'service_xxxxxx'
+        const TEMPLATE_TO_STARHOME = 'template_pup00cd';    // Template for company notification
+        const TEMPLATE_TO_CUSTOMER = 'template_u75u2n4';    // Template for customer confirmation
+
+        // ─── EmailJS Template Variables ───────────────────────────────────────
+        // Template 1 (TO STARHOME) — use these {{variables}} in your EmailJS template:
+        //   {{booking_ref}}, {{customer_name}}, {{customer_phone}}, {{customer_email}},
+        //   {{pickup_address}}, {{pickup_date}}, {{pickup_time}},
+        //   {{services}}, {{delivery}}, {{notes}}
+        //
+        // Template 2 (TO CUSTOMER) — use these {{variables}}:
+        //   {{booking_ref}}, {{customer_name}}, {{customer_email}},
+        //   {{pickup_address}}, {{pickup_date}}, {{pickup_time}},
+        //   {{services}}, {{delivery}}, {{notes}}
+
+        emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+        // ─── Helpers ──────────────────────────────────────────────────────────
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('pickup-date').setAttribute('min', today);
 
-        // Generate booking reference
         function genRef() {
             const d = new Date();
-            return 'SHL-' + d.getFullYear().toString().slice(-2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '-' + Math.floor(100 + Math.random()*900);
+            return 'SHL-' + d.getFullYear().toString().slice(-2) +
+                   String(d.getMonth()+1).padStart(2,'0') +
+                   String(d.getDate()).padStart(2,'0') + '-' +
+                   Math.floor(100 + Math.random()*900);
         }
 
-        // Form submission
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        function setSubmitState(loading) {
+            const btn = document.querySelector('.submit-btn');
+            if (loading) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Sending...';
+                btn.style.opacity = '0.7';
+            } else {
+                btn.disabled = false;
+                btn.textContent = 'Confirm Booking';
+                btn.style.opacity = '1';
+            }
+        }
+
+        function showBanner(bookingRef, starhomeWAURL, customerWAURL, emailStatus) {
+            const successMsg = document.getElementById('successMessage');
+            const refEl = document.getElementById('bookingRefDisplay');
+            if (refEl) refEl.textContent = '🔖 Booking Ref: ' + bookingRef;
+
+            const subtitle = successMsg.querySelector('.success-subtitle');
+            if (subtitle) {
+                if (emailStatus === 'ok') {
+                    subtitle.textContent = 'Emails sent! WhatsApp messages are opening now — please send them to complete your booking.';
+                } else {
+                    subtitle.textContent = 'Booking received! WhatsApp is opening. If emails didn\'t send, tap the buttons below to retry.';
+                }
+            }
+
+            // Replace static steps with live action buttons
+            const stepsEl = successMsg.querySelector('.success-steps');
+            if (stepsEl) {
+                stepsEl.innerHTML =
+                    '<a href="' + starhomeWAURL + '" target="_blank" rel="noopener" ' +
+                    'style="background:#25D366;color:white;padding:0.55rem 1.1rem;border-radius:50px;font-weight:700;text-decoration:none;font-size:0.88rem;">💬 WhatsApp Starhome</a>' +
+                    '<a href="' + customerWAURL + '" target="_blank" rel="noopener" ' +
+                    'style="background:#128C7E;color:white;padding:0.55rem 1.1rem;border-radius:50px;font-weight:700;text-decoration:none;font-size:0.88rem;">💬 My WhatsApp Copy</a>' +
+                    (emailStatus !== 'ok'
+                        ? '<span style="background:rgba(255,255,255,0.2);padding:0.55rem 1.1rem;border-radius:50px;font-size:0.88rem;font-weight:600;">📧 Emails sent automatically</span>'
+                        : '<span style="background:rgba(255,255,255,0.2);padding:0.55rem 1.1rem;border-radius:50px;font-size:0.88rem;font-weight:600;">✅ Emails sent!</span>');
+            }
+
+            successMsg.classList.add('show');
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => successMsg.classList.remove('show'), 60000);
+        }
+
+        // ─── Form Submission ──────────────────────────────────────────────────
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            // Validate at least one service is selected
+
             const services = document.querySelectorAll('input[name="services"]:checked');
             if (services.length === 0) {
                 alert('Please select at least one service');
                 return;
             }
 
-            // Get form data
             const formData = new FormData(this);
             const data = {};
-            
-            // Process regular fields
             for (let [key, value] of formData.entries()) {
-                if (key !== 'services') {
-                    data[key] = value;
-                }
+                if (key !== 'services') data[key] = value;
             }
-            
-            // Process services checkboxes
-            const selectedServices = Array.from(services).map(cb => {
-                const label = document.querySelector(`label[for="${cb.id}"]`).textContent;
-                return label;
-            });
-            data.services = selectedServices;
+            const selectedServices = Array.from(services).map(cb =>
+                document.querySelector('label[for="' + cb.id + '"]').textContent.trim()
+            );
 
-            const bookingRef = genRef();
+            const bookingRef   = genRef();
+            const deliveryLabel = data['delivery-option'] === 'express' ? 'Express (Same Day +50%)' : 'Standard (24 hours)';
+            const servicesText  = selectedServices.join(', ');
+            const notesText     = data.notes || 'None';
 
-            // Create WhatsApp message (to Starhome)
-            const whatsappMessage = `🧺 *NEW STARHOME LAUNDRY BOOKING*
-🔖 *Ref:* ${bookingRef}
+            // ── Shared template params ─────────────────────────────────────
+            const sharedParams = {
+                booking_ref:    bookingRef,
+                customer_name:  data.name,
+                customer_phone: data.phone,
+                customer_email: data.email,
+                pickup_address: data.address,
+                pickup_date:    data['pickup-date'],
+                pickup_time:    data['pickup-time'],
+                services:       servicesText,
+                delivery:       deliveryLabel,
+                notes:          notesText
+            };
 
-📋 *Customer Details:*
-Name: ${data.name}
-Phone: ${data.phone}
-Email: ${data.email}
+            // ── WhatsApp URLs (opened immediately — same event tick) ────────
+            const waNotesSection = data.notes ? '\n\n📝 *Special Instructions:*\n' + data.notes : '';
+            const starhomeWAMsg =
+                '🧺 *NEW STARHOME LAUNDRY BOOKING*\n🔖 *Ref:* ' + bookingRef +
+                '\n\n📋 *Customer Details:*\nName: ' + data.name +
+                '\nPhone: ' + data.phone + '\nEmail: ' + data.email +
+                '\n\n📍 *Pickup:*\nAddress: ' + data.address +
+                '\nDate: ' + data['pickup-date'] + '\nTime: ' + data['pickup-time'] +
+                '\n\n🧼 *Services:*\n' + selectedServices.map(s => '• ' + s).join('\n') +
+                '\n\n🚚 *Delivery:* ' + deliveryLabel + waNotesSection;
 
-📍 *Pickup Information:*
-Address: ${data.address}
-Date: ${data['pickup-date']}
-Time: ${data['pickup-time']}
+            const customerWAMsg =
+                '✅ *Booking Confirmed – Starhome Laundry*\n🔖 *Ref:* ' + bookingRef +
+                '\n\nHi ' + data.name + ', your booking is confirmed!\n\n' +
+                '📍 *Pickup:* ' + data.address +
+                '\n📅 *Date:* ' + data['pickup-date'] + ' | 🕐 ' + data['pickup-time'] +
+                '\n🧼 *Services:* ' + servicesText +
+                '\n🚚 *Delivery:* ' + deliveryLabel +
+                (data.notes ? '\n📝 *Notes:* ' + data.notes : '') +
+                '\n\nFor queries: +27 62 496 1315 | info@starhomecleaner.co.za\n— The Starhome Team';
 
-🧼 *Services Requested:*
-${selectedServices.map(s => '• ' + s).join('\n')}
+            const customerPhone  = data.phone.replace(/\D/g, '');
+            const starhomeWAURL  = 'https://wa.me/27624961315?text=' + encodeURIComponent(starhomeWAMsg);
+            const customerWAURL  = 'https://wa.me/' + customerPhone + '?text=' + encodeURIComponent(customerWAMsg);
 
-🚚 *Delivery:* ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
+            // ── Fire WhatsApp immediately (must be in same sync event tick) ──
+            window.open(starhomeWAURL, '_blank');
 
-${data.notes ? '📝 *Special Instructions:*\n' + data.notes : ''}`;
-
-            const whatsappNumber = '27624961315';
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-
-            // Create email to Starhome
-            const starhomeEmailSubject = encodeURIComponent('[' + bookingRef + '] New Laundry Booking - ' + data.name);
-            const starhomeEmailBody = encodeURIComponent(`NEW STARHOME LAUNDRY BOOKING
-Ref: ${bookingRef}
-
-CUSTOMER DETAILS:
-Name: ${data.name}
-Phone: ${data.phone}
-Email: ${data.email}
-
-PICKUP INFORMATION:
-Address: ${data.address}
-Date: ${data['pickup-date']}
-Time: ${data['pickup-time']}
-
-SERVICES REQUESTED:
-${selectedServices.map(s => '• ' + s).join('\n')}
-
-DELIVERY: ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
-
-${data.notes ? 'SPECIAL INSTRUCTIONS:\n' + data.notes : 'No special instructions'}
-
----
-Booking submitted via starhomecleaner.co.za`);
-
-            const starhomeEmailURL = `mailto:info@starhomecleaner.co.za?subject=${starhomeEmailSubject}&body=${starhomeEmailBody}`;
-
-            // Create confirmation email to customer
-            const customerEmailSubject = encodeURIComponent('Booking Confirmed [' + bookingRef + '] - Starhome Laundry');
-            const customerEmailBody = encodeURIComponent(`Dear ${data.name},
-
-✅ Booking Reference: ${bookingRef}
-
-Thank you for booking with Starhome Laundry! Here is a summary of your booking:
-
-PICKUP INFORMATION:
-Address: ${data.address}
-Date: ${data['pickup-date']}
-Time: ${data['pickup-time']}
-
-SERVICES REQUESTED:
-${selectedServices.map(s => '• ' + s).join('\n')}
-
-DELIVERY: ${data['delivery-option'] === 'express' ? 'Express (Same Day)' : 'Standard (24 hours)'}
-
-${data.notes ? 'SPECIAL INSTRUCTIONS:\n' + data.notes + '\n' : ''}
-Our team will be in touch shortly to confirm your booking.
-
-For any queries, please contact us:
-📞 WhatsApp: +27 62 496 1315
-✉️ Email: info@starhomecleaner.co.za
-
-Thank you for choosing Starhome Laundry!
-— The Starhome Team`);
-
-            const customerEmailURL = `mailto:${data.email}?subject=${customerEmailSubject}&body=${customerEmailBody}`;
-
-            // Step 1: Always open WhatsApp to Starhome
-            window.open(whatsappURL, '_blank');
-
-            // Step 2: Send email to Starhome + customer confirmation with slight delay to avoid popup blockers
-            setTimeout(() => {
-                window.open(starhomeEmailURL, '_blank');
-            }, 800);
-            setTimeout(() => {
-                window.open(customerEmailURL, '_blank');
-            }, 1600);
-
-            // Show success message with booking ref
-            const successMsg = document.getElementById('successMessage');
-            const refEl = document.getElementById('bookingRefDisplay');
-            if (refEl) refEl.textContent = 'Booking Ref: ' + bookingRef;
-            successMsg.classList.add('show');
-
-            // Reset form
+            // ── Show loading state on button ───────────────────────────────
+            setSubmitState(true);
             this.reset();
 
-            // Scroll to success message
-            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // ── Send both emails via EmailJS in parallel ───────────────────
+            let emailStatus = 'ok';
+            try {
+                await Promise.all([
+                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_STARHOME, sharedParams),
+                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_CUSTOMER, sharedParams)
+                ]);
+            } catch (err) {
+                console.error('EmailJS error:', err);
+                emailStatus = 'error';
+            }
 
-            // Hide success message after 10 seconds
-            setTimeout(() => {
-                document.getElementById('successMessage').classList.remove('show');
-            }, 10000);
+            setSubmitState(false);
+            showBanner(bookingRef, starhomeWAURL, customerWAURL, emailStatus);
         });
 
-        // Smooth scrolling for navigation links
+        // ─── Smooth scrolling ─────────────────────────────────────────────────
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     const offset = 80;
-                    const targetPosition = target.offsetTop 
+                    const targetPosition = target.offsetTop - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
