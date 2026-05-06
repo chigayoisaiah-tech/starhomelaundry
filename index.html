@@ -737,29 +737,75 @@
 
         .success-message {
             display: none;
-            background: #10B981;
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
             color: white;
-            padding: 1rem;
-            border-radius: 12px;
+            padding: 2rem;
+            border-radius: 20px;
             margin-bottom: 1.5rem;
             text-align: center;
-            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+            border: 2px solid rgba(255,255,255,0.3);
         }
 
         .success-message.show {
             display: block;
-            animation: slideInDown 0.5s ease;
+            animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes successPop {
+            0% { opacity: 0; transform: scale(0.8) translateY(-20px); }
+            60% { transform: scale(1.03) translateY(2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .success-icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 0.75rem;
+            animation: bounceIn 0.8s ease 0.3s backwards;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-title {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            font-size: 1.05rem;
+            opacity: 0.95;
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+        }
+
+        .success-steps {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .success-step {
+            background: rgba(255,255,255,0.2);
+            border: 1.5px solid rgba(255,255,255,0.4);
+            border-radius: 50px;
+            padding: 0.5rem 1.1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
         }
 
         @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* WhatsApp Floating Button */
@@ -959,6 +1005,11 @@
                 <div class="service-icon">👕</div>
                 <h3>Laundry Services</h3>
                 <p>Expert washing, drying, and folding of your everyday garments. Fresh, clean, and perfectly folded every time.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🧺</div>
+                <h3>Wash, Dry & Iron</h3>
+                <p>The complete laundry package — we wash, fully dry, and professionally iron your garments so they're ready to wear straight from delivery. R50/kg.</p>
             </div>
             <div class="service-card">
                 <div class="service-icon">🎩</div>
@@ -1274,7 +1325,17 @@
             </div>
             
             <div id="successMessage" class="success-message">
-                ✓ Booking submitted! WhatsApp & emails have been opened — please send each one. We'll confirm your booking shortly.
+                <span class="success-icon">🎉</span>
+                <div class="success-title">Booking Confirmed!</div>
+                <div class="success-subtitle">
+                    Your booking has been submitted. WhatsApp &amp; email windows are opening now — please send each one to complete your booking.
+                </div>
+                <div class="success-steps">
+                    <span class="success-step">💬 WhatsApp → Starhome</span>
+                    <span class="success-step">📧 Email → Starhome</span>
+                    <span class="success-step">✉️ Confirmation → You</span>
+                </div>
+                <div style="margin-top: 1rem; background: rgba(255,255,255,0.25); border-radius: 12px; padding: 0.6rem 1.2rem; display: inline-block; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.03em;" id="bookingRefDisplay"></div>
             </div>
 
             <form id="bookingForm">
@@ -1324,20 +1385,24 @@
                     <label>Services Required *</label>
                     <div class="service-options">
                         <div class="checkbox-card">
+                            <input type="checkbox" id="wash-dry-iron" name="services" value="wash-dry-iron">
+                            <label for="wash-dry-iron">🧺 Wash, Dry &amp; Iron</label>
+                        </div>
+                        <div class="checkbox-card">
                             <input type="checkbox" id="wash-fold" name="services" value="wash-fold">
-                            <label for="wash-fold">Wash & Fold</label>
+                            <label for="wash-fold">👕 Wash &amp; Fold</label>
                         </div>
                         <div class="checkbox-card">
                             <input type="checkbox" id="dry-clean" name="services" value="dry-clean">
-                            <label for="dry-clean">Dry Cleaning</label>
+                            <label for="dry-clean">🎩 Dry Cleaning</label>
                         </div>
                         <div class="checkbox-card">
                             <input type="checkbox" id="ironing" name="services" value="ironing">
-                            <label for="ironing">Ironing</label>
+                            <label for="ironing">🪡 Ironing Only</label>
                         </div>
                         <div class="checkbox-card">
                             <input type="checkbox" id="bedding" name="services" value="bedding">
-                            <label for="bedding">Bedding</label>
+                            <label for="bedding">🛏️ Bedding</label>
                         </div>
                     </div>
                 </div>
@@ -1347,8 +1412,13 @@
                     <textarea id="notes" name="notes" placeholder="Any special care instructions or preferences?"></textarea>
                 </div>
 
-                <div class="form-group full-width" style="background: var(--color-light); padding: 1rem; border-radius: 12px; border: 2px solid var(--color-accent);">
-                    <p style="color: var(--color-primary); font-weight: 600; text-align: center;">📲 On submit, your booking will be sent via <strong>WhatsApp</strong> and <strong>Email</strong> to Starhome, and a <strong>confirmation email</strong> will be prepared for you.</p>
+                <div class="form-group full-width" style="background: linear-gradient(135deg, #EFF9FF 0%, #E0F7FA 100%); padding: 1.25rem 1.5rem; border-radius: 16px; border: 2px solid var(--color-accent);">
+                    <p style="color: var(--color-primary); font-weight: 700; text-align: center; font-size: 1rem; margin-bottom: 0.75rem;">📲 What happens when you submit?</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center;">
+                        <span style="background: #25D366; color: white; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.88rem; font-weight: 600;">💬 WhatsApp → Starhome</span>
+                        <span style="background: var(--color-primary); color: white; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.88rem; font-weight: 600;">📧 Email → Starhome</span>
+                        <span style="background: var(--color-secondary); color: white; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.88rem; font-weight: 600;">✉️ Confirmation → Your Inbox</span>
+                    </div>
                 </div>
 
                 <button type="submit" class="submit-btn">Confirm Booking</button>
@@ -1400,6 +1470,12 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('pickup-date').setAttribute('min', today);
 
+        // Generate booking reference
+        function genRef() {
+            const d = new Date();
+            return 'SHL-' + d.getFullYear().toString().slice(-2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '-' + Math.floor(100 + Math.random()*900);
+        }
+
         // Form submission
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1429,8 +1505,11 @@
             });
             data.services = selectedServices;
 
+            const bookingRef = genRef();
+
             // Create WhatsApp message (to Starhome)
             const whatsappMessage = `🧺 *NEW STARHOME LAUNDRY BOOKING*
+🔖 *Ref:* ${bookingRef}
 
 📋 *Customer Details:*
 Name: ${data.name}
@@ -1453,8 +1532,9 @@ ${data.notes ? '📝 *Special Instructions:*\n' + data.notes : ''}`;
             const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
             // Create email to Starhome
-            const starhomeEmailSubject = encodeURIComponent('New Laundry Booking - ' + data.name);
+            const starhomeEmailSubject = encodeURIComponent('[' + bookingRef + '] New Laundry Booking - ' + data.name);
             const starhomeEmailBody = encodeURIComponent(`NEW STARHOME LAUNDRY BOOKING
+Ref: ${bookingRef}
 
 CUSTOMER DETAILS:
 Name: ${data.name}
@@ -1479,8 +1559,10 @@ Booking submitted via starhomecleaner.co.za`);
             const starhomeEmailURL = `mailto:info@starhomecleaner.co.za?subject=${starhomeEmailSubject}&body=${starhomeEmailBody}`;
 
             // Create confirmation email to customer
-            const customerEmailSubject = encodeURIComponent('Your Starhome Laundry Booking Confirmation');
+            const customerEmailSubject = encodeURIComponent('Booking Confirmed [' + bookingRef + '] - Starhome Laundry');
             const customerEmailBody = encodeURIComponent(`Dear ${data.name},
+
+✅ Booking Reference: ${bookingRef}
 
 Thank you for booking with Starhome Laundry! Here is a summary of your booking:
 
@@ -1517,8 +1599,11 @@ Thank you for choosing Starhome Laundry!
                 window.open(customerEmailURL, '_blank');
             }, 1600);
 
-            // Show success message
-            document.getElementById('successMessage').classList.add('show');
+            // Show success message with booking ref
+            const successMsg = document.getElementById('successMessage');
+            const refEl = document.getElementById('bookingRefDisplay');
+            if (refEl) refEl.textContent = 'Booking Ref: ' + bookingRef;
+            successMsg.classList.add('show');
 
             // Reset form
             this.reset();
@@ -1526,10 +1611,10 @@ Thank you for choosing Starhome Laundry!
             // Scroll to success message
             document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Hide success message after 5 seconds
+            // Hide success message after 10 seconds
             setTimeout(() => {
                 document.getElementById('successMessage').classList.remove('show');
-            }, 5000);
+            }, 10000);
         });
 
         // Smooth scrolling for navigation links
