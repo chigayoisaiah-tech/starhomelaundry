@@ -1576,7 +1576,8 @@
             const notesText     = data.notes || 'None';
 
             // ── Shared template params ─────────────────────────────────────
-            const sharedParams = {
+            // Shared booking fields
+            const bookingFields = {
                 booking_ref:    bookingRef,
                 customer_name:  data.name,
                 customer_phone: data.phone,
@@ -1588,6 +1589,16 @@
                 delivery:       deliveryLabel,
                 notes:          notesText
             };
+
+            // Separate params so each email goes to the right recipient
+            const starhomeParams = Object.assign({}, bookingFields, {
+                to_email: 'info@starhomecleaner.co.za',
+                to_name:  'Starhome Laundry'
+            });
+            const customerParams = Object.assign({}, bookingFields, {
+                to_email: data.email,
+                to_name:  data.name
+            });
 
             // ── WhatsApp URLs (opened immediately — same event tick) ────────
             const waNotesSection = data.notes ? '\n\n📝 *Special Instructions:*\n' + data.notes : '';
@@ -1625,8 +1636,8 @@
             let emailStatus = 'ok';
             try {
                 await Promise.all([
-                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_STARHOME, sharedParams),
-                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_CUSTOMER, sharedParams)
+                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_STARHOME, starhomeParams),
+                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_CUSTOMER, customerParams)
                 ]);
             } catch (err) {
                 console.error('EmailJS error:', err);
