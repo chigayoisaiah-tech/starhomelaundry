@@ -32,6 +32,147 @@
             overflow-x: hidden;
         }
 
+        /* Donate Section */
+        .donate-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFF8F0 100%);
+            border-top: 4px solid #E07B39;
+        }
+
+        .donate-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .donate-badge {
+            display: inline-block;
+            background: #E07B39;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+        }
+
+        .donate-section .section-header h2 {
+            color: #B85C1A;
+        }
+
+        .donate-section .section-header p {
+            color: var(--color-text);
+        }
+
+        .donate-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+            text-align: left;
+        }
+
+        .donate-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid #F4A862;
+            transition: all 0.3s;
+        }
+
+        .donate-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(224, 123, 57, 0.15);
+        }
+
+        .donate-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .donate-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: #B85C1A;
+            margin-bottom: 0.5rem;
+        }
+
+        .donate-card p {
+            color: var(--color-text);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .donate-cta {
+            background: linear-gradient(135deg, #E07B39 0%, #B85C1A 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            margin-top: 1rem;
+        }
+
+        .donate-cta h3 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.75rem;
+        }
+
+        .donate-cta p {
+            font-size: 1.05rem;
+            opacity: 0.92;
+            margin-bottom: 1.75rem;
+        }
+
+        .donate-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-donate-wa {
+            background: #25D366;
+            color: white;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-donate-wa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        .btn-donate-email {
+            background: white;
+            color: #B85C1A;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-donate-email:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
         /* Header & Navigation */
         header {
             position: fixed;
@@ -973,6 +1114,7 @@
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#booking">Book Now</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li><a href="#donate" style="color: #E07B39; font-weight: 700;">❤️ Donate Clothes</a></li>
             </ul>
             <a href="#booking" class="cta-button">Book Pickup</a>
             <a href="https://www.starhomecleaner.co.za" target="_blank" class="cta-button" style="background: var(--color-accent); margin-left: 0.5rem;">🏠 Cleaning Services</a>
@@ -1451,6 +1593,48 @@
             <div class="contact-item">
                 <h3>🕐 Hours</h3>
                 <p>Mon-Fri: 7am - 5pm<br>Sat: 8am - 4pm</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donate Old Clothes Section -->
+    <section id="donate" class="donate-section">
+        <div class="donate-container">
+            <span class="donate-badge">❤️ Give Back</span>
+            <div class="section-header">
+                <h2>Donate Old Clothes</h2>
+                <p>Help us clothe those in need — your pre-loved garments can make a world of difference to someone less fortunate.</p>
+            </div>
+
+            <div class="donate-cards">
+                <div class="donate-card">
+                    <div class="donate-card-icon">👕</div>
+                    <h3>What We Accept</h3>
+                    <p>Clean, gently used clothing for adults and children — shirts, trousers, dresses, jackets, shoes, and school uniforms.</p>
+                </div>
+                <div class="donate-card">
+                    <div class="donate-card-icon">🚚</div>
+                    <h3>We Come to You</h3>
+                    <p>No need to go anywhere — simply set aside your donation bag and we'll collect it together with your next laundry pickup. Zero extra effort.</p>
+                </div>
+                <div class="donate-card">
+                    <div class="donate-card-icon">🤝</div>
+                    <h3>Where It Goes</h3>
+                    <p>Donated clothes are sorted, cleaned, and distributed to local shelters, orphanages, and community organisations in Johannesburg.</p>
+                </div>
+            </div>
+
+            <div class="donate-cta">
+                <h3>Ready to Donate?</h3>
+                <p>Just let us know when you book your next pickup — we'll collect your donation bag at the same time. Simple as that!</p>
+                <div class="donate-buttons">
+                    <a href="https://wa.me/27624961315?text=Hi%20Starhome!%20I%27d%20like%20to%20donate%20some%20old%20clothes.%20Can%20you%20please%20collect%20my%20donation%20bag%20on%20my%20next%20laundry%20pickup%3F" target="_blank" class="btn-donate-wa">
+                        💬 WhatsApp Us to Donate
+                    </a>
+                    <a href="mailto:info@starhomecleaner.co.za?subject=Clothing%20Donation&body=Hi%20Starhome%2C%0A%0AI%27d%20like%20to%20donate%20some%20old%20clothes.%20Please%20collect%20my%20donation%20bag%20on%20my%20next%20laundry%20pickup.%0A%0AThank%20you!" class="btn-donate-email">
+                        ✉️ Email Us
+                    </a>
+                </div>
             </div>
         </div>
     </section>
