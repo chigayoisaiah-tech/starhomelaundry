@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- More service-forward -->
-<meta name="description" content="Laundry, dry cleaning, curtains, carpets & home cleaning in Joburg. Free doorstep pickup & 24hr delivery. Trusted by 18+ areas across Johannesburg. Get a quote on WhatsApp.">
+    <meta name="description" content="Laundry, dry cleaning, curtains, carpets & home cleaning in Joburg. Free doorstep pickup & 24hr delivery. Trusted by 18+ areas across Johannesburg. Get a quote on WhatsApp.">
     <title>Starhome Laundry - Professional Laundry & Dry Cleaning Services</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -225,14 +224,8 @@
         }
 
         @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         nav {
@@ -359,14 +352,8 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-text p {
@@ -420,14 +407,8 @@
         }
 
         @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .hero-image img {
@@ -902,12 +883,114 @@
             opacity: 0.9;
         }
 
+        /* Sister Brand Bar */
+        .sister-brand-bar {
+            background: #0A4D68;
+            padding: 2.5rem 2rem;
+            border-top: 3px solid #05BFDB;
+        }
+
+        .sister-brand-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .sister-brand-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .sister-brand-icon {
+            background: rgba(255,255,255,0.1);
+            border: 1.5px solid rgba(255,255,255,0.25);
+            border-radius: 16px;
+            padding: 0.75rem 1.25rem;
+            font-size: 2rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .sister-brand-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #05BFDB;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .sister-brand-name {
+            font-family: 'Fraunces', serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .sister-brand-desc {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.75);
+            max-width: 420px;
+        }
+
+        .sister-brand-btn {
+            background: white;
+            color: #0A4D68;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        .sister-brand-btn:hover {
+            background: #05BFDB;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 191, 219, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .sister-brand-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .sister-brand-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            .sister-brand-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
         /* Footer */
         footer {
             background: var(--color-dark);
             color: white;
             padding: 2rem;
             text-align: center;
+        }
+
+        footer a {
+            color: #05BFDB;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: white;
         }
 
         .success-message {
@@ -978,11 +1061,6 @@
             backdrop-filter: blur(4px);
         }
 
-        @keyframes slideInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* WhatsApp Floating Button */
         .whatsapp-float {
             position: fixed;
@@ -1007,17 +1085,9 @@
         }
 
         @keyframes popIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         .whatsapp-button:hover {
@@ -1205,56 +1275,35 @@
                                 <rect width="420" height="460" rx="28"/>
                             </clipPath>
                         </defs>
-
-                        <!-- Background -->
                         <rect width="420" height="460" rx="28" fill="url(#bg)"/>
-
-                        <!-- Subtle background circles -->
                         <circle cx="350" cy="80" r="120" fill="rgba(255,255,255,0.04)"/>
                         <circle cx="60" cy="380" r="100" fill="rgba(255,255,255,0.04)"/>
-
-                        <!-- Main glass card -->
                         <rect x="28" y="28" width="364" height="200" rx="20" fill="url(#card1)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" filter="url(#shadow)"/>
-
-                        <!-- Washing machine icon -->
                         <rect x="52" y="52" width="80" height="80" rx="14" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
                         <circle cx="92" cy="92" r="24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2.5"/>
                         <circle cx="92" cy="92" r="16" fill="none" stroke="#05BFDB" stroke-width="2"/>
                         <circle cx="92" cy="92" r="6" fill="#05BFDB" opacity="0.7"/>
                         <circle cx="106" cy="60" r="4" fill="rgba(255,255,255,0.5)"/>
                         <circle cx="116" cy="60" r="3" fill="rgba(255,255,255,0.3)"/>
-
-                        <!-- Card text -->
                         <text x="148" y="82" font-family="DM Sans, sans-serif" font-size="13" fill="rgba(255,255,255,0.6)" letter-spacing="1">LAUNDRY</text>
                         <text x="148" y="104" font-family="Fraunces, serif" font-size="22" font-weight="700" fill="white">Wash &amp; Fold</text>
                         <text x="148" y="124" font-family="DM Sans, sans-serif" font-size="13" fill="rgba(255,255,255,0.75)">Fresh-folded in 24 hours</text>
-
-                        <!-- Orange badge -->
                         <rect x="148" y="138" width="90" height="28" rx="14" fill="url(#badgeBg)"/>
                         <text x="193" y="156" font-family="DM Sans, sans-serif" font-size="12" font-weight="700" fill="white" text-anchor="middle">R40/kg FROM</text>
-
-                        <!-- Divider -->
                         <line x1="44" y1="248" x2="376" y2="248" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-
-                        <!-- Stat boxes row -->
                         <rect x="28" y="260" width="110" height="90" rx="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
                         <text x="83" y="300" font-family="Fraunces, serif" font-size="26" font-weight="900" fill="white" text-anchor="middle">24h</text>
                         <text x="83" y="320" font-family="DM Sans, sans-serif" font-size="10" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="1">TURNAROUND</text>
-
                         <rect x="155" y="260" width="110" height="90" rx="16" fill="rgba(224,123,57,0.25)" stroke="rgba(224,123,57,0.5)" stroke-width="1"/>
                         <text x="210" y="300" font-family="Fraunces, serif" font-size="26" font-weight="900" fill="#F4A862" text-anchor="middle">R40</text>
                         <text x="210" y="320" font-family="DM Sans, sans-serif" font-size="10" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="1">PER KG FROM</text>
-
                         <rect x="282" y="260" width="110" height="90" rx="16" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
                         <text x="337" y="300" font-family="Fraunces, serif" font-size="26" font-weight="900" fill="white" text-anchor="middle">18+</text>
                         <text x="337" y="320" font-family="DM Sans, sans-serif" font-size="10" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="1">AREAS SERVED</text>
-
-                        <!-- Bottom feature row -->
                         <rect x="28" y="370" width="172" height="64" rx="16" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
                         <text x="50" y="398" font-size="20">🚚</text>
                         <text x="80" y="396" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="white">Free Pickup</text>
                         <text x="80" y="414" font-family="DM Sans, sans-serif" font-size="11" fill="rgba(255,255,255,0.55)">&amp; Delivery</text>
-
                         <rect x="220" y="370" width="172" height="64" rx="16" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
                         <text x="242" y="398" font-size="20">✅</text>
                         <text x="272" y="396" font-family="DM Sans, sans-serif" font-size="13" font-weight="700" fill="white">Trusted</text>
@@ -1327,195 +1376,64 @@
                 <h2>Our Pricing</h2>
                 <p>Transparent, affordable pricing for quality service</p>
             </div>
-
             <div class="pricing-categories">
-                <!-- Laundry Services -->
                 <div class="pricing-category laundry-services">
                     <h3>Laundry Services</h3>
-                    <div class="price-item">
-                        <span class="price-item-name">Wash, Dry & Iron</span>
-                        <span class="price-item-cost">R50/kg</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Wash, Dry & Fold</span>
-                        <span class="price-item-cost">R40/kg</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Ironing Only</span>
-                        <span class="price-item-cost">R45/kg</span>
-                    </div>
-                    <div class="price-note">
-                        ⚖️ Minimum charge: R400
-                    </div>
+                    <div class="price-item"><span class="price-item-name">Wash, Dry & Iron</span><span class="price-item-cost">R50/kg</span></div>
+                    <div class="price-item"><span class="price-item-name">Wash, Dry & Fold</span><span class="price-item-cost">R40/kg</span></div>
+                    <div class="price-item"><span class="price-item-name">Ironing Only</span><span class="price-item-cost">R45/kg</span></div>
+                    <div class="price-note">⚖️ Minimum charge: R400</div>
                 </div>
-
-                <!-- Dry Cleaning - Clothing -->
                 <div class="pricing-category">
                     <h3>Dry Cleaning - Clothing</h3>
-                    <div class="price-item">
-                        <span class="price-item-name">Shirt / Blouse</span>
-                        <span class="price-item-cost">R120</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Trouser / Skirt</span>
-                        <span class="price-item-cost">R140</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Suit (2-Piece)</span>
-                        <span class="price-item-cost">R295</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Suit (3-Piece)</span>
-                        <span class="price-item-cost">R350</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Suit Jacket / Blazer</span>
-                        <span class="price-item-cost">R190</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">School Blazer</span>
-                        <span class="price-item-cost">R170</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Sweater / Cardigan</span>
-                        <span class="price-item-cost">R190</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Vest / Waist Coat</span>
-                        <span class="price-item-cost">R190</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Jersey / Tracksuit</span>
-                        <span class="price-item-cost">R200</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Tie</span>
-                        <span class="price-item-cost">R95</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Bow Tie</span>
-                        <span class="price-item-cost">R80</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Berets</span>
-                        <span class="price-item-cost">R100</span>
-                    </div>
+                    <div class="price-item"><span class="price-item-name">Shirt / Blouse</span><span class="price-item-cost">R120</span></div>
+                    <div class="price-item"><span class="price-item-name">Trouser / Skirt</span><span class="price-item-cost">R140</span></div>
+                    <div class="price-item"><span class="price-item-name">Suit (2-Piece)</span><span class="price-item-cost">R295</span></div>
+                    <div class="price-item"><span class="price-item-name">Suit (3-Piece)</span><span class="price-item-cost">R350</span></div>
+                    <div class="price-item"><span class="price-item-name">Suit Jacket / Blazer</span><span class="price-item-cost">R190</span></div>
+                    <div class="price-item"><span class="price-item-name">School Blazer</span><span class="price-item-cost">R170</span></div>
+                    <div class="price-item"><span class="price-item-name">Sweater / Cardigan</span><span class="price-item-cost">R190</span></div>
+                    <div class="price-item"><span class="price-item-name">Vest / Waist Coat</span><span class="price-item-cost">R190</span></div>
+                    <div class="price-item"><span class="price-item-name">Jersey / Tracksuit</span><span class="price-item-cost">R200</span></div>
+                    <div class="price-item"><span class="price-item-name">Tie</span><span class="price-item-cost">R95</span></div>
+                    <div class="price-item"><span class="price-item-name">Bow Tie</span><span class="price-item-cost">R80</span></div>
+                    <div class="price-item"><span class="price-item-name">Berets</span><span class="price-item-cost">R100</span></div>
                 </div>
-
-                <!-- Dry Cleaning - Coats & Dresses -->
                 <div class="pricing-category">
                     <h3>Coats & Dresses</h3>
-                    <div class="price-item">
-                        <span class="price-item-name">Coat - Short (Above Knee)</span>
-                        <span class="price-item-cost">R235</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Coat - Medium</span>
-                        <span class="price-item-cost">R265</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Coat - Long (Ankle Length)</span>
-                        <span class="price-item-cost">R310</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Dress - Plain Short</span>
-                        <span class="price-item-cost">R240</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Dress - Plain Medium</span>
-                        <span class="price-item-cost">R260</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Dress - Plain Long</span>
-                        <span class="price-item-cost">R400</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Wedding Dress</span>
-                        <span class="price-item-cost">From R1,500</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Outerwear</span>
-                        <span class="price-item-cost">R170</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Fur Jacket</span>
-                        <span class="price-item-cost">R440</span>
-                    </div>
+                    <div class="price-item"><span class="price-item-name">Coat - Short (Above Knee)</span><span class="price-item-cost">R235</span></div>
+                    <div class="price-item"><span class="price-item-name">Coat - Medium</span><span class="price-item-cost">R265</span></div>
+                    <div class="price-item"><span class="price-item-name">Coat - Long (Ankle Length)</span><span class="price-item-cost">R310</span></div>
+                    <div class="price-item"><span class="price-item-name">Dress - Plain Short</span><span class="price-item-cost">R240</span></div>
+                    <div class="price-item"><span class="price-item-name">Dress - Plain Medium</span><span class="price-item-cost">R260</span></div>
+                    <div class="price-item"><span class="price-item-name">Dress - Plain Long</span><span class="price-item-cost">R400</span></div>
+                    <div class="price-item"><span class="price-item-name">Wedding Dress</span><span class="price-item-cost">From R1,500</span></div>
+                    <div class="price-item"><span class="price-item-name">Outerwear</span><span class="price-item-cost">R170</span></div>
+                    <div class="price-item"><span class="price-item-name">Fur Jacket</span><span class="price-item-cost">R440</span></div>
                 </div>
-
-                <!-- Leather & Suede -->
                 <div class="pricing-category">
                     <h3>Leather & Suede</h3>
-                    <div class="price-item">
-                        <span class="price-item-name">Suede/Leather Jacket - Short</span>
-                        <span class="price-item-cost">R570</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Suede/Leather Jacket - Above Knee</span>
-                        <span class="price-item-cost">R720</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Suede/Leather Jacket - Above Ankle</span>
-                        <span class="price-item-cost">R870</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Leather / Suede Shoes</span>
-                        <span class="price-item-cost">R250</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Sneakers (Canvas/Synthetic)</span>
-                        <span class="price-item-cost">R110</span>
-                    </div>
+                    <div class="price-item"><span class="price-item-name">Suede/Leather Jacket - Short</span><span class="price-item-cost">R570</span></div>
+                    <div class="price-item"><span class="price-item-name">Suede/Leather Jacket - Above Knee</span><span class="price-item-cost">R720</span></div>
+                    <div class="price-item"><span class="price-item-name">Suede/Leather Jacket - Above Ankle</span><span class="price-item-cost">R870</span></div>
+                    <div class="price-item"><span class="price-item-name">Leather / Suede Shoes</span><span class="price-item-cost">R250</span></div>
+                    <div class="price-item"><span class="price-item-name">Sneakers (Canvas/Synthetic)</span><span class="price-item-cost">R110</span></div>
                 </div>
-
-                <!-- Handbags -->
                 <div class="pricing-category">
                     <h3>Handbags</h3>
-                    <div class="price-item">
-                        <span class="price-item-name">Small Handbag (&lt;25cm)</span>
-                        <span class="price-item-cost">R280</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Medium Handbag (26-34cm)</span>
-                        <span class="price-item-cost">R350</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Large Handbag (35-45cm)</span>
-                        <span class="price-item-cost">R490</span>
-                    </div>
+                    <div class="price-item"><span class="price-item-name">Small Handbag (&lt;25cm)</span><span class="price-item-cost">R280</span></div>
+                    <div class="price-item"><span class="price-item-name">Medium Handbag (26-34cm)</span><span class="price-item-cost">R350</span></div>
+                    <div class="price-item"><span class="price-item-name">Large Handbag (35-45cm)</span><span class="price-item-cost">R490</span></div>
                 </div>
-
-                <!-- Bedding & Home -->
                 <div class="pricing-category">
                     <h3>Bedding & Home</h3>
-                    <div class="price-item">
-                        <span class="price-item-name">Single Down Duvet</span>
-                        <span class="price-item-cost">R200</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Duvet / Blanket - Double</span>
-                        <span class="price-item-cost">R250</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Duvet / Blanket - Queen</span>
-                        <span class="price-item-cost">R270</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Duvet / Blanket - King</span>
-                        <span class="price-item-cost">R300</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Pillow - Medium</span>
-                        <span class="price-item-cost">R60</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Curtains - Normal</span>
-                        <span class="price-item-cost">R90/kg</span>
-                    </div>
-                    <div class="price-item">
-                        <span class="price-item-name">Curtains - Blockout</span>
-                        <span class="price-item-cost">R120/kg</span>
-                    </div>
+                    <div class="price-item"><span class="price-item-name">Single Down Duvet</span><span class="price-item-cost">R200</span></div>
+                    <div class="price-item"><span class="price-item-name">Duvet / Blanket - Double</span><span class="price-item-cost">R250</span></div>
+                    <div class="price-item"><span class="price-item-name">Duvet / Blanket - Queen</span><span class="price-item-cost">R270</span></div>
+                    <div class="price-item"><span class="price-item-name">Duvet / Blanket - King</span><span class="price-item-cost">R300</span></div>
+                    <div class="price-item"><span class="price-item-name">Pillow - Medium</span><span class="price-item-cost">R60</span></div>
+                    <div class="price-item"><span class="price-item-name">Curtains - Normal</span><span class="price-item-cost">R90/kg</span></div>
+                    <div class="price-item"><span class="price-item-name">Curtains - Blockout</span><span class="price-item-cost">R120/kg</span></div>
                 </div>
             </div>
         </div>
@@ -1529,7 +1447,6 @@
                 <p>We proudly serve the following areas across Johannesburg South & East Rand</p>
             </div>
             <div class="areas-grid">
-                <!-- Johannesburg South -->
                 <div class="area-tag">Johannesburg South</div>
                 <div class="area-tag">Turffontein</div>
                 <div class="area-tag">Glenvista</div>
@@ -1538,11 +1455,9 @@
                 <div class="area-tag">Lenasia</div>
                 <div class="area-tag">Kibler Park</div>
                 <div class="area-tag">Bassonia</div>
-                <!-- Johannesburg North -->
                 <div class="area-tag">Johannesburg North</div>
                 <div class="area-tag">Sandton</div>
                 <div class="area-tag">Midrand</div>
-                <!-- East Rand -->
                 <div class="area-tag">Boksburg</div>
                 <div class="area-tag">Benoni</div>
                 <div class="area-tag">Germiston</div>
@@ -1594,7 +1509,7 @@
                 <h2>Book Your Pickup</h2>
                 <p>Fill in your details and we'll be there</p>
             </div>
-            
+
             <div id="successMessage" class="success-message">
                 <span class="success-icon">🎉</span>
                 <div class="success-title">Booking Confirmed!</div>
@@ -1732,7 +1647,6 @@
                 <h2>Donate Old Clothes</h2>
                 <p>Help us clothe those in need — your pre-loved garments can make a world of difference to someone less fortunate.</p>
             </div>
-
             <div class="donate-cards">
                 <div class="donate-card">
                     <div class="donate-card-icon">👕</div>
@@ -1750,7 +1664,6 @@
                     <p>Donated clothes are sorted, cleaned, and distributed to local shelters, orphanages, and community organisations in Johannesburg.</p>
                 </div>
             </div>
-
             <div class="donate-cta">
                 <h3>Ready to Donate?</h3>
                 <p>Just let us know when you book your next pickup — we'll collect your donation bag at the same time. Simple as that!</p>
@@ -1774,38 +1687,40 @@
         </a>
     </div>
 
+    <!-- ✅ Sister Brand Bar — links to Starhome Cleaner (cleaning site) -->
+    <section class="sister-brand-bar">
+        <div class="sister-brand-inner">
+            <div class="sister-brand-info">
+                <div class="sister-brand-icon">🏠</div>
+                <div>
+                    <p class="sister-brand-label">Also by Starhome</p>
+                    <p class="sister-brand-name">Starhome Cleaners</p>
+                    <p class="sister-brand-desc">Professional home cleaning — standard, deep clean, end of tenancy & after-builders cleaning across Johannesburg.</p>
+                </div>
+            </div>
+            <a href="https://www.starhomecleaner.co.za" target="_blank" rel="noopener" class="sister-brand-btn">
+                Visit Cleaning Site →
+            </a>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Starhome Laundry. All rights reserved. | starhomecleaner.co.za</p>
+        <p>&copy; 2026 Starhome Laundry. All rights reserved. |
+            <a href="https://www.starhomecleaners.co.za">starhomecleaners.co.za</a>
+            &nbsp;|&nbsp;
+            <a href="https://www.starhomecleaner.co.za" target="_blank">Cleaning Services</a>
+        </p>
     </footer>
 
     <script>
-        // ─── EmailJS Configuration ─────────────────────────────────────────────
-        // SETUP INSTRUCTIONS:
-        // 1. Sign up free at https://www.emailjs.com
-        // 2. Add Email Service (connect your Gmail/Outlook) → copy Service ID
-        // 3. Create TWO email templates (see template variables below) → copy Template IDs
-        // 4. Go to Account → API Keys → copy your Public Key
-        // 5. Replace the four placeholder values below with your real IDs
-        const EMAILJS_PUBLIC_KEY   = 'PdnvIkCPHLPdZlOeS';       // e.g. 'abc123XYZ'
-        const EMAILJS_SERVICE_ID   = 'service_lvusebf';       // e.g. 'service_xxxxxx'
-        const TEMPLATE_TO_STARHOME = 'template_u75u2n4';    // Template for company notification
-        const TEMPLATE_TO_CUSTOMER = 'template_pup00cd';    // Template for customer confirmation
-
-        // ─── EmailJS Template Variables ───────────────────────────────────────
-        // Template 1 (TO STARHOME) — use these {{variables}} in your EmailJS template:
-        //   {{booking_ref}}, {{customer_name}}, {{customer_phone}}, {{customer_email}},
-        //   {{pickup_address}}, {{pickup_date}}, {{pickup_time}},
-        //   {{services}}, {{delivery}}, {{notes}}
-        //
-        // Template 2 (TO CUSTOMER) — use these {{variables}}:
-        //   {{booking_ref}}, {{customer_name}}, {{customer_email}},
-        //   {{pickup_address}}, {{pickup_date}}, {{pickup_time}},
-        //   {{services}}, {{delivery}}, {{notes}}
+        const EMAILJS_PUBLIC_KEY   = 'PdnvIkCPHLPdZlOeS';
+        const EMAILJS_SERVICE_ID   = 'service_lvusebf';
+        const TEMPLATE_TO_STARHOME = 'template_u75u2n4';
+        const TEMPLATE_TO_CUSTOMER = 'template_pup00cd';
 
         emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
-        // ─── Helpers ──────────────────────────────────────────────────────────
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('pickup-date').setAttribute('min', today);
 
@@ -1844,7 +1759,6 @@
                 }
             }
 
-            // Replace static steps with live action buttons
             const stepsEl = successMsg.querySelector('.success-steps');
             if (stepsEl) {
                 stepsEl.innerHTML =
@@ -1862,7 +1776,6 @@
             setTimeout(() => successMsg.classList.remove('show'), 60000);
         }
 
-        // ─── Form Submission ──────────────────────────────────────────────────
         document.getElementById('bookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -1881,13 +1794,11 @@
                 document.querySelector('label[for="' + cb.id + '"]').textContent.trim()
             );
 
-            const bookingRef   = genRef();
+            const bookingRef    = genRef();
             const deliveryLabel = data['delivery-option'] === 'express' ? 'Express (Same Day +50%)' : 'Standard (24 hours)';
             const servicesText  = selectedServices.join(', ');
             const notesText     = data.notes || 'None';
 
-            // ── Shared template params ─────────────────────────────────────
-            // Shared booking fields
             const bookingFields = {
                 booking_ref:    bookingRef,
                 customer_name:  data.name,
@@ -1901,7 +1812,6 @@
                 notes:          notesText
             };
 
-            // Separate params so each email goes to the right recipient
             const starhomeParams = Object.assign({}, bookingFields, {
                 to_email: 'info@starhomecleaner.co.za',
                 to_name:  'Starhome Laundry'
@@ -1911,7 +1821,6 @@
                 to_name:  data.name
             });
 
-            // ── WhatsApp URLs (opened immediately — same event tick) ────────
             const waNotesSection = data.notes ? '\n\n📝 *Special Instructions:*\n' + data.notes : '';
             const starhomeWAMsg =
                 '🧺 *NEW STARHOME LAUNDRY BOOKING*\n🔖 *Ref:* ' + bookingRef +
@@ -1936,14 +1845,11 @@
             const starhomeWAURL  = 'https://wa.me/27624961315?text=' + encodeURIComponent(starhomeWAMsg);
             const customerWAURL  = 'https://wa.me/' + customerPhone + '?text=' + encodeURIComponent(customerWAMsg);
 
-            // ── Fire WhatsApp immediately (must be in same sync event tick) ──
             window.open(starhomeWAURL, '_blank');
 
-            // ── Show loading state on button ───────────────────────────────
             setSubmitState(true);
             this.reset();
 
-            // ── Send both emails via EmailJS in parallel ───────────────────
             let emailStatus = 'ok';
             try {
                 await Promise.all([
@@ -1959,7 +1865,6 @@
             showBanner(bookingRef, starhomeWAURL, customerWAURL, emailStatus);
         });
 
-        // ─── Smooth scrolling ─────────────────────────────────────────────────
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
