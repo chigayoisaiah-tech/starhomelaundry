@@ -33,18 +33,16 @@
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": "Starhome Laundry",
+      "name": "Starhome Cleaners",
       "url": "https://www.starhomecleaners.co.za",
       "telephone": "+27624961315",
-      "email": "info@starhomecleaner.co.za",
+      "email": "info@starhomecleaners.co.za",
       "description": "Professional laundry, dry cleaning, curtain cleaning, carpet cleaning and home cleaning with free pickup and delivery across Johannesburg.",
       "priceRange": "R45–R1500",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Main Street",
-        "addressLocality": "Rosettenville",
+        "addressLocality": "Johannesburg",
         "addressRegion": "Gauteng",
-        "postalCode": "2190",
         "addressCountry": "ZA"
       },
       "openingHoursSpecification": [
@@ -1453,6 +1451,7 @@
       text-transform: uppercase; padding: 0.4rem 1.1rem; border-radius: 50px; margin-bottom: 1.5rem;
     }
 #cleaning .hero h1 { color: white; margin-bottom: 1.25rem; }
+#cleaning .hero h2.hero-title { font-family: var(--display); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 600; line-height: 1.2; color: white; margin-bottom: 1.25rem; }
 #cleaning .hero h1 em { font-style: italic; color: var(--sky); }
 #cleaning .hero p { color: rgba(255,255,255,0.85); font-size: 1.15rem; margin-bottom: 2.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
 #cleaning .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
@@ -2045,16 +2044,12 @@
                 <p>Johannesburg South, East Rand<br>& Surrounding Areas</p>
             </div>
             <div class="contact-item">
-                <h3>🏢 Address</h3>
-                <p>Main Street<br>Rosettenville, JHB 2190</p>
-            </div>
-            <div class="contact-item">
                 <h3>💬 WhatsApp</h3>
                 <p>+27 62 496 1315<br>Fast Response</p>
             </div>
             <div class="contact-item">
                 <h3>✉️ Email</h3>
-                <p><a href="mailto:info@starhomecleaner.co.za" style="color:white;">info@starhomecleaner.co.za</a></p>
+                <p><a href="mailto:info@starhomecleaners.co.za" style="color:white;">info@starhomecleaners.co.za</a></p>
             </div>
             <div class="contact-item">
                 <h3>🕐 Hours</h3>
@@ -2095,7 +2090,7 @@
                     <a href="https://wa.me/27624961315?text=Hi%20Starhome!%20I%27d%20like%20to%20donate%20some%20old%20clothes.%20Can%20you%20please%20collect%20my%20donation%20bag%20on%20my%20next%20laundry%20pickup%3F" target="_blank" class="btn-donate-wa">
                         💬 WhatsApp Us to Donate
                     </a>
-                    <a href="mailto:info@starhomecleaner.co.za?subject=Clothing%20Donation&body=Hi%20Starhome%2C%0A%0AI%27d%20like%20to%20donate%20some%20old%20clothes.%20Please%20collect%20my%20donation%20bag%20on%20my%20next%20laundry%20pickup.%0A%0AThank%20you!" class="btn-donate-email">
+                    <a href="mailto:info@starhomecleaners.co.za?subject=Clothing%20Donation&body=Hi%20Starhome%2C%0A%0AI%27d%20like%20to%20donate%20some%20old%20clothes.%20Please%20collect%20my%20donation%20bag%20on%20my%20next%20laundry%20pickup.%0A%0AThank%20you!" class="btn-donate-email">
                         ✉️ Email Us
                     </a>
                 </div>
@@ -2112,7 +2107,7 @@
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-badge">⭐ Rated 5 Stars by Joburg Homeowners</div>
-    <h1>Reliable Home Cleaning,<br/><em>Done Properly</em></h1>
+    <h2 class="hero-title">Reliable Home Cleaning,<br/><em>Done Properly</em></h2>
     <p>Book professional cleaners who come to you — vetted, insured, and thorough. Standard, deep clean, end of tenancy, and more.</p>
     <div class="hero-buttons">
       <a href="book.html" class="btn btn-white btn-lg">Get an Instant Quote</a>
@@ -2286,7 +2281,7 @@
     <div>
       <h4>Contact Us</h4>
       <ul>
-        <li><a href="mailto:info@starhomecleaner.co.za">info@starhomecleaner.co.za</a></li>
+        <li><a href="mailto:info@starhomecleaners.co.za">info@starhomecleaners.co.za</a></li>
         <li><a href="tel:0100850643">010 085 0643</a></li>
         <li><a href="https://wa.me/27624961315" target="_blank">WhatsApp: +27 62 496 1315</a></li>
       </ul>
@@ -2460,7 +2455,7 @@
             };
 
             const starhomeParams = Object.assign({}, bookingFields, {
-                to_email: 'info@starhomecleaner.co.za',
+                to_email: 'info@starhomecleaners.co.za',
                 to_name:  'Starhome Laundry'
             });
             const customerParams = Object.assign({}, bookingFields, {
@@ -2486,7 +2481,7 @@
                 '\n🧼 *Services:* ' + servicesText +
                 '\n🚚 *Delivery:* ' + deliveryLabel +
                 (data.notes ? '\n📝 *Notes:* ' + data.notes : '') +
-                '\n\nFor queries: +27 62 496 1315 | info@starhomecleaner.co.za\n— The Starhome Team';
+                '\n\nFor queries: +27 62 496 1315 | info@starhomecleaners.co.za\n— The Starhome Team';
 
             const customerPhone  = data.phone.replace(/\D/g, '');
             const starhomeWAURL  = 'https://wa.me/27624961315?text=' + encodeURIComponent(starhomeWAMsg);
