@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Wash, dry, fold & dry cleaning with free doorstep pickup in Johannesburg. 24hr turnaround. Serving Sandton, Alberton, Boksburg & 18+ areas. WhatsApp to book.">
-    <title>Laundry & Dry Cleaning Service Johannesburg | Free Pickup & Delivery | Starhome</title>
+    <meta name="description" content="Laundry, dry cleaning & professional home cleaning in Johannesburg. Free laundry pickup & delivery, 24hr turnaround, vetted home cleaners. WhatsApp to book.">
+    <title>Laundry, Dry Cleaning & Home Cleaning Johannesburg | Free Pickup | Starhome</title>
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://www.starhomecleaners.co.za/">
@@ -12,7 +12,7 @@
     <!-- Open Graph (Facebook / WhatsApp previews) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.starhomecleaners.co.za/">
-    <meta property="og:title" content="Laundry & Dry Cleaning Service Johannesburg | Free Pickup & Delivery | Starhome">
+    <meta property="og:title" content="Laundry, Dry Cleaning & Home Cleaning Johannesburg | Starhome">
     <meta property="og:description" content="Wash, dry, fold & dry cleaning with free doorstep pickup in Johannesburg. 24hr turnaround. Serving Sandton, Alberton, Boksburg & 18+ areas. WhatsApp to book.">
     <meta property="og:site_name" content="Starhome Laundry">
 
@@ -24,7 +24,7 @@
     <!-- Additional SEO meta tags -->
     <meta name="robots" content="index, follow">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
-    <meta name="keywords" content="laundry service Johannesburg, dry cleaning Johannesburg, laundry pickup delivery Johannesburg, wash and fold Johannesburg, curtain cleaning Johannesburg, carpet cleaning Johannesburg, laundry Sandton, laundry Alberton, laundry Boksburg">
+    <meta name="keywords" content="home cleaning Johannesburg, deep cleaning Johannesburg, laundry service Johannesburg, dry cleaning Johannesburg, laundry pickup delivery Johannesburg, wash and fold Johannesburg, curtain cleaning Johannesburg, carpet cleaning Johannesburg, laundry Sandton, laundry Alberton, laundry Boksburg">
     <meta name="geo.region" content="ZA-GP">
     <meta name="geo.placename" content="Johannesburg, Gauteng">
 
@@ -83,11 +83,13 @@
       "subOrganization": {
         "@type": "HouseCleaningService",
         "name": "Starhome Cleaners",
-        "url": "https://www.starhomecleaners.co.za/cleaning/"
+        "url": "https://www.starhomecleaners.co.za/#cleaning",
+        "telephone": "+27624961315",
+        "areaServed": "Johannesburg"
       }
     }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700;900&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -388,7 +390,7 @@
 
         /* Hero Section */
         .hero {
-            margin-top: 90px;
+            margin-top: var(--header-h, 90px);
             padding: 6rem 2rem 4rem;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
             position: relative;
@@ -1238,10 +1240,12 @@
 
             nav ul {
                 display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.4rem 1rem;
                 width: 100%;
-                text-align: center;
+                font-size: 0.85rem;
             }
 
             .cta-button {
@@ -1251,7 +1255,7 @@
             }
 
             .hero {
-                margin-top: 280px;
+                margin-top: var(--header-h, 90px);
             }
 
             .hero-text h1 {
@@ -1285,28 +1289,363 @@
                 font-size: 1.75rem;
             }
         }
+
+        /* ===== ONE-SITE VIEW SWITCH (Laundry | Home Cleaning) ===== */
+        .view-switch {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: rgba(10, 77, 104, 0.08);
+            border: 1.5px solid rgba(10, 77, 104, 0.15);
+            border-radius: 50px;
+            flex-shrink: 0;
+        }
+        .view-switch a {
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--color-primary);
+            white-space: nowrap;
+        }
+        .view-switch a::after { display: none; }
+        .view-switch a.active,
+        .view-switch a.active:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+        body.view-laundry [data-for="cleaning"],
+        body.view-cleaning [data-for="laundry"] { display: none !important; }
+        body.view-laundry #cleaning,
+        body.view-cleaning #laundry { display: none; }
+        .service-link {
+            display: inline-block;
+            margin-top: 1rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            text-decoration: none;
+        }
+        .service-link:hover { color: var(--color-primary); }
+
+        /* ===== HOME CLEANING SECTION (scoped under #cleaning) ===== */
+#cleaning *, #cleaning *::before, #cleaning *::after { margin: 0; padding: 0; box-sizing: border-box; }
+#cleaning {
+      --navy:    #0A4D68;
+      --teal:    #088395;
+      --sky:     #05BFDB;
+      --cream:   #FDF9F5;
+      --offwhite:#F4F0EB;
+      --dark:    #1C2B35;
+      --text:    #3D4F58;
+      --muted:   #7A8E97;
+      --white:   #FFFFFF;
+      --green:   #25D366;
+      --display: 'Playfair Display', serif;
+      --body:    'DM Sans', sans-serif;
+      --radius:  16px;
+      --shadow:  0 4px 24px rgba(10,77,104,0.10);
+      --shadow-lg: 0 10px 40px rgba(10,77,104,0.14);
+    }
+#cleaning {
+      font-family: var(--body);
+      color: var(--text);
+      background: var(--cream);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+#cleaning h1, #cleaning h2, #cleaning h3 { font-family: var(--display); color: var(--navy); line-height: 1.2; }
+#cleaning h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 600; }
+#cleaning h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 600; text-align: center; margin-bottom: 0.5rem; }
+#cleaning h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; }
+#cleaning p { color: var(--text); font-size: 1rem; }
+#cleaning .section-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 3rem;
+    }
+#cleaning .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      font-family: var(--body);
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+    }
+#cleaning .btn-primary { background: var(--navy); color: var(--white); box-shadow: 0 4px 16px rgba(10,77,104,0.25); }
+#cleaning .btn-primary:hover { background: var(--teal); transform: translateY(-2px); }
+#cleaning .btn-white { background: white; color: var(--navy); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+#cleaning .btn-white:hover { background: var(--sky); color: white; transform: translateY(-2px); }
+#cleaning .btn-wa { background: var(--green); color: white; box-shadow: 0 4px 16px rgba(37,211,102,0.35); }
+#cleaning .btn-wa:hover { background: #1ebe5d; transform: translateY(-2px); }
+#cleaning .btn-lg { padding: 1rem 2.5rem; font-size: 1.1rem; }
+#cleaning .nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(253,249,245,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1.5px solid rgba(10,77,104,0.12);
+      transition: box-shadow 0.3s;
+    }
+#cleaning .nav.scrolled { box-shadow: 0 2px 20px rgba(10,77,104,0.1); }
+#cleaning .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 1.1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+#cleaning .logo {
+      font-family: var(--display); font-size: 1.5rem; font-weight: 600;
+      color: var(--navy); text-decoration: none;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+#cleaning .logo .star-icon { color: var(--sky); }
+#cleaning .menu { display: flex; align-items: center; gap: 2rem; }
+#cleaning .menu a {
+      text-decoration: none; color: var(--text); font-weight: 500; font-size: 0.95rem;
+      position: relative; transition: color 0.2s;
+    }
+#cleaning .menu a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 2px; background: var(--sky); transition: width 0.25s ease;
+    }
+#cleaning .menu a:hover { color: var(--navy); }
+#cleaning .menu a:hover::after { width: 100%; }
+#cleaning .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+#cleaning .hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; }
+#cleaning .mobile-menu {
+      display: none; flex-direction: column;
+      background: var(--white); border-top: 1px solid rgba(10,77,104,0.1);
+      padding: 1rem 2rem 1.5rem; gap: 0.75rem;
+    }
+#cleaning .mobile-menu.open { display: flex; }
+#cleaning .mobile-menu a {
+      text-decoration: none; color: var(--text); font-weight: 500;
+      padding: 0.5rem 0; border-bottom: 1px solid rgba(10,77,104,0.07);
+    }
+#cleaning .mobile-menu .mobile-cta {
+      margin-top: 0.5rem; background: var(--navy); color: white;
+      padding: 0.8rem 1.5rem; border-radius: 50px; text-align: center; font-weight: 600; border: none;
+    }
+#cleaning .hero {
+      margin-top: var(--header-h, 90px);
+      background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 100%);
+      padding: 6rem 2rem 5rem; position: relative; overflow: hidden;
+    }
+#cleaning .hero::before {
+      content: ''; position: absolute; top: -30%; right: -5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(5,191,219,0.18) 0%, transparent 65%);
+      border-radius: 50%;
+    }
+#cleaning .hero-inner { max-width: 700px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+#cleaning .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      color: white; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.4rem 1.1rem; border-radius: 50px; margin-bottom: 1.5rem;
+    }
+#cleaning .hero h1 { color: white; margin-bottom: 1.25rem; }
+#cleaning .hero h1 em { font-style: italic; color: var(--sky); }
+#cleaning .hero p { color: rgba(255,255,255,0.85); font-size: 1.15rem; margin-bottom: 2.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+#cleaning .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+#cleaning .hero-trust { margin-top: 3rem; display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; }
+#cleaning .trust-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+#cleaning .trust-num { font-family: var(--display); font-size: 1.8rem; font-weight: 600; color: white; }
+#cleaning .trust-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+#cleaning .trust-divider { width: 1px; height: 2.5rem; background: rgba(255,255,255,0.2); align-self: center; }
+#cleaning .section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+#cleaning .section-full { padding: 5rem 2rem; background: var(--white); }
+#cleaning .section-full .section-inner { max-width: 1200px; margin: 0 auto; }
+#cleaning .section-alt { padding: 5rem 2rem; background: var(--offwhite); }
+#cleaning .section-alt .section-inner { max-width: 1200px; margin: 0 auto; }
+#cleaning .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+#cleaning .service-card {
+      background: var(--white); border: 1.5px solid rgba(10,77,104,0.1);
+      border-radius: var(--radius); padding: 2rem 1.5rem; text-align: center;
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+    }
+#cleaning .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--sky), var(--teal));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease;
+    }
+#cleaning .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--sky); }
+#cleaning .service-card:hover::before { transform: scaleX(1); }
+#cleaning .service-icon {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, rgba(5,191,219,0.12), rgba(8,131,149,0.12));
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem; margin: 0 auto 1.25rem;
+    }
+#cleaning .service-card h3 { color: var(--navy); font-size: 1.05rem; }
+#cleaning .service-card p { color: var(--muted); font-size: 0.9rem; margin-top: 0.4rem; }
+#cleaning .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+#cleaning .feature {
+      background: var(--white); border-radius: var(--radius); padding: 1.75rem;
+      border-left: 3px solid var(--sky); box-shadow: var(--shadow); transition: transform 0.25s;
+    }
+#cleaning .feature:hover { transform: translateY(-3px); }
+#cleaning .feature-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+#cleaning .feature h4 { font-size: 1rem; color: var(--navy); margin-bottom: 0.4rem; font-family: var(--body); font-weight: 600; }
+#cleaning .feature p { color: var(--muted); font-size: 0.92rem; }
+#cleaning .reviews-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+#cleaning .review-card {
+      background: var(--white); border-radius: var(--radius); padding: 2rem;
+      box-shadow: var(--shadow); border: 1.5px solid rgba(10,77,104,0.07);
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+#cleaning .stars { font-size: 1.1rem; letter-spacing: 2px; }
+#cleaning .review-card p { color: var(--text); font-size: 0.95rem; line-height: 1.7; flex: 1; }
+#cleaning .review-author { font-weight: 600; color: var(--navy); font-size: 0.9rem; }
+#cleaning .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+#cleaning .step-card {
+      background: var(--white); border-radius: var(--radius); padding: 2rem 1.5rem;
+      text-align: center; box-shadow: var(--shadow); transition: transform 0.25s;
+    }
+#cleaning .step-card:hover { transform: translateY(-4px); }
+#cleaning .step-num {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--navy), var(--teal));
+      color: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--display); font-size: 1.4rem; font-weight: 600;
+      margin: 0 auto 1rem; box-shadow: 0 4px 14px rgba(10,77,104,0.3);
+    }
+#cleaning .step-card h3 { font-size: 1rem; color: var(--navy); }
+#cleaning .step-card p { font-size: 0.88rem; color: var(--muted); margin-top: 0.3rem; }
+#cleaning .cta-band { background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 100%); padding: 5rem 2rem; text-align: center; }
+#cleaning .cta-band h2 { color: white; margin-bottom: 0.75rem; }
+#cleaning .cta-band p { color: rgba(255,255,255,0.8); font-size: 1.05rem; margin-bottom: 2rem; }
+#cleaning .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+#cleaning .footer { background: var(--dark); color: rgba(255,255,255,0.75); padding: 4rem 2rem 0; }
+#cleaning .footer-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 3rem; padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+#cleaning .footer h4 {
+      color: white; font-family: var(--body); font-size: 0.85rem;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem;
+    }
+#cleaning .footer p { font-size: 0.92rem; line-height: 1.7; }
+#cleaning .footer ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+#cleaning .footer ul li { font-size: 0.92rem; }
+#cleaning .footer a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+#cleaning .footer a:hover { color: var(--sky); }
+#cleaning .footer-sister-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 1rem; color: var(--sky) !important; font-weight: 600; font-size: 0.92rem;
+    }
+#cleaning .social-links { display: flex; flex-direction: column; gap: 0.6rem; }
+#cleaning .social-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.92rem; transition: color 0.2s;
+    }
+#cleaning .social-link:hover { color: var(--sky); }
+#cleaning .footer-bottom {
+      max-width: 1200px; margin: 0 auto; padding: 1.5rem 0;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; color: rgba(255,255,255,0.35);
+    }
+#cleaning .footer-bottom a { color: var(--sky); text-decoration: none; }
+#cleaning .footer-bottom a:hover { color: white; }
+#cleaning .sister-brand-bar { background: #062F42; padding: 2.5rem 2rem; border-top: 3px solid var(--sky); }
+#cleaning .sister-brand-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+#cleaning .sister-brand-info { display: flex; align-items: center; gap: 1.5rem; }
+#cleaning .sister-brand-icon {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 14px; padding: 0.75rem 1.1rem; font-size: 1.8rem; line-height: 1; flex-shrink: 0;
+    }
+#cleaning .sister-brand-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; color: var(--sky); text-transform: uppercase; margin-bottom: 0.25rem; }
+#cleaning .sister-brand-name { font-family: var(--display); font-size: 1.3rem; font-weight: 600; color: white; margin-bottom: 0.2rem; }
+#cleaning .sister-brand-desc { font-size: 0.9rem; color: rgba(255,255,255,0.65); max-width: 400px; line-height: 1.5; }
+#cleaning .sister-brand-btn {
+      background: white; color: var(--navy); padding: 0.85rem 1.75rem; border-radius: 50px;
+      font-weight: 700; font-size: 0.95rem; text-decoration: none; white-space: nowrap;
+      transition: all 0.25s; box-shadow: 0 4px 15px rgba(0,0,0,0.15); flex-shrink: 0;
+    }
+#cleaning .sister-brand-btn:hover { background: var(--sky); color: white; transform: translateY(-2px); }
+#cleaning .whatsapp-float {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      width: 58px; height: 58px; background: var(--green); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.45); transition: all 0.3s;
+    }
+#cleaning .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(37,211,102,0.55); }
+@media (max-width: 768px) {
+#cleaning .menu { display: none; }
+#cleaning .hamburger { display: flex; }
+#cleaning .nav-inner .btn { display: none; }
+#cleaning .hero { padding: 5rem 1.5rem 4rem; }
+#cleaning .trust-divider { display: none; }
+#cleaning .hero-trust { gap: 1.5rem; }
+#cleaning .sister-brand-inner { flex-direction: column; text-align: center; }
+#cleaning .sister-brand-info { flex-direction: column; text-align: center; }
+#cleaning .sister-brand-btn { width: 100%; text-align: center; }
+#cleaning .footer-bottom { flex-direction: column; text-align: center; }
+}
+@media (max-width: 480px) {
+#cleaning .section, #cleaning .section-full, #cleaning .section-alt { padding: 3.5rem 1.25rem; }
+#cleaning h2 { font-size: 1.7rem; }
+#cleaning .cta-band { padding: 3.5rem 1.25rem; }
+}
     </style>
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
-<body>
+<body class="view-laundry">
     <!-- Header -->
     <header>
         <nav>
-            <a href="https://www.starhomecleaners.co.za/" class="logo">Star<span>Home Laundry</span></a>
-            <ul>
+            <a href="#laundry" class="logo">Star<span>home</span></a>
+            <div class="view-switch" role="tablist" aria-label="Choose a service">
+                <a href="#laundry" data-view="laundry" class="active">🧺 Laundry</a>
+                <a href="#cleaning" data-view="cleaning">🏠 Home Cleaning</a>
+            </div>
+            <ul data-for="laundry">
                 <li><a href="#services">Services</a></li>
                 <li><a href="#pricing">Price List</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#booking">Book Now</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="#donate" style="color: #E07B39; font-weight: 700;">❤️ Donate Clothes</a></li>
-                <li><a href="https://www.starhomecleaners.co.za/cleaning/" style="color: var(--color-secondary); font-weight: 700;">🏠 Home Cleaning</a></li>
             </ul>
-            <a href="#booking" class="cta-button">Book Pickup</a>
-            <a href="https://www.starhomecleaners.co.za/cleaning/" class="cta-button" style="background: var(--color-accent); margin-left: 0.5rem;">🏠 Cleaning Services</a>
+            <ul data-for="cleaning">
+                <li><a href="#cl-services">Services</a></li>
+                <li><a href="#cl-offers">Why Us</a></li>
+                <li><a href="#cl-reviews">Reviews</a></li>
+                <li><a href="#cl-how">How It Works</a></li>
+            </ul>
+            <a href="#booking" class="cta-button" data-for="laundry">Book Pickup</a>
+            <a href="book.html" class="cta-button" data-for="cleaning">Book a Clean</a>
         </nav>
     </header>
+
+    <!-- ===================== LAUNDRY ===================== -->
+    <main id="laundry" data-panel="laundry">
 
     <!-- Hero Section -->
     <section class="hero">
@@ -1439,6 +1778,7 @@
                 <div class="service-icon">🏠</div>
                 <h3>House Cleaning</h3>
                 <p>Professional home cleaning services by Starhome Cleaners — standard cleans, deep cleans, end of tenancy, and after-builders cleaning across Johannesburg.</p>
+                <a href="#cleaning" class="service-link">See Home Cleaning →</a>
             </div>
             <div class="service-card">
                 <div class="service-icon">🧼</div>
@@ -1763,6 +2103,206 @@
         </div>
     </section>
 
+    </main>
+
+    <!-- ===================== HOME CLEANING ===================== -->
+    <main id="cleaning" data-panel="cleaning">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">⭐ Rated 5 Stars by Joburg Homeowners</div>
+    <h1>Reliable Home Cleaning,<br/><em>Done Properly</em></h1>
+    <p>Book professional cleaners who come to you — vetted, insured, and thorough. Standard, deep clean, end of tenancy, and more.</p>
+    <div class="hero-buttons">
+      <a href="book.html" class="btn btn-white btn-lg">Get an Instant Quote</a>
+      <a href="https://wa.me/27624961315" target="_blank" class="btn btn-wa btn-lg">💬 WhatsApp Us</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <span class="trust-num">5★</span>
+        <span class="trust-label">Rated Service</span>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-item">
+        <span class="trust-num">100%</span>
+        <span class="trust-label">Vetted Staff</span>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-item">
+        <span class="trust-num">JHB</span>
+        <span class="trust-label">Wide Coverage</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<div class="section" id="cl-services">
+  <h2>Our Services</h2>
+  <p class="section-sub">Everything your home needs, handled by professionals.</p>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🧹</div>
+      <h3>Standard Cleaning</h3>
+      <p>Routine cleaning for everyday living — kitchens, bathrooms, floors, and more.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">✨</div>
+      <h3>Deep Cleaning</h3>
+      <p>A thorough, top-to-bottom clean. Every corner, surface, and appliance.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌿</div>
+      <h3>Garden Landscaping</h3>
+      <p>Have a yard worth showing off — trimming, clearing, and tidying.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📦</div>
+      <h3>Moving Services</h3>
+      <p>Perfect for end-of-lease, landlords, and relocations. Leave no trace.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🤝</div>
+      <h3>Care Giving</h3>
+      <p>Compassionate home support for seniors and families who need a helping hand.</p>
+    </div>
+  </div>
+</div>
+
+<!-- WHY US -->
+<div class="section-full" id="cl-offers">
+  <div class="section-inner">
+    <h2>Why Choose Starhome?</h2>
+    <p class="section-sub">We don't just clean — we care about your home and the people in it.</p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🛡️</div>
+        <h4>Vetted & Insured</h4>
+        <p>Every cleaner and caregiver is background-checked, trained, and insured before they step into your home.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏠</div>
+        <h4>Home & Care in One</h4>
+        <p>From spotless homes to compassionate elderly care — all the support you need, one team.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⏰</div>
+        <h4>Full-Day, Unhurried</h4>
+        <p>We don't rush. Your clean is done right — not checked off a clock.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💬</div>
+        <h4>Easy Booking</h4>
+        <p>Book online or WhatsApp us directly. We confirm quickly and keep you updated.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="section-alt" id="cl-reviews">
+  <div class="section-inner">
+    <h2>Loved by Our Customers</h2>
+    <p class="section-sub">Real reviews from real Johannesburg homeowners.</p>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p>"Percy and Beauty did a deep clean in our unit and it was really wonderful what they accomplished. Very kind and professional — and they arrived early! Highly recommend."</p>
+        <span class="review-author">— Ilana Smidt</span>
+      </div>
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p>"Very professional overall. Responsive with booking, and Percy was so friendly and thorough. I was very happy with the service — will definitely use again."</p>
+        <span class="review-author">— Alicia Naidoo</span>
+      </div>
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p>"Two highly professional, hard-working ladies — I would never have been able to clean as thoroughly as they did in the time we had. Definitely a 5-star service."</p>
+        <span class="review-author">— Sherezade Lubbe</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="cl-how">
+  <h2>How it Works</h2>
+  <p class="section-sub">Simple, transparent, and hassle-free from start to finish.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Book a Service</h3>
+      <p>Choose your service online or WhatsApp us — takes less than 2 minutes.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>We Confirm</h3>
+      <p>We acknowledge your booking and send a reminder the evening before.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>We Arrive</h3>
+      <p>Our vetted team arrives on time — often early — and gets straight to work.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h3>You're Satisfied</h3>
+      <p>We don't leave until the job is done properly. Your happiness is our standard.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <h2>Ready to Book Your Clean?</h2>
+  <p>Join hundreds of Johannesburg homeowners who trust Starhome Cleaners.</p>
+  <div class="cta-buttons">
+    <a href="book.html" class="btn btn-white btn-lg">Book Online Now</a>
+    <a href="https://wa.me/27624961315" target="_blank" class="btn btn-wa btn-lg">💬 WhatsApp Us</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-grid">
+    <div>
+      <h4>Starhome Cleaners</h4>
+      <p>Professional home cleaning and care services you can trust across Johannesburg.</p>
+      <a href="#laundry" class="footer-sister-link">
+        🧺 Need laundry? Visit Starhome Laundry →
+      </a>
+    </div>
+    <div>
+      <h4>Services</h4>
+      <ul>
+        <li>Standard Cleaning</li>
+        <li>Deep Cleaning</li>
+        <li>Garden Landscaping</li>
+        <li>Moving Services</li>
+        <li>Care Giving</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact Us</h4>
+      <ul>
+        <li><a href="mailto:info@starhomecleaner.co.za">info@starhomecleaner.co.za</a></li>
+        <li><a href="tel:0100850643">010 085 0643</a></li>
+        <li><a href="https://wa.me/27624961315" target="_blank">WhatsApp: +27 62 496 1315</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Follow Us</h4>
+      <div class="social-links">
+        <a href="https://www.facebook.com/StarHomecleaningservices/" target="_blank" class="social-link">📘 Facebook</a>
+        <a href="https://www.instagram.com/starhomecleaner/" target="_blank" class="social-link">📸 Instagram</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </main>
+
     <!-- WhatsApp Float Button -->
     <div class="whatsapp-float">
         <a href="https://wa.me/27624961315" target="_blank" class="whatsapp-button" aria-label="Chat on WhatsApp">
@@ -1771,20 +2311,29 @@
         </a>
     </div>
 
-    <!-- ✅ Sister Brand Bar — links to Starhome Cleaner & Quick Laundry -->
+    <!-- Sister Brand Bar — switches sides on the same site + Quick Laundry -->
     <section class="sister-brand-bar">
-        <div class="sister-brand-inner">
+        <div class="sister-brand-inner" data-for="laundry">
             <div class="sister-brand-info">
                 <div class="sister-brand-icon">🏠</div>
                 <div>
                     <p class="sister-brand-label">Also by Starhome</p>
-                    <p class="sister-brand-name">Starhome Cleaners</p>
-                    <p class="sister-brand-desc">Professional home cleaning — standard, deep clean, end of tenancy & after-builders cleaning across Johannesburg.</p>
+                    <p class="sister-brand-name">Starhome Home Cleaning</p>
+                    <p class="sister-brand-desc">Professional home cleaning — standard, deep clean, end of tenancy &amp; after-builders cleaning across Johannesburg.</p>
                 </div>
             </div>
-            <a href="https://www.starhomecleaners.co.za/cleaning/" class="sister-brand-btn">
-                Visit Cleaning Site →
-            </a>
+            <a href="#cleaning" class="sister-brand-btn">See Home Cleaning →</a>
+        </div>
+        <div class="sister-brand-inner" data-for="cleaning">
+            <div class="sister-brand-info">
+                <div class="sister-brand-icon">🧺</div>
+                <div>
+                    <p class="sister-brand-label">Also by Starhome</p>
+                    <p class="sister-brand-name">Starhome Laundry</p>
+                    <p class="sister-brand-desc">Laundry, dry cleaning &amp; ironing with free pickup &amp; delivery across Johannesburg. 24hr turnaround.</p>
+                </div>
+            </div>
+            <a href="#laundry" class="sister-brand-btn">See Laundry Services →</a>
         </div>
         <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 1.5rem auto; max-width: 1400px;"></div>
         <div class="sister-brand-inner">
@@ -1804,10 +2353,10 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Starhome Laundry. All rights reserved. |
-            <a href="https://www.starhomecleaners.co.za/">starhomecleaners.co.za</a>
+        <p>&copy; 2026 Starhome. All rights reserved. |
+            <a href="#laundry">Laundry &amp; Dry Cleaning</a>
             &nbsp;|&nbsp;
-            <a href="https://www.starhomecleaners.co.za/cleaning/">Cleaning Services</a>
+            <a href="#cleaning">Home Cleaning</a>
         </p>
     </footer>
 
@@ -1963,17 +2512,67 @@
             showBanner(bookingRef, starhomeWAURL, customerWAURL, emailStatus);
         });
 
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const offset = 80;
-                    const targetPosition = target.offsetTop - offset;
-                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+    </script>
+    <!-- One-site router: kept separate so booking/EmailJS issues can never break navigation -->
+    <script>
+        /* ===== ONE-SITE ROUTER: #laundry / #cleaning + in-page anchors ===== */
+        (function () {
+            const header = document.querySelector('header');
+            const TITLES = {
+                laundry:  document.title,
+                cleaning: 'Home Cleaning Johannesburg | Deep Clean & End of Tenancy | Starhome'
+            };
+
+            function setHeaderHeight() {
+                document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+            }
+            function panelOf(el) {
+                const p = el && el.closest('[data-panel]');
+                return p ? p.dataset.panel : null;
+            }
+            function currentView() {
+                return document.body.classList.contains('view-cleaning') ? 'cleaning' : 'laundry';
+            }
+            function show(view) {
+                document.body.classList.toggle('view-laundry', view === 'laundry');
+                document.body.classList.toggle('view-cleaning', view === 'cleaning');
+                document.querySelectorAll('.view-switch a').forEach(a =>
+                    a.classList.toggle('active', a.dataset.view === view));
+                document.title = TITLES[view];
+                setHeaderHeight();
+            }
+            function route(hash, smooth) {
+                const id = (hash || '').replace('#', '');
+                let view = currentView(), target = null;
+                if (id === 'laundry' || id === 'cleaning') {
+                    view = id;
+                } else if (id) {
+                    target = document.getElementById(id);
+                    view = panelOf(target) || view;
                 }
+                show(view);
+                if (target) {
+                    const y = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight - 10;
+                    window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'auto' });
+                }
+            }
+
+            document.addEventListener('click', function (e) {
+                const a = e.target.closest('a[href^="#"]');
+                if (!a) return;
+                const href = a.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                history.pushState(null, '', href);
+                route(href, true);
             });
-        });
+            window.addEventListener('popstate', () => route(location.hash, false));
+            window.addEventListener('resize', setHeaderHeight);
+            setHeaderHeight();
+            route(location.hash, false);
+        })();
     </script>
 </body>
 </html>
