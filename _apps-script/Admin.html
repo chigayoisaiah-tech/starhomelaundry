@@ -1477,6 +1477,13 @@ document.querySelectorAll('.js-logout').forEach(b => b.onclick = async () => {
 
 (async function bootApp() {
   if (BOOT.key) return startApp();                       // master link
+  if (BOOT.sso) {                                        // signed in on the website
+    try { google.script.history.replace(null, { page: 'admin' }, ''); } catch (_) {}
+    try {
+      const me = await raw('authCheck', BOOT.sso);
+      if (me) { BOOT.key = BOOT.sso; S.me = me; lsSet(TOKEN_KEY, BOOT.sso); return startApp(); }
+    } catch (_) {}
+  }
   const saved = lsGet(TOKEN_KEY);
   if (saved) {
     try {

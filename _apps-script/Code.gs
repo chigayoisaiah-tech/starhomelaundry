@@ -304,6 +304,7 @@ function doGet(e) {
     const boot = {
       business: CONFIG.BUSINESS_NAME, phone: CONFIG.PHONE, whatsapp: CONFIG.WHATSAPP, website: CONFIG.WEBSITE,
       today: ymd_(new Date()),
+      sso: takeSso_(p.sso, 'portal'),
     };
     const t = HtmlService.createTemplateFromFile('Portal');
     t.bootstrap = JSON.stringify(boot).replace(/</g, '\\u003c');
@@ -315,6 +316,7 @@ function doGet(e) {
     // Signed in by email + password (login screen), or by the private master key link
     const boot = {
       key: String(p.key || '') === getAdminKey_() ? p.key : '',
+      sso: takeSso_(p.sso, 'admin'),
       today: ymd_(new Date()),
       dayStart: CONFIG.DAY_START_HOUR,
       dayEnd: CONFIG.DAY_END_HOUR,
@@ -348,6 +350,8 @@ function doPost(e) {
   try {
     lock.waitLock(20000);
     const d = parseRequest_(e);
+
+    if (d.action === 'login') return json_(siteLogin_(d.id, d.secret));  // website "Sign in" box
 
     if (d.website) return json_({ ok: true }); // honeypot: bots fill hidden "website" field
 
@@ -1002,6 +1006,33 @@ function authLogin(email, password) {
   const token = createSession_({ type: 'admin', email: u.email, name: u.name, role: u.role }, CONFIG.ADMIN_SESSION_DAYS);
   logActivity_('login', null, u.name + ' signed in to the admin app');
   return { token: token, name: u.name, role: u.role, email: u.email };
+}
+
+// ---------- One sign-in on the website ----------
+// Admin email + password -> admin app; phone + PIN -> client portal.
+// Returns a one-time code (valid 2 minutes) that the app page swaps for the
+// session, so no password or session token ever appears in a URL.
+function siteLogin_(id, secret) {
+  id = String(id || '').trim();
+  try {
+    let page, r;
+    if (id.indexOf('@') > 0) { r = authLogin(id, secret); page = 'admin'; }
+    else { r = portalLogin(id, secret); page = 'portal'; }
+    const code = newToken_();
+    CacheService.getScriptCache().put('SSO_' + code, JSON.stringify({ page: page, token: r.token }), 120);
+    return { ok: true, page: page, code: code, name: r.name };
+  } catch (err) {
+    return { ok: false, error: (err && err.message) || String(err) };
+  }
+}
+
+function takeSso_(code, page) {
+  if (!code) return '';
+  const c = CacheService.getScriptCache();
+  const raw = c.get('SSO_' + String(code));
+  if (!raw) return '';
+  c.remove('SSO_' + String(code));
+  try { const o = JSON.parse(raw); return o.page === page ? o.token : ''; } catch (_) { return ''; }
 }
 
 function authCheck(token) {

@@ -487,6 +487,10 @@ $('ftWa').href = 'https://wa.me/' + waNum(BOOT.whatsapp);
 $('ftCall').href = 'tel:' + BOOT.phone.replace(/\s/g, '');
 
 (async function boot() {
+  if (BOOT.sso) {                                        // signed in on the website
+    try { google.script.history.replace(null, { page: 'portal' }, ''); } catch (_) {}
+    try { if (await raw('portalCheck', BOOT.sso)) { TOKEN = BOOT.sso; lsSet(TOKEN_KEY, TOKEN); return startApp(); } } catch (_) {}
+  }
   const saved = lsGet(TOKEN_KEY);
   if (saved) {
     try { if (await raw('portalCheck', saved)) { TOKEN = saved; return startApp(); } } catch (_) {}
