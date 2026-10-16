@@ -22,6 +22,14 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 />
   <link rel="stylesheet" href="book.css">
+<style>
+  /* Phones: logo on one row, Sign in / Sign up / Back on the next */
+  @media (max-width: 600px) {
+    .nav-inner { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; gap: 8px !important; }
+    .nav-actions .btn-primary { padding: 8px 14px; font-size: 13px; letter-spacing: 0; border-radius: 50px; }
+  }
+</style>
 </head>
 <body>
 
@@ -31,8 +39,9 @@
     <div class="logo">
       <span class="star-icon">★</span> Starhome Cleaners
     </div>
-    <div style="display:flex;gap:10px;align-items:center">
-      <a href="#" data-app-link="portal" class="btn-primary" style="background:transparent;color:inherit;border:2px solid currentColor">👤 My Account</a>
+    <div class="nav-actions" style="display:flex;gap:10px;align-items:center">
+      <a href="#" data-app-link="portal" class="btn-primary" style="background:transparent;color:inherit;border:2px solid currentColor">👤 Sign in</a>
+      <a href="#" data-app-link="signup" class="btn-primary" style="background:#E07B39;color:#fff;border:2px solid #E07B39">✍️ Sign up</a>
       <a href="index.html#cleaning" class="btn-primary">Back to Home</a>
     </div>
   </div>
@@ -136,13 +145,13 @@
 </script>
 
 <!-- WhatsApp Floating Button -->
-<a 
-  href="https://wa.me/27652992030" 
-  class="whatsapp-float" 
+<a
+  href="https://wa.me/27652992030"
+  class="whatsapp-float"
   target="_blank"
   aria-label="Chat on WhatsApp"
 >
-  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" 
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png"
      alt="WhatsApp"
      style="width:30px;height:30px;">
 

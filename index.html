@@ -1676,6 +1676,25 @@
             .account-link { width: 36px; height: 36px; font-size: 0.95rem; margin-left: 0.25rem; }
         }
         .login-links a { color: inherit; opacity: 0.85; }
+        .account-link.signup-link { background: #E07B39; border-color: #E07B39; color: #fff; }
+        .account-link.signup-link:hover { background: #c96626; border-color: #c96626; color: #fff; }
+        .acct-group { display: inline-flex; align-items: center; gap: 0.5rem; margin-left: 0.5rem; flex-shrink: 0; }
+        .acct-group .account-link { margin-left: 0; }
+        /* Desktop: two compact round buttons so the menu never wraps */
+        @media (min-width: 769px) {
+            .acct-group .account-link { width: 42px; height: 42px; padding: 0; justify-content: center; font-size: 1.05rem; }
+            .acct-group .account-link .acc-text { display: none; }
+        }
+        /* Mid-size screens: header is full, so Sign up lives in the Sign in box (and footer) */
+        @media (min-width: 769px) and (max-width: 1499px) {
+            .acct-group .signup-link { display: none; }
+        }
+        /* Phones: the buttons sit on their own row, so show the labels */
+        @media (max-width: 768px) {
+            .acct-group { margin: 0; }
+            .acct-group .account-link { width: auto; height: auto; padding: 0.45rem 0.95rem; font-size: 0.88rem; }
+            .acct-group .account-link .acc-text { display: inline; }
+        }
     </style>
     <!-- Starhome booking system settings (Web app URL) -->
     <script src="starhome-config.js"></script>
@@ -1707,7 +1726,10 @@
             </ul>
             <a href="#booking" class="cta-button" data-for="laundry">Book Pickup</a>
             <a href="book.html" class="cta-button" data-for="cleaning">Book a Clean</a>
-            <a href="#" class="account-link" data-app-link="portal" title="My Starhome — manage your bookings">👤<span class="acc-text"> My Account</span></a>
+            <span class="acct-group">
+                <a href="#" class="account-link" data-app-link="portal" title="Sign in — My Starhome or staff">👤<span class="acc-text"> Sign in</span></a>
+                <a href="#" class="account-link signup-link" data-app-link="signup" title="New here? Create your Starhome account">✍️<span class="acc-text"> Sign up</span></a>
+            </span>
         </nav>
     </header>
 
@@ -2430,6 +2452,8 @@
             <a href="#" data-app-link="portal">👤 Client login</a>
             &nbsp;|&nbsp;
             <a href="#" data-app-link="admin">🔒 Staff login</a>
+            &nbsp;|&nbsp;
+            <a href="#" data-app-link="signup">✍️ Sign up</a>
         </p>
     </footer>
 
