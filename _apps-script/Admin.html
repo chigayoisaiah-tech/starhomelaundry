@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14213d; --muted:#6b7280; --line:#e8ebf0; --line2:#f2f4f7; --bg:#f6f7fb; --panel:#fff;
+  --brand:#0b5394; --rail:#0f1b2d;
+  --clean:#a9dcf7; --clean-ink:#0b4a75;
+  --laundry:#8ee3cb; --laundry-ink:#0b5a47;
+  --pending:#ffd39a; --pending-ink:#7a4a00;
+  --done:#e5e7eb; --cancel:#fde2e2;
+  --hour:64px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:14px}
+button,input,select,textarea{font:inherit}
+.app{display:flex;height:100vh}
+.muted{color:var(--muted);font-size:12px}
+
+/* ---- left rail ---- */
+.rail{width:76px;flex:none;background:var(--rail);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;display:grid;place-items:center;margin-bottom:12px;letter-spacing:.5px}
+.rail .nav{width:64px;padding:8px 0 6px;border-radius:12px;border:0;background:transparent;color:#aeb8cc;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative;text-decoration:none;font-size:10px;font-weight:500}
+.rail .nav:hover{background:#1b2a42;color:#fff}
+.rail .nav.active{background:#24324a;color:#fff}
+.rail svg,.bnav svg{width:22px;height:22px}
+.rail .grow{flex:1}
+.badge{position:absolute;top:2px;right:10px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:9px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center}
+
+/* ---- views ---- */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.view{flex:1;display:flex;flex-direction:column;min-height:0}
+.top,.vhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.vhead h1{font-size:20px;margin:0 8px 0 4px}
+.vbody{flex:1;overflow:auto;padding:16px 20px 90px}
+.btn{height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none}
+.btn:hover{background:#f3f5f9}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.dark:hover{background:#22325a}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.wa{background:#25D366;color:#fff;border-color:#25D366}
+.btn.icon{width:36px;padding:0;justify-content:center}
+.btn.sm{height:30px;padding:0 10px;font-size:13px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.search{height:36px;border:1px solid var(--line);border-radius:18px;padding:0 14px;min-width:220px;background:#fff}
+.datenav{display:inline-flex;border:1px solid var(--line);border-radius:18px;overflow:hidden;height:36px;background:#fff}
+.datenav button{border:0;background:#fff;width:36px;cursor:pointer;font-size:18px;color:var(--ink)}
+.datenav button:hover{background:#f3f5f9}
+.datenav .label{padding:0 14px;display:flex;align-items:center;font-weight:600;border-left:1px solid var(--line);border-right:1px solid var(--line);min-width:190px;justify-content:center;position:relative;cursor:pointer}
+.datenav input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2314213d' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:18px;overflow:hidden;height:36px;background:#fff}
+.seg button{border:0;background:#fff;padding:0 14px;font-weight:500;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--ink);color:#fff}
+.spacer{flex:1}
+.legend{display:flex;gap:12px;color:var(--muted);font-size:12px;align-items:center}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:-1px}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+
+/* ---- calendar board ---- */
+.board{flex:1;overflow:auto;position:relative;background:#fff}
+.grid{display:grid;min-width:100%;position:relative}
+.corner{position:sticky;left:0;top:0;z-index:7;background:#fff;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.colhead{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:12px 6px 10px;text-align:center;box-shadow:0 2px 6px rgba(15,27,45,.04)}
+.avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;font-weight:700;color:#fff;font-size:16px;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ring,#cbd5e1)}
+.avatar.empty{background:#f8fafc;color:#94a3b8;border:2px dashed #cbd5e1;box-shadow:none}
+.colhead .nm{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.colhead .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.dayhead span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dayhead b{display:inline-grid;place-items:center;font-size:20px;width:36px;height:36px;margin-top:2px}
+.dayhead.today b{background:var(--brand);color:#fff;border-radius:50%}
+.gutter{position:sticky;left:0;z-index:4;background:#fff;border-right:1px solid var(--line)}
+.hr{height:var(--hour);font-size:10px;color:var(--muted);text-align:right;padding:4px 8px 0 0;line-height:1.1}
+.hr b{display:block;font-size:12px;color:var(--ink);font-weight:600}
+.col{position:relative;border-right:1px solid var(--line);cursor:copy;
+  background-image:linear-gradient(to bottom,var(--line) 1px,transparent 1px),linear-gradient(to bottom,var(--line2) 1px,transparent 1px);
+  background-size:100% var(--hour),100% calc(var(--hour)/2)}
+.col.drop{background-color:#eef6ff}
+.col.offday{background-color:#fcfcfd}
+.card{position:absolute;border-radius:8px;padding:6px 8px;overflow:hidden;cursor:pointer;font-size:12px;line-height:1.3;transition:box-shadow .15s;border-left:4px solid rgba(0,0,0,.12)}
+.card:hover{box-shadow:0 6px 16px rgba(15,27,45,.18);z-index:3}
+.card.dragging{opacity:.4}
+.card .t{font-size:11px;opacity:.85;white-space:nowrap}
+.card .n{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .s{opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card.Cleaning{background:var(--clean);color:var(--clean-ink)}
+.card.Laundry{background:var(--laundry);color:var(--laundry-ink)}
+.card.Pending{background:var(--pending);color:var(--pending-ink);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.35) 0 8px,transparent 8px 16px)}
+.card.Completed{background:var(--done);color:#4b5563}
+.card.Cancelled{background:var(--cancel);color:#991b1b;opacity:.85}
+.card.Cancelled .n{text-decoration:line-through}
+.nowline{position:absolute;left:0;right:0;height:2px;background:#ef4444;z-index:2;pointer-events:none}
+.nowline:before{content:"";position:absolute;left:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:#ef4444}
+.loading{position:sticky;top:0;left:0;height:3px;margin-bottom:-3px;z-index:9;display:none;
+  background:linear-gradient(90deg,transparent,var(--brand),transparent);background-size:40% 100%;background-repeat:no-repeat;animation:ld 1s linear infinite}
+.loading.on{display:block}
+@keyframes ld{from{background-position:-40% 0}to{background-position:140% 0}}
+
+/* ---- pills & tags ---- */
+.pill{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:9px;background:rgba(255,255,255,.75);margin-left:4px;vertical-align:1px;white-space:nowrap}
+.st-Pending,.st-Sent{background:#ffedd5;color:#9a3412}
+.st-Confirmed,.st-Accepted{background:#dcfce7;color:#166534}
+.st-Completed,.st-Booked{background:#e0e7ff;color:#3730a3}
+.st-Cancelled,.st-Declined{background:#fee2e2;color:#991b1b}
+.st-Draft{background:#f1f5f9;color:#475569}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;background:#f1f5f9;color:#334155;white-space:nowrap}
+.tag.Cleaning{background:#e0f2fe;color:#075985}
+.tag.Laundry{background:#d1fae5;color:#065f46}
+
+/* ---- tables (quotes, clients) ---- */
+.table{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.trow{display:grid;grid-template-columns:var(--cols);gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line2);cursor:pointer}
+.trow:last-child{border-bottom:0}
+.trow:hover{background:#f8fafc}
+.thead{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:#fafbfc;cursor:default}
+.thead:hover{background:#fafbfc}
+.who{display:flex;gap:10px;align-items:center;min-width:0}
+.who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who > div{min-width:0}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;flex:none;font-size:14px}
+.r{text-align:right}
+.money{font-weight:700;font-variant-numeric:tabular-nums}
+.empty-note{color:var(--muted);padding:24px;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:12px}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.chipstat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:140px}
+.chipstat b{display:block;font-size:18px}
+
+/* ---- staff cards ---- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.scard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.scard.off{opacity:.6}
+.scard .top2{display:flex;gap:12px;align-items:center}
+.scard .av{width:48px;height:48px;font-size:16px;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ring,#cbd5e1)}
+.stats{display:flex;gap:8px}
+.stat{flex:1;background:#f8fafc;border-radius:10px;padding:8px 6px;text-align:center;font-size:11px;color:var(--muted)}
+.stat b{display:block;font-size:18px;color:var(--ink)}
+.scard .acts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---- notifications ---- */
+.ngroup{max-width:760px;margin:0 auto}
+.ngroup h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px}
+.nitem{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer;position:relative}
+.nitem:hover{background:#f8fafc}
+.nitem.unread{background:#f0f7ff;border-color:#cfe3ff}
+.nitem.unread:after{content:"";position:absolute;right:14px;top:16px;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.nicon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:16px}
+.nitem .msg{font-size:13px;line-height:1.4;padding-right:16px}
+.nitem .when{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ---- drawer ---- */
+.scrim{position:fixed;inset:0;background:rgba(15,27,45,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:100%;background:#fff;z-index:21;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-10px 0 30px rgba(15,27,45,.15)}
+.drawer.wide{width:620px}
+.drawer.open{transform:none}
+.dh{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.dh h2{margin:0;font-size:18px;flex:1;min-width:0}
+.db{padding:16px 20px;overflow:auto;flex:1}
+.df{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.quick{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.quick a{flex:1;min-width:90px;text-align:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px;font-weight:500;font-size:13px}
+.quick a:hover{background:#f8fafc}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f.full{grid-column:1/-1}
+.f label,.lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.f input,.f select,.f textarea,.qline input,.qline select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);width:100%}
+.f input:focus,.f select:focus,.f textarea:focus,.qline input:focus{outline:2px solid #bfdbfe;border-color:#93c5fd}
+.f textarea{min-height:64px;resize:vertical}
+.f input[type=color]{height:40px;padding:3px}
+.f label.chk{text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--ink);min-height:38px}
+.f .chk input,.chk input{width:auto !important;margin:0}
+
+/* ---- login ---- */
+.login{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:20px;
+  background:radial-gradient(circle at 20% 10%,#1d4f8a 0,transparent 45%),radial-gradient(circle at 90% 90%,#0e7490 0,transparent 40%),var(--rail)}
+.login .box{width:100%;max-width:380px;background:#fff;border-radius:18px;padding:28px 26px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.login .logo{margin:0 0 14px}
+.login h1{font-size:22px;margin:0 0 4px}
+.login p{margin:0 0 18px;color:var(--muted)}
+.login .f{margin-bottom:12px}
+.login .err{color:#b91c1c;font-size:13px;min-height:18px;margin:4px 0 8px}
+.login .btn{width:100%;justify-content:center;height:44px;border-radius:12px;font-size:15px}
+.login .foot{font-size:12px;color:var(--muted);margin-top:14px;text-align:center}
+.users .trow{cursor:default}
+.swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.swatches button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.req{background:#fff8eb;border:1px solid #ffe2b3;color:#7a4a00;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:4px}
+.info{background:#eff6ff;border:1px solid #dbeafe;color:#1e40af;border-radius:8px;padding:9px 11px;font-size:12px}
+.sec{font-size:11px;font-weight:700;color:var(--muted);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.06em}
+.list .item{padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer}
+.list .item:hover{background:#f8fafc}
+.list .meta{font-size:12px;color:var(--muted);margin-top:4px}
+.minigrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px}
+
+/* ---- quote builder ---- */
+.qadd{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.qadd select{flex:1;min-width:200px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.qline{display:grid;grid-template-columns:1fr 68px 54px 88px 84px 30px;gap:6px;align-items:center;margin-bottom:6px}
+.qline .unit{font-size:12px;color:var(--muted)}
+.qline .lt{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.qline .x{border:0;background:#fef2f2;color:#b91c1c;border-radius:8px;height:34px;cursor:pointer}
+.qhead{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.qtot{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:12px}
+.qtot .row{display:flex;justify-content:space-between;padding:3px 0;font-variant-numeric:tabular-nums}
+.qtot .big{font-size:20px;font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;opacity:0;transition:.25s;z-index:30;font-weight:500;pointer-events:none;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.fab{display:none;position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;border:0;font-size:28px;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.25);z-index:10;cursor:pointer}
+.bnav{display:none;position:fixed;left:0;right:0;bottom:0;height:62px;background:#fff;border-top:1px solid var(--line);z-index:15}
+.bnav button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;color:var(--muted);position:relative;cursor:pointer}
+.bnav button.active{color:var(--brand);font-weight:600}
+.bnav .badge{right:calc(50% - 22px);top:6px}
+
+#printArea{display:none}
+@media print{
+  body.printing > *:not(#printArea){display:none !important}
+  body.printing #printArea{display:block}
+  body{background:#fff}
+}
+
+@media (max-width:760px){
+  :root{--hour:56px}
+  .rail{display:none}
+  .bnav{display:flex}
+  .app{height:calc(100vh - 62px)}
+  .top,.vhead{padding:10px;gap:6px}
+  .vhead h1{font-size:18px}
+  .vbody{padding:12px 12px 90px}
+  .search{min-width:0;flex:1}
+  .legend,.hide-sm{display:none !important}
+  .datenav .label{min-width:0;flex:1;padding:0 8px;font-size:13px}
+  .datenav{order:10;flex-basis:100%}
+  .fg{grid-template-columns:1fr}
+  .drawer,.drawer.wide{width:100%}
+  .fab{display:grid;bottom:76px}
+  .trow{grid-template-columns:1fr auto !important}
+  .trow > .c-hide{display:none}
+  .thead{display:none}
+  .qline{grid-template-columns:1fr 60px 80px 30px}
+  .qline .unit,.qline .lt{display:none}
+  .minigrid{grid-template-columns:repeat(2,1fr)}
+  #mLogout{display:inline-flex !important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="rail">
+    <div class="logo">SH</div>
+    <button class="nav active" data-tab="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendar</button>
+    <button class="nav" data-tab="quotes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Quotes</button>
+    <button class="nav" data-tab="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5"/></svg>Clients</button>
+    <button class="nav" data-tab="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17c.7-1.8 2.2-2.5 4-2.5s3.3.7 4 2.5"/></svg>Staff</button>
+    <button class="nav" data-tab="notifs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Alerts<span class="badge js-unread" hidden>0</span></button>
+    <div class="grow"></div>
+    <a class="nav" id="navSite" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Website</a>
+    <a class="nav" id="navSheet" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>Sheet</a>
+    <button class="nav js-logout" title="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg><span class="js-me">Sign out</span></button>
+  </nav>
+
+  <div class="main">
+    <!-- ================= CALENDAR ================= -->
+    <section class="view" id="view-calendar">
+      <div class="top">
+        <button class="btn" id="btnToday">Today</button>
+        <div class="datenav">
+          <button id="prev" aria-label="Previous">‹</button>
+          <div class="label"><span id="dateLabel">…</span><input type="date" id="datePick" aria-label="Pick a date"></div>
+          <button id="next" aria-label="Next">›</button>
+        </div>
+        <select class="btn hide-sm" id="fService">
+          <option value="">All services</option><option value="Cleaning">Cleaning</option><option value="Laundry">Laundry</option>
+        </select>
+        <button class="btn" id="btnPending">⏳ <span id="pendCount">0</span><span class="hide-sm">&nbsp;pending</span></button>
+        <div class="spacer"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--clean)"></i>Cleaning</span>
+          <span><i class="dot" style="background:var(--laundry)"></i>Laundry</span>
+          <span><i class="dot" style="background:var(--pending)"></i>Pending</span>
+        </div>
+        <label class="chk hide-sm"><input type="checkbox" id="showCancelled"> Cancelled</label>
+        <button class="btn icon" id="btnRefresh" title="Refresh">⟳</button>
+        <div class="seg" id="viewSeg"><button data-v="day" class="on">Day</button><button data-v="week">Week</button></div>
+        <button class="btn dark hide-sm" id="btnAdd">+ Booking</button>
+      </div>
+      <div class="board" id="board"><div class="loading" id="loading"></div><div class="grid" id="grid"></div></div>
+    </section>
+
+    <!-- ================= QUOTES ================= -->
+    <section class="view" id="view-quotes" hidden>
+      <div class="vhead">
+        <h1>Quotes</h1>
+        <input class="search" id="qSearch" placeholder="Search name, phone or quote no.">
+        <select class="btn" id="qStatus"><option value="">All</option><option>Draft</option><option>Sent</option><option>Accepted</option><option>Declined</option><option>Booked</option></select>
+        <div class="spacer"></div>
+        <button class="btn dark hide-sm" id="btnNewQuote">+ New quote</button>
+      </div>
+      <div class="vbody"><div class="chips" id="qChips"></div><div id="qList"></div></div>
+    </section>
+
+    <!-- ================= CLIENTS ================= -->
+    <section class="view" id="view-clients" hidden>
+      <div class="vhead">
+        <h1>Clients</h1>
+        <input class="search" id="cSearch" placeholder="Search name, phone, email or suburb">
+        <span class="muted" id="cCount"></span>
+      </div>
+      <div class="vbody"><div id="cList"></div></div>
+    </section>
+
+    <!-- ================= STAFF ================= -->
+    <section class="view" id="view-staff" hidden>
+      <div class="vhead">
+        <h1>Staff</h1>
+        <label class="chk"><input type="checkbox" id="showInactive"> Show inactive</label>
+        <div class="spacer"></div>
+        <button class="btn sm js-logout" style="display:none" id="mLogout">Sign out</button>
+        <button class="btn dark hide-sm" id="btnAddStaff">+ Add staff</button>
+      </div>
+      <div class="vbody">
+        <div id="sList" class="cards"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin:26px 0 10px">
+          <h2 style="font-size:16px;margin:0">Admin logins</h2>
+          <span class="muted">People who can sign in to this app</span>
+          <div class="spacer"></div>
+          <button class="btn sm" id="btnAddUser">+ Add login</button>
+        </div>
+        <div id="uList" class="users"></div>
+      </div>
+    </section>
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    <section class="view" id="view-notifs" hidden>
+      <div class="vhead">
+        <h1>Notifications</h1>
+        <div class="spacer"></div>
+        <button class="btn" id="btnNotifRefresh">⟳ Refresh</button>
+      </div>
+      <div class="vbody"><div id="nList"></div></div>
+    </section>
+  </div>
+</div>
+
+<nav class="bnav">
+  <button data-tab="calendar" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendar</button>
+  <button data-tab="quotes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Quotes</button>
+  <button data-tab="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/></svg>Clients</button>
+  <button data-tab="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/></svg>Staff</button>
+  <button data-tab="notifs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Alerts<span class="badge js-unread" hidden>0</span></button>
+</nav>
+
+<button class="fab" id="fab" aria-label="Add">+</button>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="dh"><h2 id="dTitle"></h2><button class="btn icon" id="dClose" aria-label="Close">✕</button></div>
+  <div class="db" id="dBody"></div>
+  <div class="df" id="dFoot"></div>
+</aside>
+<div class="toast" id="toast"></div>
+<div id="printArea"></div>
+
+<div class="login" id="login" hidden>
+  <form class="box" id="loginForm" autocomplete="on">
+    <div class="logo">SH</div>
+    <h1>Starhome Admin</h1>
+    <p>Calendar, quotes, clients &amp; staff</p>
+    <div class="f"><label for="lgEmail">Email</label><input id="lgEmail" type="email" autocomplete="username" required></div>
+    <div class="f"><label for="lgPw">Password</label><input id="lgPw" type="password" autocomplete="current-password" required></div>
+    <div class="err" id="lgErr"></div>
+    <button class="btn dark" id="lgBtn" type="submit">Sign in</button>
+    <div class="foot">Forgot your password? The owner can reset it in the bookings sheet:<br><b>Starhome → Set / reset an admin login</b></div>
+  </form>
+</div>
+
+<script>
+const BOOT = <?!= bootstrap ?>;
+
+/* =====================================================================
+ *  STATE & HELPERS
+ * ===================================================================== */
+const S = {
+  tab: 'calendar', view: 'day', date: BOOT.today,
+  staff: [], bookings: [], pending: [], service: '', showCancelled: false, drag: null, scrolled: false,
+  quotes: null, prices: [], clients: null, staffAll: null, notifs: null,
+  unread: 0, lastNotifTime: '',
+};
+const H0 = BOOT.dayStart, H1 = BOOT.dayEnd;
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// Calls without a session (login screen)
+function raw(fn, ...args) {
+  return new Promise((res, rej) =>
+    google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(e instanceof Error ? e : new Error(String(e))))[fn](...args));
+}
+
+// Calls with the signed-in session token; an expired session shows the login screen
+function api(fn, ...args) {
+  return raw(fn, BOOT.key, ...args).catch(e => {
+    if (/not authorised/i.test(e.message)) { lsDel(TOKEN_KEY); BOOT.key = ''; showLogin('Your session has ended — please sign in again.'); }
+    throw e;
+  });
+}
+
+const TOKEN_KEY = 'starhome_admin_token';
+const lsGet = k => { try { return localStorage.getItem(k) || ''; } catch (_) { return ''; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (_) {} };
+const lsDel = k => { try { localStorage.removeItem(k); } catch (_) {} };
+
+const parseYmd = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, m - 1, d); };
+const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate() + n); return ymd(d); };
+const weekStart = s => { const d = parseYmd(s); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return ymd(d); };
+const toMin = t => { const [h, m] = String(t || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
+const toHM = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const snap = (m, step) => Math.round(m / step) * step;
+const todayLive = () => ymd(new Date());
+const fmtDay = s => parseYmd(s).toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'short' });
+const fmtShortDay = s => s ? parseYmd(s).toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+const initials = n => String(n || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
+const hourPx = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour')) || 64;
+const waNum = p => { let d = String(p || '').replace(/\D/g, ''); if (d[0] === '0') d = '27' + d.slice(1); return d; };
+const staffColour = name => (S.staff.find(s => s.name === name) || {}).colour || '';
+const findBooking = id => S.bookings.find(b => b.id === id) || S.pending.find(b => b.id === id);
+const fmtR = n => { const v = Math.round((Number(n) || 0) * 100) / 100; const [a, b] = v.toFixed(v % 1 ? 2 : 0).split('.'); return 'R' + a.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (b ? '.' + b : ''); };
+const PALETTE = ['#3b82f6', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6', '#6366f1', '#84cc16', '#f97316'];
+const colourFor = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return PALETTE[h % PALETTE.length]; };
+const svcLabel = s => s === 'Laundry' ? 'Laundry pickup' : 'Home cleaning';
+
+function timeAgo(iso) {
+  const t = new Date(iso).getTime(), s = Math.max(0, (Date.now() - t) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + ' min ago';
+  if (s < 86400) return Math.floor(s / 3600) + ' h ago';
+  return new Date(iso).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' }) + ', ' +
+    new Date(iso).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+}
+
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function openDrawer(wide) { $('drawer').classList.toggle('wide', !!wide); $('drawer').classList.add('open'); $('scrim').classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false'); }
+function closeDrawer() { $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); }
+const drawerOpen = () => $('drawer').classList.contains('open');
+
+const field = (label, html, full) => `<div class="f ${full ? 'full' : ''}"><label>${label}</label>${html}</div>`;
+const sel = (id, opts, val) => `<select id="${id}">${opts.map(o => { const [v, t] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${esc(t)}</option>`; }).join('')}</select>`;
+const inp = (id, val, type, extra) => `<input id="${id}" type="${type || 'text'}" value="${esc(val == null ? '' : val)}" ${extra || ''}>`;
+
+function quickLinks(o) {
+  const wa = o.phone ? 'https://wa.me/' + waNum(o.phone) + '?text=' + encodeURIComponent('Hi ' + (o.name || '') + ', this is ' + BOOT.business + '.') : '';
+  const addr = [o.address, o.suburb].filter(Boolean).join(', ');
+  return '<div class="quick">' +
+    (o.phone ? `<a href="tel:${esc(o.phone)}">📞 Call</a><a href="${esc(wa)}" target="_blank" rel="noopener">💬 WhatsApp</a>` : '') +
+    (o.email ? `<a href="mailto:${esc(o.email)}">✉️ Email</a>` : '') +
+    (addr ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" rel="noopener">📍 Map</a>` : '') +
+    '</div>';
+}
+
+/* =====================================================================
+ *  TABS
+ * ===================================================================== */
+function setTab(t) {
+  S.tab = t;
+  document.querySelectorAll('[data-tab]').forEach(el => el.classList.toggle('active', el.dataset.tab === t));
+  document.querySelectorAll('.view').forEach(v => v.hidden = v.id !== 'view-' + t);
+  $('fab').hidden = !['calendar', 'quotes', 'staff'].includes(t);
+  if (t === 'calendar') render();
+  if (t === 'quotes') loadQuotes();
+  if (t === 'clients') loadClients();
+  if (t === 'staff') loadStaff();
+  if (t === 'notifs') loadNotifs();
+}
+
+function setUnread(n) {
+  S.unread = n;
+  document.querySelectorAll('.js-unread').forEach(b => { b.textContent = n > 99 ? '99+' : n; b.hidden = !n; });
+  document.title = (n ? '(' + n + ') ' : '') + 'Starhome Admin';
+}
+
+function handleNotif(notif) {
+  if (!notif) return;
+  if (notif.latest && S.lastNotifTime && notif.latest.time > S.lastNotifTime && S.tab !== 'notifs') {
+    toast('🔔 ' + notif.latest.message);
+  }
+  if (notif.latest) S.lastNotifTime = notif.latest.time;
+  setUnread(S.tab === 'notifs' ? 0 : notif.unread);
+}
+
+/* =====================================================================
+ *  CALENDAR
+ * ===================================================================== */
+function range() {
+  if (S.view === 'day') return [S.date, S.date];
+  const f = weekStart(S.date); return [f, addDays(f, 6)];
+}
+
+async function load(silent) {
+  if (!silent) $('loading').classList.add('on');
+  try {
+    const [from, to] = range();
+    const res = await api('adminGetData', from, to);
+    S.staff = res.staff; S.bookings = res.bookings; S.pending = res.pending;
+    handleNotif(res.notif);
+    if (S.tab === 'calendar') render(); else updatePendingCount();
+  } catch (e) {
+    toast('Could not load: ' + e.message);
+  } finally {
+    $('loading').classList.remove('on');
+  }
+}
+
+function updatePendingCount() { $('pendCount').textContent = S.pending.length; }
+
+function render() {
+  const [from, to] = range();
+  $('dateLabel').textContent = S.view === 'day'
+    ? fmtDay(S.date)
+    : parseYmd(from).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' }) + ' – ' +
+      parseYmd(to).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+  $('datePick').value = S.date;
+  updatePendingCount();
+
+  const list = S.bookings.filter(b => (!S.service || b.service === S.service) && (S.showCancelled || b.status !== 'Cancelled'));
+  let cols;
+  if (S.view === 'day') {
+    const names = S.staff.map(s => s.name);
+    cols = [{ title: 'Unassigned', sub: 'New requests', empty: true, date: S.date, staff: '' }]
+      .concat(S.staff.map(s => ({ title: s.name, sub: s.role, colour: s.colour, date: S.date, staff: s.name })));
+    cols.forEach(c => c.items = list.filter(b => b.date === S.date && (c.staff ? b.staff === c.staff : !names.includes(b.staff))));
+  } else {
+    cols = [];
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(from, i);
+      cols.push({ isDay: true, date: d, staff: null, title: parseYmd(d).toLocaleDateString('en-ZA', { weekday: 'short' }), num: parseYmd(d).getDate(), items: list.filter(b => b.date === d) });
+    }
+  }
+  cols.forEach(c => { const n = c.items.filter(b => b.status !== 'Cancelled').length; c.count = n + (n === 1 ? ' job' : ' jobs'); });
+  draw(cols);
+}
+
+function layout(items) {
+  items.sort((a, b) => a.s - b.s || b.e - a.e);
+  let cluster = [], end = -1;
+  const flush = () => {
+    const lanes = [];
+    cluster.forEach(it => {
+      let i = lanes.findIndex(e => e <= it.s);
+      if (i < 0) { i = lanes.length; lanes.push(it.e); } else lanes[i] = it.e;
+      it.lane = i;
+    });
+    cluster.forEach(it => it.lanes = lanes.length);
+    cluster = [];
+  };
+  items.forEach(it => {
+    if (cluster.length && it.s >= end) { flush(); end = -1; }
+    cluster.push(it); end = Math.max(end, it.e);
+  });
+  if (cluster.length) flush();
+  return items;
+}
+
+function draw(cols) {
+  const px = hourPx(), hours = H1 - H0, minW = S.view === 'day' ? 170 : 150;
+  const g = $('grid');
+  g.style.gridTemplateColumns = `64px repeat(${cols.length}, minmax(${minW}px, 1fr))`;
+
+  let h = '<div class="corner"></div>';
+  cols.forEach(c => {
+    if (c.isDay) {
+      h += `<div class="colhead"><div class="dayhead ${c.date === todayLive() ? 'today' : ''}"><span>${esc(c.title)}</span><b>${c.num}</b></div><div class="sub">${c.count}</div></div>`;
+    } else {
+      const av = c.empty
+        ? '<div class="avatar empty">?</div>'
+        : `<div class="avatar" style="background:${esc(c.colour)};--ring:${esc(c.colour)}">${esc(initials(c.title))}</div>`;
+      h += `<div class="colhead">${av}<div class="nm">${esc(c.title)}</div><div class="sub">${c.sub ? esc(c.sub) + ' · ' : ''}${c.count}</div></div>`;
+    }
+  });
+
+  h += '<div class="gutter">';
+  for (let i = 0; i < hours; i++) {
+    const hr = H0 + i;
+    h += `<div class="hr"><b>${((hr + 11) % 12) + 1}:00</b>${hr < 12 ? 'am' : 'pm'}</div>`;
+  }
+  h += '</div>';
+
+  const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+  cols.forEach((c, ci) => {
+    h += `<div class="col ${c.date < todayLive() ? 'offday' : ''}" data-ci="${ci}" style="height:${hours * px}px">`;
+    const items = layout(c.items.map(b => {
+      const s = Math.min(Math.max(toMin(b.start), H0 * 60), H1 * 60 - 30);
+      const e = Math.max(Math.min(Math.max(toMin(b.end), toMin(b.start) + 30), H1 * 60), s + 30);
+      return { b, s, e };
+    }));
+    items.forEach(it => {
+      const b = it.b;
+      const top = (it.s - H0 * 60) / 60 * px;
+      const ht = Math.max((it.e - it.s) / 60 * px - 3, 24);
+      const w = 100 / it.lanes, left = it.lane * w;
+      const cls = ['Pending', 'Completed', 'Cancelled'].includes(b.status) ? b.status : b.service;
+      const sc = S.view === 'week' && b.staff ? staffColour(b.staff) : '';
+      h += `<div class="card ${cls}" draggable="true" data-id="${esc(b.id)}" title="${esc(b.name)} · ${esc(b.start)}–${esc(b.end)}"
+               style="top:${top + 1}px;height:${ht}px;left:calc(${left}% + 3px);width:calc(${w}% - 6px);${sc ? 'border-left-color:' + esc(sc) : ''}">
+          <div class="t">${esc(b.start)} – ${esc(b.end)}${b.status === 'Pending' ? '<span class="pill">PENDING</span>' : ''}${b.status === 'Completed' ? ' ✔' : ''}</div>
+          <div class="n">${esc(b.name)}</div>
+          <div class="s">${svcLabel(b.service)}${b.suburb ? ' · ' + esc(b.suburb) : ''}</div>
+          ${S.view === 'week' ? `<div class="s">👤 ${esc(b.staff || 'Unassigned')}</div>` : ''}
+        </div>`;
+    });
+    if (c.date === todayLive() && nowM >= H0 * 60 && nowM <= H1 * 60) {
+      h += `<div class="nowline" style="top:${(nowM - H0 * 60) / 60 * px}px"></div>`;
+    }
+    h += '</div>';
+  });
+  g.innerHTML = h;
+
+  g.querySelectorAll('.card').forEach(el => {
+    el.addEventListener('click', e => { e.stopPropagation(); openBooking(el.dataset.id); });
+    el.addEventListener('dragstart', e => {
+      S.drag = { id: el.dataset.id, offset: e.offsetY };
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', el.dataset.id);
+      setTimeout(() => el.classList.add('dragging'), 0);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+  });
+
+  g.querySelectorAll('.col').forEach(el => {
+    const c = cols[+el.dataset.ci];
+    el.addEventListener('click', e => {
+      if (e.target !== el) return;
+      const m = Math.min(snap(H0 * 60 + e.offsetY / px * 60 - 15, 30), H1 * 60 - 60);
+      openNew({ date: c.date, staff: c.staff || '', startTime: toHM(m), endTime: toHM(Math.min(m + 120, H1 * 60)) });
+    });
+    el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drop'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drop'));
+    el.addEventListener('drop', e => {
+      e.preventDefault(); el.classList.remove('drop');
+      const r = el.getBoundingClientRect();
+      onDrop(c, e.clientY - r.top - (S.drag ? S.drag.offset : 0), px);
+    });
+  });
+
+  if (!S.scrolled) {
+    S.scrolled = true;
+    const target = (S.date === todayLive() && nowM > H0 * 60 + 60) ? nowM - 60 : (H0 + 1) * 60;
+    $('board').scrollTop = Math.max(0, (target - H0 * 60) / 60 * px - 20);
+  }
+}
+
+async function onDrop(c, y, px) {
+  if (!S.drag) return;
+  const b = findBooking(S.drag.id); S.drag = null;
+  if (!b) return;
+  const dur = Math.max(toMin(b.end) - toMin(b.start), 30);
+  let s = snap(H0 * 60 + y / px * 60, 15);
+  s = Math.max(H0 * 60, Math.min(s, H1 * 60 - 15));
+  const changes = { date: c.date, startTime: toHM(s), endTime: toHM(Math.min(s + dur, 23 * 60 + 45)) };
+  if (c.staff !== null) changes.staff = c.staff;
+
+  const moved = changes.date !== b.date || changes.startTime !== b.start;
+  if (!moved && (changes.staff === undefined || changes.staff === b.staff)) return;
+
+  let notify = false;
+  if (moved && b.status === 'Confirmed' && b.email) notify = confirm('Email ' + b.name + ' about the new time?');
+
+  const snapshot = Object.assign({}, b);
+  Object.assign(b, { date: changes.date, start: changes.startTime, end: changes.endTime, staff: changes.staff !== undefined ? changes.staff : b.staff });
+  render();
+  try {
+    await api('adminUpdateBooking', b.id, changes, notify);
+    toast((moved ? 'Moved to ' + fmtShortDay(changes.date) + ' ' + changes.startTime : 'Reassigned to ' + (changes.staff || 'Unassigned')) + (notify ? ' · customer emailed' : ''));
+    load(true);
+  } catch (e) {
+    Object.assign(b, snapshot); render();
+    toast('Move failed: ' + e.message);
+  }
+}
+
+/* ---------- booking drawer ---------- */
+function openBooking(id) { const b = findBooking(id); if (b) showForm(b, false); }
+
+async function openBookingById(id) {
+  const b = findBooking(id);
+  if (b) return showForm(b, false);
+  try { showForm(await api('adminGetBooking', id), false); }
+  catch (e) { toast(e.message); }
+}
+
+function openNew(pre) {
+  showForm(Object.assign({
+    service: 'Cleaning', status: 'Confirmed', staff: '', date: S.date,
+    startTime: '08:00', endTime: '12:00', timeWindow: BOOT.windows[0],
+    name: '', phone: '', email: '', address: '', suburb: '', details: '', estimate: '', notes: '',
+  }, pre || {}), true);
+}
+
+function showForm(b, isNew) {
+  $('dTitle').innerHTML = isNew ? (b.quoteId ? 'Book quote ' + esc(b.quoteId) : 'New booking')
+    : esc(b.name) + ` <span class="pill st-${esc(b.status)}">${esc(b.status)}</span>`;
+  const staffOpts = [['', '— Unassigned —']].concat(S.staff.map(s => [s.name, s.name + (s.role ? ' (' + s.role + ')' : '')]));
+  if (b.staff && !S.staff.some(s => s.name === b.staff)) staffOpts.push([b.staff, b.staff + ' (inactive)']);
+
+  let h = '';
+  if (!isNew) {
+    h += quickLinks(b);
+    h += `<div class="req">Ref <b>${esc(b.id)}</b> · customer asked for <b>${esc(fmtShortDay(b.date))}, ${esc(b.startTime ? b.start + '–' + b.end : b.timeWindow)}</b>${b.reminderSent ? ' · reminder sent' : ''}</div>`;
+  }
+  h += '<div class="sec">Schedule</div><div class="fg">' +
+    field('Status', sel('fStatus', BOOT.statuses, b.status)) +
+    field('Assigned to', sel('fStaff', staffOpts, b.staff || '')) +
+    field('Date', inp('fDate', b.date, 'date'), true) +
+    field('Start', inp('fStart', b.startTime || b.start, 'time', 'step="900"')) +
+    field('End', inp('fEnd', b.endTime || b.end, 'time', 'step="900"')) +
+    '</div><div class="sec">Customer & job</div><div class="fg">' +
+    field('Service', sel('fSvc', ['Cleaning', 'Laundry'], b.service)) +
+    field('Requested time', sel('fWindow', BOOT.windows, b.timeWindow)) +
+    field('Name', inp('fName', b.name), true) +
+    field('Phone', inp('fPhone', b.phone, 'tel')) +
+    field('Email', inp('fEmail', b.email, 'email')) +
+    field('Address', inp('fAddress', b.address), true) +
+    field('Suburb', inp('fSuburb', b.suburb)) +
+    field('Estimate', inp('fEstimate', b.estimate)) +
+    field('Details', `<textarea id="fDetails">${esc(b.details)}</textarea>`, true) +
+    field('Internal notes', `<textarea id="fNotes" placeholder="Only visible to your team">${esc(b.notes)}</textarea>`, true) +
+    '</div>';
+  $('dBody').innerHTML = h;
+
+  $('dFoot').innerHTML =
+    `<label class="chk" style="flex-basis:100%"><input type="checkbox" id="fNotify" checked> Email the customer about this</label>` +
+    (!isNew && b.status === 'Pending' ? '<button class="btn primary" id="dConfirm">✓ Confirm</button>' : '') +
+    (!isNew && b.status === 'Confirmed' ? '<button class="btn" id="dDone">Mark completed</button>' : '') +
+    '<div class="spacer"></div><button class="btn" id="dCancel">Close</button>' +
+    `<button class="btn dark" id="dSave">${isNew ? 'Create booking' : 'Save'}</button>`;
+
+  $('dCancel').onclick = closeDrawer;
+  $('dSave').onclick = () => save(b, isNew);
+  if ($('dConfirm')) $('dConfirm').onclick = () => save(b, false, { status: 'Confirmed' });
+  if ($('dDone')) $('dDone').onclick = () => { $('fNotify').checked = false; save(b, false, { status: 'Completed' }); };
+  openDrawer(false);
+}
+
+function collectForm() {
+  return {
+    status: $('fStatus').value, staff: $('fStaff').value, date: $('fDate').value,
+    startTime: $('fStart').value, endTime: $('fEnd').value,
+    service: $('fSvc').value, timeWindow: $('fWindow').value,
+    name: $('fName').value.trim(), phone: $('fPhone').value.trim(), email: $('fEmail').value.trim(),
+    address: $('fAddress').value.trim(), suburb: $('fSuburb').value.trim(),
+    estimate: $('fEstimate').value.trim(), details: $('fDetails').value.trim(), notes: $('fNotes').value.trim(),
+  };
+}
+
+async function save(b, isNew, override) {
+  const d = Object.assign(collectForm(), override || {});
+  if (!d.name || !d.date) return toast('Name and date are required');
+  if (d.startTime && d.endTime && d.endTime <= d.startTime) return toast('End time must be after the start time');
+  const notify = $('fNotify').checked;
+  const btns = $('dFoot').querySelectorAll('button'); btns.forEach(x => x.disabled = true);
+  try {
+    if (isNew) {
+      if (b.quoteId) d.quoteId = b.quoteId;
+      await api('adminCreateBooking', d, notify);
+      toast('Booking created' + (notify && d.email ? ' · customer emailed' : ''));
+      if (d.date) S.date = d.date;
+      if (b.quoteId) S.quotes = null;
+    } else {
+      const current = { startTime: b.start, endTime: b.end };
+      const changes = {};
+      Object.keys(d).forEach(k => {
+        const cur = k in current ? current[k] : b[k];
+        if (String(d[k] == null ? '' : d[k]) !== String(cur == null ? '' : cur)) changes[k] = d[k];
+      });
+      if (!Object.keys(changes).length) { closeDrawer(); return; }
+      await api('adminUpdateBooking', b.id, changes, notify);
+      toast(override && override.status ? 'Marked ' + override.status.toLowerCase() : 'Saved');
+    }
+    closeDrawer();
+    S.clients = null;
+    load(true);
+    if (S.tab === 'clients') loadClients();
+  } catch (e) {
+    toast('Error: ' + e.message);
+  } finally {
+    btns.forEach(x => x.disabled = false);
+  }
+}
+
+function showPending() {
+  $('dTitle').textContent = 'Waiting for confirmation';
+  $('dBody').innerHTML = S.pending.length
+    ? '<div class="list">' + S.pending.map(b =>
+        `<div class="item" data-id="${esc(b.id)}"><b>${esc(b.name)}</b> <span class="muted">· ${svcLabel(b.service)}</span>
+          <div class="meta">${esc(fmtDay(b.date))} · ${esc(b.startTime ? b.start + '–' + b.end : b.timeWindow)}${b.suburb ? ' · ' + esc(b.suburb) : ''}</div></div>`).join('') + '</div>'
+    : '<p class="empty-note">No pending requests 🎉</p>';
+  $('dFoot').innerHTML = '<div class="spacer"></div><button class="btn" id="dCancel">Close</button>';
+  $('dCancel').onclick = closeDrawer;
+  $('dBody').querySelectorAll('.item').forEach(el => el.onclick = () => {
+    const b = S.pending.find(p => p.id === el.dataset.id);
+    if (!b) return;
+    if (S.view !== 'day' || S.date !== b.date) { S.view = 'day'; S.date = b.date; syncSeg(); load(); }
+    showForm(b, false);
+  });
+  openDrawer(false);
+}
+
+/* =====================================================================
+ *  QUOTES
+ * ===================================================================== */
+async function loadQuotes(force) {
+  if (!S.quotes || force) {
+    $('qList').innerHTML = '<p class="muted">Loading quotes…</p>';
+    try {
+      const r = await api('adminGetQuotes');
+      S.quotes = r.quotes; S.prices = r.prices;
+    } catch (e) { $('qList').innerHTML = ''; return toast('Could not load quotes: ' + e.message); }
+  }
+  renderQuotes();
+}
+
+function renderQuotes() {
+  const q = $('qSearch').value.trim().toLowerCase(), st = $('qStatus').value;
+  const all = S.quotes || [];
+  const list = all.filter(x => (!st || x.status === st) &&
+    (!q || [x.id, x.name, x.phone, x.email, x.suburb].join(' ').toLowerCase().includes(q)));
+
+  const open = all.filter(x => x.status === 'Draft' || x.status === 'Sent');
+  const won = all.filter(x => x.status === 'Accepted' || x.status === 'Booked');
+  $('qChips').innerHTML =
+    `<div class="chipstat"><span class="muted">Open quotes</span><b>${open.length} · ${fmtR(open.reduce((s, x) => s + x.total, 0))}</b></div>` +
+    `<div class="chipstat"><span class="muted">Won (accepted/booked)</span><b>${won.length} · ${fmtR(won.reduce((s, x) => s + x.total, 0))}</b></div>` +
+    `<div class="chipstat"><span class="muted">Win rate</span><b>${all.length ? Math.round(won.length / all.length * 100) : 0}%</b></div>`;
+
+  if (!list.length) {
+    $('qList').innerHTML = `<div class="empty-note">${all.length ? 'No quotes match.' : 'No quotes yet — tap <b>+ New quote</b> to price a job in seconds.'}</div>`;
+    return;
+  }
+  const today = todayLive();
+  $('qList').innerHTML = '<div class="table" style="--cols:2fr 110px 1fr 110px 110px 100px">' +
+    '<div class="trow thead"><div>Customer</div><div class="c-hide">Quote</div><div class="c-hide">Service</div><div class="c-hide">Created</div><div class="r">Total</div><div class="c-hide">Status</div></div>' +
+    list.map(x => {
+      const expired = x.validUntil && x.validUntil < today && (x.status === 'Draft' || x.status === 'Sent');
+      return `<div class="trow" data-id="${esc(x.id)}">
+        <div class="who"><div class="av" style="background:${colourFor(x.name + x.phone)}">${esc(initials(x.name))}</div>
+          <div><b>${esc(x.name)}</b><div class="muted">${esc(x.phone || x.email || '')}${x.suburb ? ' · ' + esc(x.suburb) : ''}</div></div></div>
+        <div class="c-hide muted">${esc(x.id)}</div>
+        <div class="c-hide"><span class="tag ${esc(x.service)}">${esc(x.service)}</span></div>
+        <div class="c-hide muted">${esc(fmtShortDay(x.created.slice(0, 10)))}</div>
+        <div class="r"><div class="money">${fmtR(x.total)}</div><span class="pill st-${esc(x.status)}" style="margin:2px 0 0">${esc(x.status)}</span></div>
+        <div class="c-hide">${expired ? '<span class="tag" style="background:#fee2e2;color:#991b1b">Expired</span>' : '<span class="muted">to ' + esc(fmtShortDay(x.validUntil)) + '</span>'}</div>
+      </div>`;
+    }).join('') + '</div>';
+  $('qList').querySelectorAll('.trow[data-id]').forEach(el => el.onclick = () => showQuote(S.quotes.find(x => x.id === el.dataset.id)));
+}
+
+// --- quote maths (mirrors computeQuote_ in Code.gs) ---
+function computeQuote(q) {
+  const r2 = n => Math.round(n * 100) / 100;
+  const lines = q.lines.map(l => ({ item: String(l.item || '').trim(), unit: l.unit || 'item', qty: Math.max(0, Number(l.qty) || 0), price: Math.max(0, Number(l.price) || 0) }))
+    .filter(l => l.item && l.qty > 0);
+  lines.forEach(l => l.total = r2(l.qty * l.price));
+  const subtotal = r2(lines.reduce((s, l) => s + l.total, 0));
+  const laundry = q.service === 'Laundry';
+  const topUp = laundry && subtotal > 0 ? Math.max(0, r2(BOOT.quote.minCharge - subtotal)) : 0;
+  const base = subtotal + topUp;
+  const express = laundry && q.express ? r2(base * BOOT.quote.express) : 0;
+  const discount = Math.min(Math.max(0, r2(Number(q.discount) || 0)), base + express);
+  return { lines, subtotal, topUp, express, discount, total: r2(base + express - discount) };
+}
+
+let QE = null; // quote being edited
+
+function showQuote(q, prefill) {
+  QE = q ? JSON.parse(JSON.stringify(q)) : Object.assign({
+    id: '', service: 'Laundry', name: '', phone: '', email: '', suburb: '',
+    lines: [], express: false, discount: 0, notes: '', status: 'Draft',
+    validUntil: addDays(todayLive(), BOOT.quote.validDays),
+  }, prefill || {});
+  renderQuoteEditor();
+  openDrawer(true);
+}
+
+function priceOptions(service) {
+  const cats = {};
+  S.prices.filter(p => p.service === service).forEach((p, i) => { (cats[p.category] = cats[p.category] || []).push(p); });
+  return '<option value="">Add from price list…</option>' + Object.keys(cats).map(c =>
+    `<optgroup label="${esc(c)}">` + cats[c].map(p =>
+      `<option value="${esc(p.item)}">${esc(p.item)} — ${p.price ? fmtR(p.price) + '/' + esc(p.unit) : 'set price'}</option>`).join('') + '</optgroup>').join('');
+}
+
+function renderQuoteEditor() {
+  const q = QE;
+  $('dTitle').innerHTML = q.id ? 'Quote ' + esc(q.id) + ` <span class="pill st-${esc(q.status)}">${esc(q.status)}</span>` : 'New quick quote';
+  const cleaningUnpriced = q.service === 'Cleaning' && S.prices.filter(p => p.service === 'Cleaning').every(p => !p.price);
+
+  $('dBody').innerHTML =
+    `<div class="seg" id="qeSvc" style="margin-bottom:6px"><button data-s="Laundry" class="${q.service === 'Laundry' ? 'on' : ''}">🧺 Laundry & dry cleaning</button><button data-s="Cleaning" class="${q.service === 'Cleaning' ? 'on' : ''}">🧹 Cleaning</button></div>` +
+    '<div class="sec">Customer <span style="text-transform:none;font-weight:500">(name or phone is enough)</span></div><div class="fg">' +
+    field('Name', inp('qeName', q.name === 'Quick quote' ? '' : q.name, 'text', 'placeholder="e.g. Hotel Lux"')) +
+    field('Phone / WhatsApp', inp('qePhone', q.phone, 'tel', 'placeholder="082…"')) +
+    field('Email (optional)', inp('qeEmail', q.email, 'email')) +
+    field('Suburb (optional)', inp('qeSuburb', q.suburb)) +
+    '</div>' +
+    '<div class="sec">Items</div>' +
+    (cleaningUnpriced ? '<div class="info" style="margin-bottom:10px">Cleaning rates aren\'t set yet — type a price on each line, or fill in the <b>Prices</b> tab in the sheet.</div>' : '') +
+    `<div class="qadd"><select id="qePick">${priceOptions(q.service)}</select><button class="btn sm" id="qeCustom">+ Custom line</button></div>` +
+    '<div class="qline qhead"><div>Item</div><div>Qty</div><div class="unit">Unit</div><div>Price (R)</div><div class="lt">Amount</div><div></div></div>' +
+    '<div id="qeLines"></div>' +
+    '<div class="fg" style="margin-top:12px">' +
+    (q.service === 'Laundry' ? field('Express', `<label class="chk" style="height:38px"><input type="checkbox" id="qeExpress" ${q.express ? 'checked' : ''}> Same-day (+${Math.round(BOOT.quote.express * 100)}%)</label>`) : '') +
+    field('Discount (R)', inp('qeDiscount', q.discount || '', 'number', 'min="0" step="10" placeholder="0"')) +
+    field('Valid until', inp('qeValid', q.validUntil, 'date')) +
+    field('Note to customer', `<textarea id="qeNotes" placeholder="e.g. Includes free pickup & delivery">${esc(q.notes)}</textarea>`, true) +
+    '</div>' +
+    '<div class="qtot" id="qeTotals"></div>' +
+    (q.bookingId ? `<div class="info" style="margin-top:10px">Booked as <b>${esc(q.bookingId)}</b> — <a href="#" id="qeOpenBooking">open booking</a></div>` : '');
+
+  $('dFoot').innerHTML =
+    (q.id ? sel('qeStatus', ['Draft', 'Sent', 'Accepted', 'Declined', 'Booked'], q.status).replace('<select', '<select class="btn sm"') : '') +
+    '<button class="btn sm" id="qePrint" title="Print or save as PDF">🖨 Print</button>' +
+    '<button class="btn sm" id="qeEmailBtn">✉️ Email</button>' +
+    '<button class="btn sm wa" id="qeWa">💬 WhatsApp</button>' +
+    '<div class="spacer"></div>' +
+    (q.bookingId ? '' : '<button class="btn sm primary" id="qeBook">→ Booking</button>') +
+    '<button class="btn sm dark" id="qeSave">Save</button>';
+
+  renderQuoteLines();
+  wireQuoteEditor();
+}
+
+function renderQuoteLines() {
+  const wrap = $('qeLines');
+  if (!QE.lines.length) { wrap.innerHTML = '<p class="muted" style="margin:6px 0 0">Pick items from the price list above, or add a custom line.</p>'; updateQuoteTotals(); return; }
+  wrap.innerHTML = QE.lines.map((l, i) => `
+    <div class="qline" data-i="${i}">
+      <input data-k="item" value="${esc(l.item)}" placeholder="Item">
+      <input data-k="qty" type="number" min="0" step="${l.unit === 'kg' ? '0.5' : '1'}" value="${esc(l.qty)}">
+      <div class="unit">${esc(l.unit)}</div>
+      <input data-k="price" type="number" min="0" step="1" value="${esc(l.price)}">
+      <div class="lt" data-lt>${fmtR((Number(l.qty) || 0) * (Number(l.price) || 0))}</div>
+      <button class="x" data-rm title="Remove">✕</button>
+    </div>`).join('');
+  wrap.querySelectorAll('.qline').forEach(row => {
+    const i = +row.dataset.i;
+    row.querySelectorAll('input').forEach(input => input.oninput = () => {
+      QE.lines[i][input.dataset.k] = input.dataset.k === 'item' ? input.value : input.value;
+      row.querySelector('[data-lt]').textContent = fmtR((Number(QE.lines[i].qty) || 0) * (Number(QE.lines[i].price) || 0));
+      updateQuoteTotals();
+    });
+    row.querySelector('[data-rm]').onclick = () => { QE.lines.splice(i, 1); renderQuoteLines(); };
+  });
+  updateQuoteTotals();
+}
+
+function readQuoteEditor() {
+  QE.name = $('qeName').value.trim();
+  QE.phone = $('qePhone').value.trim();
+  QE.email = $('qeEmail').value.trim();
+  QE.suburb = $('qeSuburb').value.trim();
+  QE.express = $('qeExpress') ? $('qeExpress').checked : false;
+  QE.discount = Number($('qeDiscount').value) || 0;
+  QE.validUntil = $('qeValid').value;
+  QE.notes = $('qeNotes').value.trim();
+  if ($('qeStatus')) QE.status = $('qeStatus').value;
+}
+
+function updateQuoteTotals() {
+  if ($('qeExpress')) QE.express = $('qeExpress').checked;
+  if ($('qeDiscount')) QE.discount = Number($('qeDiscount').value) || 0;
+  const c = computeQuote(QE);
+  const row = (l, v, neg) => v ? `<div class="row"><span>${l}</span><span>${neg ? '− ' : ''}${fmtR(v)}</span></div>` : '';
+  $('qeTotals').innerHTML =
+    row('Subtotal', c.subtotal) +
+    row('Minimum charge top-up (' + fmtR(BOOT.quote.minCharge) + ' min)', c.topUp) +
+    row('Express same-day (+' + Math.round(BOOT.quote.express * 100) + '%)', c.express) +
+    row('Discount', c.discount, true) +
+    `<div class="row big"><span>Total</span><span>${fmtR(c.total)}</span></div>`;
+  return c;
+}
+
+function wireQuoteEditor() {
+  $('qeSvc').querySelectorAll('button').forEach(b => b.onclick = () => {
+    if (QE.service === b.dataset.s) return;
+    readQuoteEditor(); QE.service = b.dataset.s; if (QE.service !== 'Laundry') QE.express = false;
+    renderQuoteEditor();
+  });
+  $('qePick').onchange = e => {
+    const p = S.prices.find(x => x.service === QE.service && x.item === e.target.value);
+    if (!p) return;
+    const existing = QE.lines.find(l => l.item === p.item);
+    if (existing) existing.qty = (Number(existing.qty) || 0) + 1;
+    else QE.lines.push({ item: p.item, unit: p.unit, qty: p.unit === 'kg' ? 5 : 1, price: p.price });
+    e.target.value = '';
+    renderQuoteLines();
+    const last = $('qeLines').querySelector('.qline:last-child input[data-k="qty"]'); if (last) last.select();
+  };
+  $('qeCustom').onclick = () => {
+    QE.lines.push({ item: '', unit: 'item', qty: 1, price: 0 });
+    renderQuoteLines();
+    const last = $('qeLines').querySelector('.qline:last-child input[data-k="item"]'); if (last) last.focus();
+  };
+  if ($('qeExpress')) $('qeExpress').onchange = updateQuoteTotals;
+  $('qeDiscount').oninput = updateQuoteTotals;
+  $('qeSave').onclick = async () => { if (await saveQuote()) toast('Quote saved'); };
+  $('qeWa').onclick = quoteWhatsApp;
+  $('qeEmailBtn').onclick = quoteEmail;
+  $('qePrint').onclick = quotePrint;
+  if ($('qeBook')) $('qeBook').onclick = quoteToBooking;
+  if ($('qeOpenBooking')) $('qeOpenBooking').onclick = e => { e.preventDefault(); openBookingById(QE.bookingId); };
+}
+
+async function saveQuote() {
+  readQuoteEditor();
+  if (!computeQuote(QE).lines.length) { toast('Add at least one item with a quantity'); return false; }
+  const btns = $('dFoot').querySelectorAll('button'); btns.forEach(x => x.disabled = true);
+  try {
+    const saved = await api('adminSaveQuote', QE);
+    QE = saved;
+    const i = (S.quotes || []).findIndex(x => x.id === saved.id);
+    if (i >= 0) S.quotes[i] = saved; else (S.quotes = S.quotes || []).unshift(saved);
+    renderQuoteEditor();
+    if (S.tab === 'quotes') renderQuotes();
+    return true;
+  } catch (e) { toast('Error: ' + e.message); return false; }
+  finally { btns.forEach(x => x.disabled = false); }
+}
+
+function quoteText(q) {
+  const c = computeQuote(q);
+  const name = q.name && q.name !== 'Quick quote' ? q.name : 'there';
+  const lines = c.lines.map(l => `• ${l.item} — ${l.qty} ${l.unit}${l.qty == 1 ? '' : ''} × ${fmtR(l.price)} = ${fmtR(l.total)}`).join('\n');
+  return `*${BOOT.business} — Quote ${q.id}*\n\nHi ${name}, here's your ${q.service === 'Laundry' ? 'laundry & dry cleaning' : 'cleaning'} quote:\n\n${lines}\n` +
+    (c.topUp ? `Minimum charge top-up: ${fmtR(c.topUp)}\n` : '') +
+    (c.express ? `Express same-day (+${Math.round(BOOT.quote.express * 100)}%): ${fmtR(c.express)}\n` : '') +
+    (c.discount ? `Discount: −${fmtR(c.discount)}\n` : '') +
+    `\n*Total: ${fmtR(c.total)}*\n` +
+    (q.notes ? `\n${q.notes}\n` : '') +
+    `\nValid until ${fmtShortDay(q.validUntil)}. Reply *YES* to book, or call ${BOOT.quote.phone}.`;
+}
+
+async function quoteWhatsApp() {
+  const w = window.open('', '_blank'); // open now so pop-up blockers allow it
+  if (!(await saveQuote())) { if (w) w.close(); return; }
+  const url = (QE.phone ? 'https://wa.me/' + waNum(QE.phone) : 'https://wa.me/') + '?text=' + encodeURIComponent(quoteText(QE));
+  if (w) w.location.href = url; else window.open(url, '_blank');
+  try { QE = await api('adminSendQuote', QE.id, 'whatsapp'); syncQuote(); } catch (e) { /* recorded best-effort */ }
+}
+
+async function quoteEmail() {
+  readQuoteEditor();
+  if (!QE.email) { toast('Add the customer\'s email first'); $('qeEmail').focus(); return; }
+  if (!(await saveQuote())) return;
+  try { QE = await api('adminSendQuote', QE.id, 'email'); syncQuote(); toast('Quote emailed with PDF to ' + QE.email); }
+  catch (e) { toast('Email failed: ' + e.message); }
+}
+
+function syncQuote() {
+  const i = (S.quotes || []).findIndex(x => x.id === QE.id);
+  if (i >= 0) S.quotes[i] = QE;
+  renderQuoteEditor();
+  if (S.tab === 'quotes') renderQuotes();
+}
+
+async function quotePrint() {
+  if (!(await saveQuote())) return;
+  const q = QE, c = computeQuote(q);
+  const row = (l, v, neg) => v ? `<tr><td colspan="3" style="text-align:right;padding:6px 8px;color:#555">${l}</td><td style="text-align:right;padding:6px 8px">${neg ? '− ' : ''}${fmtR(v)}</td></tr>` : '';
+  $('printArea').innerHTML = `
+    <div style="font-family:Arial,sans-serif;max-width:720px;margin:0 auto;color:#14213d;padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0b5394;padding-bottom:12px">
+        <div><div style="font-size:22px;font-weight:700;color:#0b5394">${esc(BOOT.business)}</div>
+          <div style="font-size:12px;color:#555">${esc(BOOT.quote.website.replace('https://', ''))} · ${esc(BOOT.quote.phone)}</div></div>
+        <div style="text-align:right"><div style="font-size:20px;font-weight:700">QUOTE</div>
+          <div style="font-size:12px">${esc(q.id)}<br>${esc(fmtShortDay(q.created ? q.created.slice(0, 10) : todayLive()))}</div></div>
+      </div>
+      <p style="margin:18px 0 6px"><b>For:</b> ${esc(q.name)}${q.phone ? ' · ' + esc(q.phone) : ''}${q.email ? ' · ' + esc(q.email) : ''}${q.suburb ? ' · ' + esc(q.suburb) : ''}</p>
+      <p style="margin:0 0 14px;color:#555">${q.service === 'Laundry' ? 'Laundry & dry cleaning' : 'Home cleaning'}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tr style="background:#f1f5f9"><th style="text-align:left;padding:8px">Item</th><th style="text-align:right;padding:8px">Qty</th><th style="text-align:right;padding:8px">Price</th><th style="text-align:right;padding:8px">Amount</th></tr>
+        ${c.lines.map(l => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${esc(l.item)}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${l.qty} ${esc(l.unit)}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmtR(l.price)}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${fmtR(l.total)}</td></tr>`).join('')}
+        ${row('Subtotal', c.subtotal)}${row('Minimum charge top-up', c.topUp)}${row('Express same-day', c.express)}${row('Discount', c.discount, true)}
+        <tr><td colspan="3" style="text-align:right;padding:10px 8px;font-size:17px;font-weight:700">Total</td><td style="text-align:right;padding:10px 8px;font-size:17px;font-weight:700">${fmtR(c.total)}</td></tr>
+      </table>
+      ${q.notes ? `<p style="background:#f8fafc;padding:10px;border-radius:6px">${esc(q.notes)}</p>` : ''}
+      <p style="font-size:12px;color:#555">Valid until ${esc(fmtShortDay(q.validUntil))}. ${q.service === 'Laundry' ? 'Per-kg items are weighed at collection; final amount may differ slightly. ' : ''}To book: WhatsApp ${esc(BOOT.quote.whatsapp)} or call ${esc(BOOT.quote.phone)}.</p>
+    </div>`;
+  document.body.classList.add('printing');
+  setTimeout(() => { window.print(); document.body.classList.remove('printing'); }, 50);
+}
+
+async function quoteToBooking() {
+  if (!(await saveQuote())) return;
+  const q = QE, c = computeQuote(q);
+  closeDrawer();
+  setTab('calendar');
+  openNew({
+    quoteId: q.id, service: q.service, status: 'Confirmed',
+    name: q.name === 'Quick quote' ? '' : q.name, phone: q.phone, email: q.email, suburb: q.suburb,
+    estimate: fmtR(c.total) + ' (quote ' + q.id + ')',
+    details: c.lines.map(l => l.qty + ' ' + l.unit + ' ' + l.item).join('; ') + (c.express ? ' · EXPRESS same-day' : ''),
+  });
+  toast('Add the date, time and address, then create the booking');
+}
+
+/* =====================================================================
+ *  CLIENTS
+ * ===================================================================== */
+async function loadClients(force) {
+  if (!S.clients || force) {
+    $('cList').innerHTML = '<p class="muted">Loading clients…</p>';
+    try { S.clients = await api('adminGetClients'); }
+    catch (e) { $('cList').innerHTML = ''; return toast('Could not load clients: ' + e.message); }
+  }
+  renderClients();
+}
+
+function renderClients() {
+  const q = $('cSearch').value.trim().toLowerCase();
+  const list = (S.clients || []).filter(c => !q || [c.name, c.phone, c.email, c.suburb, c.address].join(' ').toLowerCase().includes(q));
+  $('cCount').textContent = list.length + ' client' + (list.length === 1 ? '' : 's');
+  if (!list.length) { $('cList').innerHTML = `<div class="empty-note">${(S.clients || []).length ? 'No clients match.' : 'Clients appear here automatically from bookings.'}</div>`; return; }
+  $('cList').innerHTML = '<div class="table" style="--cols:2fr 1.2fr 1.4fr 90px 120px 130px">' +
+    '<div class="trow thead"><div>Client</div><div class="c-hide">Phone</div><div class="c-hide">Email</div><div class="c-hide">Bookings</div><div class="c-hide">Last visit</div><div>Next</div></div>' +
+    list.map(c => `<div class="trow" data-k="${esc(c.key)}">
+      <div class="who"><div class="av" style="background:${colourFor(c.key)}">${esc(initials(c.name))}</div>
+        <div><b>${esc(c.name)}</b><div class="muted">${esc(c.suburb || c.address || '')} ${c.services.map(s => `<span class="tag ${esc(s)}">${esc(s)}</span>`).join(' ')}</div></div></div>
+      <div class="c-hide">${esc(c.phone)}</div>
+      <div class="c-hide muted" style="overflow:hidden;text-overflow:ellipsis">${esc(c.email || '—')}</div>
+      <div class="c-hide"><b>${c.total}</b></div>
+      <div class="c-hide muted">${c.lastVisit ? esc(fmtShortDay(c.lastVisit)) : '—'}</div>
+      <div>${c.next ? `<span class="tag" style="background:#dcfce7;color:#166534">${esc(fmtShortDay(c.next))}</span>` : '<span class="muted">—</span>'}</div>
+    </div>`).join('') + '</div>';
+  $('cList').querySelectorAll('.trow[data-k]').forEach(el => el.onclick = () => showClient(S.clients.find(c => c.key === el.dataset.k)));
+}
+
+function showClient(c) {
+  $('dTitle').textContent = c.name;
+  $('dBody').innerHTML = quickLinks(c) +
+    `<div class="minigrid">
+       <div class="stat"><b>${c.total}</b>Bookings</div><div class="stat"><b>${c.completed}</b>Completed</div>
+       <div class="stat"><b>${c.upcoming}</b>Upcoming</div><div class="stat"><b>${c.cancelled}</b>Cancelled</div>
+     </div>` +
+    '<div class="fg" style="margin-top:10px">' +
+    field('Phone', `<div>${esc(c.phone || '—')}</div>`) + field('Email', `<div style="word-break:break-all">${esc(c.email || '—')}</div>`) +
+    field('Address', `<div>${esc([c.address, c.suburb].filter(Boolean).join(', ') || '—')}</div>`, true) +
+    '</div>' +
+    '<div class="sec">Client portal login</div><div id="portalBox">' + portalBlock(c) + '</div>' +
+    '<div class="sec">Booking history</div><div class="list">' +
+    c.bookings.map((b, i) => `<div class="item" data-i="${i}">
+       <b>${esc(fmtShortDay(b.date))}</b> · ${esc(b.start)}–${esc(b.end)} <span class="pill st-${esc(b.status)}">${esc(b.status)}</span>
+       <div class="meta">${svcLabel(b.service)} · ${esc(b.staff || 'Unassigned')}${b.estimate ? ' · ' + esc(b.estimate) : ''} · ${esc(b.id)}</div></div>`).join('') + '</div>';
+  $('dFoot').innerHTML = '<button class="btn" id="dCancel">Close</button><div class="spacer"></div>' +
+    '<button class="btn" id="cQuote">+ Quote</button><button class="btn dark" id="cBook">+ Booking</button>';
+  $('dCancel').onclick = closeDrawer;
+  const who = { name: c.name, phone: c.phone, email: c.email, suburb: c.suburb };
+  $('cQuote').onclick = () => { closeDrawer(); setTab('quotes'); setTimeout(() => showQuote(null, Object.assign({ service: c.services[0] || 'Laundry' }, who)), 50); };
+  $('cBook').onclick = () => { closeDrawer(); setTab('calendar'); openNew(Object.assign({ address: c.address, service: c.services[0] || 'Cleaning', date: todayLive() }, who)); };
+  $('dBody').querySelectorAll('.item').forEach(el => el.onclick = () => showForm(c.bookings[+el.dataset.i], false));
+  wirePortalBlock(c);
+  openDrawer(false);
+}
+
+/* ---------- client portal access ---------- */
+function portalBlock(c) {
+  if (c.portal && c.portal.active) {
+    return `<div class="info">✅ ${esc(c.name)} can sign in to <b>My Starhome</b> with their phone number + PIN` +
+      (c.portal.lastLogin ? ` · last signed in ${esc(timeAgo(c.portal.lastLogin))}` : ' · hasn\'t signed in yet') + '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" id="pReset">Reset PIN</button><button class="btn sm" id="pRevoke">Remove access</button></div>';
+  }
+  return `<p class="muted" style="margin:0 0 8px">Let ${esc(c.name)} book, reschedule, accept quotes and track orders online — they sign in with their phone number and a PIN.</p>` +
+    (c.phone ? '<button class="btn sm primary" id="pGrant">Give portal access</button>' : '<p class="muted">Add a phone number to a booking first.</p>');
+}
+
+function wirePortalBlock(c) {
+  const who = { name: c.name, phone: c.phone, email: c.email };
+  const grant = async () => {
+    try {
+      const r = await api('adminGrantPortal', who);
+      c.portal = { active: true, lastLogin: c.portal ? c.portal.lastLogin : '' };
+      const url = r.url || BOOT.portalUrl || '(your portal link)';
+      const msg = `Hi ${c.name}! You can now book and manage your Starhome orders online 🎉\n\nSign in here: ${url}\nPhone: ${c.phone}\nPIN: ${r.pin}\n\nYou can change your PIN after signing in.\n— ${BOOT.business}`;
+      $('portalBox').innerHTML =
+        `<div class="info" style="font-size:13px">Login ready. PIN for ${esc(c.name)}: <b style="font-size:20px;letter-spacing:3px;display:block;margin:6px 0">${esc(r.pin)}</b>` +
+        'This PIN is only shown now — send it to the client:</div>' +
+        `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+           <a class="btn sm wa" target="_blank" rel="noopener" href="https://wa.me/${waNum(c.phone)}?text=${encodeURIComponent(msg)}">💬 Send by WhatsApp</a>
+           ${c.email ? `<a class="btn sm" href="mailto:${esc(c.email)}?subject=${encodeURIComponent('Your Starhome login')}&body=${encodeURIComponent(msg)}">✉️ Email</a>` : ''}
+         </div>`;
+      S.clients = null;
+      toast('Portal access ready');
+    } catch (e) { toast('Error: ' + e.message); }
+  };
+  if ($('pGrant')) $('pGrant').onclick = grant;
+  if ($('pReset')) $('pReset').onclick = () => { if (confirm('Create a new PIN for ' + c.name + '? Their old PIN stops working.')) grant(); };
+  if ($('pRevoke')) $('pRevoke').onclick = async () => {
+    if (!confirm('Remove ' + c.name + '\'s portal login?')) return;
+    try { await api('adminRevokePortal', who); c.portal = { active: false }; $('portalBox').innerHTML = portalBlock(c); wirePortalBlock(c); S.clients = null; toast('Access removed'); }
+    catch (e) { toast('Error: ' + e.message); }
+  };
+}
+
+/* =====================================================================
+ *  STAFF
+ * ===================================================================== */
+async function loadStaff(force) {
+  if (!S.staffAll || force) {
+    $('sList').innerHTML = '<p class="muted">Loading staff…</p>';
+    try { [S.staffAll, S.users] = await Promise.all([api('adminGetStaff'), api('adminListUsers')]); }
+    catch (e) { $('sList').innerHTML = ''; return toast('Could not load staff: ' + e.message); }
+  }
+  renderStaff();
+  renderUsers();
+}
+
+/* ---------- admin logins ---------- */
+function renderUsers() {
+  const list = S.users || [];
+  $('uList').innerHTML = !list.length
+    ? '<div class="empty-note">No admin logins yet. Add one here, or in the sheet: <b>Starhome → Set / reset an admin login</b>.</div>'
+    : '<div class="table" style="--cols:2fr 100px 150px 90px 70px">' +
+      '<div class="trow thead"><div>Name</div><div class="c-hide">Role</div><div class="c-hide">Last sign-in</div><div class="c-hide">Status</div><div></div></div>' +
+      list.map((u, i) => `<div class="trow">
+        <div class="who"><div class="av" style="background:${colourFor(u.email)}">${esc(initials(u.name))}</div><div><b>${esc(u.name)}</b><div class="muted">${esc(u.email)}</div></div></div>
+        <div class="c-hide"><span class="tag">${esc(u.role)}</span></div>
+        <div class="c-hide muted">${u.lastLogin ? esc(timeAgo(u.lastLogin)) : 'Never'}</div>
+        <div class="c-hide">${u.active ? '<span class="pill st-Confirmed">Active</span>' : '<span class="pill st-Cancelled">Off</span>'}</div>
+        <div class="r"><button class="btn sm" data-u="${i}">Edit</button></div></div>`).join('') + '</div>';
+  $('uList').querySelectorAll('[data-u]').forEach(b => b.onclick = () => showUserForm(list[+b.dataset.u]));
+}
+
+function showUserForm(u) {
+  const isNew = !u;
+  u = u || { email: '', name: '', role: 'Admin', active: true };
+  $('dTitle').textContent = isNew ? 'Add admin login' : 'Edit login — ' + u.name;
+  $('dBody').innerHTML = '<div class="fg">' +
+    field('Email (used to sign in)', inp('ufEmail', u.email, 'email', isNew ? '' : 'readonly'), true) +
+    field('Name', inp('ufName', u.name)) +
+    field('Role', sel('ufRole', ['Owner', 'Admin', 'Staff'], u.role)) +
+    field(isNew ? 'Password (min 8 characters)' : 'New password (leave blank to keep)', inp('ufPw', '', 'password', 'autocomplete="new-password"'), true) +
+    field('Status', `<label class="chk"><input type="checkbox" id="ufActive" ${u.active ? 'checked' : ''}> Can sign in</label>`, true) +
+    '</div><p class="info" style="margin-top:14px">Changing the password or switching a login off signs that person out on every device.</p>';
+  $('dFoot').innerHTML = '<div class="spacer"></div><button class="btn" id="dCancel">Close</button><button class="btn dark" id="ufSave">' + (isNew ? 'Add login' : 'Save') + '</button>';
+  $('dCancel').onclick = closeDrawer;
+  $('ufSave').onclick = async () => {
+    const d = { email: $('ufEmail').value.trim(), name: $('ufName').value.trim(), role: $('ufRole').value, password: $('ufPw').value, active: $('ufActive').checked };
+    if (isNew && d.password.length < 8) return toast('Password must be at least 8 characters');
+    $('ufSave').disabled = true;
+    try { S.users = await api('adminSaveUser', d); closeDrawer(); renderUsers(); toast('Login saved'); }
+    catch (e) { toast('Error: ' + e.message); }
+    finally { if ($('ufSave')) $('ufSave').disabled = false; }
+  };
+  openDrawer(false);
+}
+
+function renderStaff() {
+  const showOff = $('showInactive').checked;
+  const list = (S.staffAll || []).filter(s => showOff || s.active);
+  if (!list.length) { $('sList').innerHTML = '<div class="empty-note" style="grid-column:1/-1">No staff yet — tap <b>+ Add staff</b>.</div>'; return; }
+  $('sList').innerHTML = list.map((s, i) => `
+    <div class="scard ${s.active ? '' : 'off'}">
+      <div class="top2">
+        <div class="av" style="background:${esc(s.colour)};--ring:${esc(s.colour)}">${esc(initials(s.name))}</div>
+        <div style="min-width:0;flex:1"><b style="font-size:15px">${esc(s.name)}</b>
+          <div class="muted">${esc(s.role || 'Team member')}${s.active ? '' : ' · <b style="color:#b91c1c">Inactive</b>'}</div></div>
+      </div>
+      <div class="muted">${s.phone ? '📞 ' + esc(s.phone) : ''}${s.phone && s.email ? '<br>' : ''}${s.email ? '✉️ ' + esc(s.email) + ' <span title="Jobs appear in their Google Calendar">📅</span>' : ''}${!s.phone && !s.email ? 'No contact details' : ''}</div>
+      <div class="stats">
+        <div class="stat"><b>${s.todayJobs}</b>Today</div>
+        <div class="stat"><b>${s.upcoming}</b>Upcoming</div>
+        <div class="stat"><b>${s.completed30}</b>Done (30d)</div>
+      </div>
+      <div class="muted">${s.next ? 'Next: <b style="color:var(--ink)">' + esc(fmtShortDay(s.next.date)) + ' ' + esc(s.next.start) + '</b> — ' + esc(s.next.name) + (s.next.suburb ? ', ' + esc(s.next.suburb) : '') : 'No upcoming jobs'}</div>
+      <div class="acts">
+        <button class="btn sm" data-edit="${i}">Edit</button>
+        <button class="btn sm" data-cal="${i}">View day</button>
+        ${s.phone ? `<a class="btn sm wa" href="https://wa.me/${waNum(s.phone)}" target="_blank" rel="noopener">💬</a>` : ''}
+      </div>
+    </div>`).join('');
+  $('sList').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => showStaffForm(list[+b.dataset.edit]));
+  $('sList').querySelectorAll('[data-cal]').forEach(b => b.onclick = () => {
+    const s = list[+b.dataset.cal];
+    S.view = 'day'; S.date = s.next ? s.next.date : todayLive(); syncSeg(); setTab('calendar'); load();
+  });
+}
+
+function showStaffForm(s) {
+  const isNew = !s;
+  s = s || { name: '', role: 'Cleaner', colour: PALETTE[(S.staffAll || []).length % PALETTE.length], phone: '', email: '', active: true };
+  $('dTitle').textContent = isNew ? 'Add staff member' : 'Edit ' + s.name;
+  $('dBody').innerHTML = '<div class="fg">' +
+    field('Name', inp('sfName', s.name), true) +
+    field('Role', inp('sfRole', s.role, 'text', 'list="roleList"') + '<datalist id="roleList"><option>Cleaner</option><option>Driver</option><option>Supervisor</option><option>Caregiver</option><option>Gardener</option></datalist>') +
+    field('Calendar colour', inp('sfColour', s.colour, 'color') + '<div class="swatches">' + PALETTE.map(c => `<button type="button" data-c="${c}" style="background:${c}"></button>`).join('') + '</div>') +
+    field('Phone / WhatsApp', inp('sfPhone', s.phone, 'tel')) +
+    field('Email (Gmail)', inp('sfEmail', s.email, 'email', 'placeholder="Jobs show in their Google Calendar"')) +
+    field('Status', `<label class="chk" style="height:38px"><input type="checkbox" id="sfActive" ${s.active ? 'checked' : ''}> Active — shows as a calendar column</label>`, true) +
+    '</div>' +
+    (isNew ? '' : '<p class="info" style="margin-top:14px">Renaming updates all of their bookings and calendar events automatically.</p>');
+  $('dFoot').innerHTML = '<div class="spacer"></div><button class="btn" id="dCancel">Close</button><button class="btn dark" id="sfSave">' + (isNew ? 'Add staff' : 'Save') + '</button>';
+  $('dCancel').onclick = closeDrawer;
+  $('dBody').querySelectorAll('.swatches button').forEach(b => b.onclick = () => { $('sfColour').value = b.dataset.c; });
+  $('sfSave').onclick = async () => {
+    const data = {
+      name: $('sfName').value.trim(), role: $('sfRole').value.trim(), colour: $('sfColour').value,
+      phone: $('sfPhone').value.trim(), email: $('sfEmail').value.trim(), active: $('sfActive').checked,
+    };
+    if (!data.name) return toast('Name is required');
+    $('sfSave').disabled = true;
+    try {
+      S.staffAll = await api('adminSaveStaff', data, isNew ? '' : s.name);
+      closeDrawer(); renderStaff(); load(true);
+      toast(isNew ? data.name + ' added' : 'Saved');
+    } catch (e) { toast('Error: ' + e.message); }
+    finally { if ($('sfSave')) $('sfSave').disabled = false; }
+  };
+  openDrawer(false);
+}
+
+/* =====================================================================
+ *  NOTIFICATIONS
+ * ===================================================================== */
+const NT = {
+  new: ['🆕', '#ffedd5'], created: ['➕', '#e0f2fe'], confirmed: ['✅', '#dcfce7'], rescheduled: ['🔁', '#ede9fe'],
+  cancelled: ['✖️', '#fee2e2'], completed: ['✔️', '#e0e7ff'], assigned: ['👤', '#e0f2fe'], reminder: ['⏰', '#fef9c3'],
+  staff: ['👥', '#f1f5f9'], quote: ['🧾', '#fef3c7'], updated: ['✏️', '#f1f5f9'], login: ['🔑', '#f1f5f9'],
+};
+
+async function loadNotifs() {
+  $('nList').innerHTML = '<p class="muted">Loading…</p>';
+  try {
+    const r = await api('adminGetNotifications');
+    S.notifs = r.items;
+    renderNotifs();
+    if (r.unread) { await api('adminMarkSeen'); }
+    setUnread(0);
+  } catch (e) { $('nList').innerHTML = ''; toast('Could not load notifications: ' + e.message); }
+}
+
+function renderNotifs() {
+  const items = S.notifs || [];
+  if (!items.length) { $('nList').innerHTML = '<div class="empty-note ngroup">No activity yet. New website bookings, confirmations, reminders and quotes will appear here.</div>'; return; }
+  const today = todayLive(), yest = addDays(today, -1);
+  const groups = {};
+  items.forEach(n => {
+    const d = ymd(new Date(n.time));
+    const label = d === today ? 'Today' : d === yest ? 'Yesterday' : fmtDay(d);
+    (groups[label] = groups[label] || []).push(n);
+  });
+  $('nList').innerHTML = Object.keys(groups).map(g => `<div class="ngroup"><h3>${esc(g)}</h3>` +
+    groups[g].map(n => {
+      const [ic, bg] = NT[n.type] || ['•', '#f1f5f9'];
+      return `<div class="nitem ${n.unread ? 'unread' : ''}" data-id="${esc(n.id)}">
+        <div class="nicon" style="background:${bg}">${ic}</div>
+        <div><div class="msg">${esc(n.message)}</div><div class="when">${esc(timeAgo(n.time))}${n.id ? ' · ' + esc(n.id) : ''}</div></div>
+      </div>`;
+    }).join('') + '</div>').join('');
+  $('nList').querySelectorAll('.nitem').forEach(el => el.onclick = () => {
+    const id = el.dataset.id;
+    if (!id) return;
+    if (/^Q-/.test(id)) { setTab('quotes'); return; }
+    openBookingById(id);
+  });
+}
+
+async function ping() {
+  if (!BOOT.key) return;
+  try {
+    const r = await api('adminPing');
+    S.pending.length = S.pending.length; // keep list; count shown from ping
+    $('pendCount').textContent = r.pending;
+    const before = S.lastNotifTime;
+    handleNotif(r.notif);
+    if (r.notif.latest && before && r.notif.latest.time > before) {
+      if (S.tab === 'calendar' && !drawerOpen()) load(true);
+      if (S.tab === 'notifs') loadNotifs();
+      S.clients = null; if (S.tab === 'quotes' && /quote/i.test(r.notif.latest.type)) loadQuotes(true);
+    }
+  } catch (e) { /* offline — try again next tick */ }
+}
+
+/* =====================================================================
+ *  WIRING
+ * ===================================================================== */
+function syncSeg() { $('viewSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.v === S.view)); }
+function go(n) { S.date = addDays(S.date, S.view === 'day' ? n : 7 * n); load(); }
+
+$('navSheet').href = BOOT.sheetUrl;
+$('navSite').href = BOOT.quote.website;
+$('btnAddUser').onclick = () => showUserForm(null);
+document.querySelectorAll('[data-tab]').forEach(el => el.onclick = () => setTab(el.dataset.tab));
+$('btnToday').onclick = () => { S.date = todayLive(); S.scrolled = false; load(); };
+$('prev').onclick = () => go(-1);
+$('next').onclick = () => go(1);
+$('datePick').onchange = e => { if (e.target.value) { S.date = e.target.value; load(); } };
+$('fService').onchange = e => { S.service = e.target.value; render(); };
+$('showCancelled').onchange = e => { S.showCancelled = e.target.checked; render(); };
+$('btnRefresh').onclick = () => load();
+$('btnAdd').onclick = () => openNew();
+$('btnPending').onclick = showPending;
+$('viewSeg').querySelectorAll('button').forEach(x => x.onclick = () => { S.view = x.dataset.v; syncSeg(); load(); });
+$('btnNewQuote').onclick = () => showQuote(null);
+$('qSearch').oninput = renderQuotes;
+$('qStatus').onchange = renderQuotes;
+$('cSearch').oninput = renderClients;
+$('btnAddStaff').onclick = () => showStaffForm(null);
+$('showInactive').onchange = renderStaff;
+$('btnNotifRefresh').onclick = loadNotifs;
+$('fab').onclick = () => {
+  if (S.tab === 'quotes') { if (!S.prices.length) loadQuotes().then(() => showQuote(null)); else showQuote(null); }
+  else if (S.tab === 'staff') showStaffForm(null);
+  else openNew();
+};
+$('dClose').onclick = closeDrawer;
+$('scrim').onclick = closeDrawer;
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDrawer();
+  if (S.tab !== 'calendar' || drawerOpen() || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowLeft') go(-1);
+  if (e.key === 'ArrowRight') go(1);
+  if (e.key === 't') $('btnToday').click();
+});
+window.addEventListener('resize', () => { clearTimeout(window._rz); window._rz = setTimeout(() => { if (S.tab === 'calendar') render(); }, 150); });
+
+setInterval(ping, 60000);                                                           // new-activity check every minute
+setInterval(() => { if (BOOT.key && S.tab === 'calendar' && !drawerOpen() && !S.drag) load(true); }, 180000);
+
+/* =====================================================================
+ *  SIGN IN / OUT
+ * ===================================================================== */
+function showLogin(msg) {
+  closeDrawer();
+  $('login').hidden = false;
+  $('lgErr').textContent = msg || '';
+  setTimeout(() => $('lgEmail').focus(), 50);
+}
+
+let appStarted = false;
+function startApp() {
+  $('login').hidden = true;
+  if (S.me) document.querySelectorAll('.js-me').forEach(el => el.textContent = 'Sign out');
+  if (appStarted) { load(); return; }
+  appStarted = true;
+  load().then(() => { if (BOOT.tab !== 'calendar') setTab(BOOT.tab); });
+}
+
+$('loginForm').onsubmit = async e => {
+  e.preventDefault();
+  $('lgBtn').disabled = true; $('lgErr').textContent = '';
+  try {
+    const r = await raw('authLogin', $('lgEmail').value, $('lgPw').value);
+    BOOT.key = r.token; S.me = r; lsSet(TOKEN_KEY, r.token);
+    $('lgPw').value = '';
+    startApp();
+    toast('Welcome, ' + r.name);
+  } catch (err) {
+    $('lgErr').textContent = err.message;
+  } finally {
+    $('lgBtn').disabled = false;
+  }
+};
+
+document.querySelectorAll('.js-logout').forEach(b => b.onclick = async () => {
+  if (!confirm('Sign out of Starhome Admin?')) return;
+  try { await raw('authLogout', BOOT.key); } catch (_) {}
+  lsDel(TOKEN_KEY); BOOT.key = ''; S.me = null;
+  showLogin('You have signed out.');
+});
+
+(async function bootApp() {
+  if (BOOT.key) return startApp();                       // master link
+  const saved = lsGet(TOKEN_KEY);
+  if (saved) {
+    try {
+      const me = await raw('authCheck', saved);
+      if (me) { BOOT.key = saved; S.me = me; return startApp(); }
+    } catch (_) {}
+    lsDel(TOKEN_KEY);
+  }
+  showLogin();
+})();
+</script>
+</body>
+</html>

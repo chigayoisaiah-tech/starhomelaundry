@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A4D68; --teal:#088395; --sky:#05BFDB; --orange:#E07B39; --cream:#FFF8F0;
+  --ink:#10283a; --muted:#64748b; --line:#e6ebf0; --bg:#f5f8fa; --green:#25D366;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0;font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15px}
+button,input,select,textarea{font:inherit}
+a{color:var(--teal)}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 40px}
+.muted{color:var(--muted);font-size:13px}
+h2{font-family:Fraunces,Georgia,serif;font-size:20px;margin:26px 0 10px;color:var(--navy)}
+
+/* header */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--teal) 100%);color:#fff;padding:22px 0 64px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(5,191,219,.35),transparent 70%)}
+.hero .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
+.brand{font-family:Fraunces,Georgia,serif;font-weight:900;font-size:22px;color:#fff;text-decoration:none}
+.brand span{color:#F4A862}
+.hero h1{font-family:Fraunces,Georgia,serif;font-size:28px;margin:22px 0 4px;position:relative;z-index:1}
+.hero p{margin:0;opacity:.85;position:relative;z-index:1}
+.ghost{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:50px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:13px}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:-44px;position:relative;z-index:2}
+.tile{background:#fff;border:0;border-radius:18px;padding:18px 16px;text-align:left;cursor:pointer;box-shadow:0 10px 30px rgba(10,77,104,.12);transition:transform .15s}
+.tile:hover{transform:translateY(-2px)}
+.tile .ic{font-size:26px}
+.tile b{display:block;margin-top:6px;font-size:16px;color:var(--navy)}
+.tile span{font-size:12px;color:var(--muted)}
+
+/* cards */
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.card .row1{display:flex;gap:12px;align-items:flex-start}
+.badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex:none}
+.badge.Laundry{background:#d1fae5}.badge.Cleaning{background:#e0f2fe}
+.card h3{margin:0;font-size:16px;color:var(--navy)}
+.card .when{font-weight:600;margin-top:2px}
+.card .meta{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
+.card .acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:auto;white-space:nowrap}
+.st-Pending{background:#ffedd5;color:#9a3412}
+.st-Confirmed{background:#dcfce7;color:#166534}
+.st-Completed{background:#e0e7ff;color:#3730a3}
+.st-Cancelled{background:#fee2e2;color:#991b1b}
+.st-Sent,.st-Accepted{background:#fef3c7;color:#92400e}
+.st-Booked{background:#e0e7ff;color:#3730a3}
+.past{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:8px}
+.past .grow{flex:1;min-width:0}
+.past .grow b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted)}
+
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:50px;padding:9px 16px;font-weight:600;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn:hover{background:#f6f9fb}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--teal)}
+.btn.orange{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn.wa{background:var(--green);border-color:var(--green);color:#fff}
+.btn.block{width:100%;justify-content:center;padding:13px;font-size:16px}
+.btn.danger{color:#b91c1c}
+.btn[disabled]{opacity:.6;cursor:wait}
+
+/* forms */
+.f{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.f label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.f input,.f select,.f textarea{padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);width:100%}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--sky)}
+.f textarea{min-height:70px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;background:#eef3f6;border-radius:50px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:transparent;border-radius:50px;padding:9px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+
+/* calculator */
+.calc{background:var(--cream);border:1px solid #f5dfc8;border-radius:14px;padding:12px;margin-bottom:12px}
+.calc select{width:100%;padding:10px;border:1.5px solid #f0d7bd;border-radius:10px;background:#fff;margin-bottom:8px}
+.cline{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed #f0d7bd}
+.cline:last-of-type{border-bottom:0}
+.cline .nm{flex:1;min-width:0;font-size:14px}
+.cline .nm small{display:block;color:var(--muted)}
+.step{display:flex;align-items:center;border:1.5px solid #f0d7bd;border-radius:50px;background:#fff}
+.step button{border:0;background:none;width:32px;height:32px;font-size:18px;cursor:pointer;color:var(--navy)}
+.step input{width:44px;border:0;text-align:center;font-weight:700;padding:0}
+.est{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+.est.big{font-size:18px;font-weight:700;color:var(--navy);border-top:1px solid #f0d7bd;margin-top:6px;padding-top:8px}
+
+/* bottom sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,40,58,.45);opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:92vh;background:#fff;border-radius:22px 22px 0 0;z-index:21;transform:translateY(105%);transition:transform .25s ease;display:flex;flex-direction:column;max-width:640px;margin:0 auto}
+.sheet.open{transform:none}
+.sheet .sh{padding:16px 18px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.sheet .sh h3{margin:0;flex:1;font-family:Fraunces,Georgia,serif;color:var(--navy);font-size:20px}
+.sheet .sb{padding:16px 18px;overflow:auto}
+.sheet .sf{padding:12px 18px 18px;border-top:1px solid var(--line)}
+.x{border:0;background:#f1f5f9;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
+.note{background:#eef9fb;border:1px solid #cdeff4;color:#0b5566;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.err{color:#b91c1c;font-size:14px;min-height:20px;margin:4px 0}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,var(--navy) 0%,var(--teal) 100%)}
+.login .box{width:100%;max-width:400px;background:#fff;border-radius:22px;padding:28px 24px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.login .brand{color:var(--navy);font-size:26px}
+.login h1{font-family:Fraunces,Georgia,serif;color:var(--navy);margin:14px 0 4px;font-size:24px}
+.login p{margin:0 0 18px;color:var(--muted)}
+.login .pin{letter-spacing:8px;font-size:22px;text-align:center;font-weight:700}
+.login .help{margin-top:16px;text-align:center;font-size:14px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;transition:.25s;z-index:30;font-weight:600;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.foot{text-align:center;margin-top:30px;font-size:13px;color:var(--muted)}
+.foot .btns{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.loading{padding:40px;text-align:center;color:var(--muted)}
+@media (max-width:420px){ .two{grid-template-columns:1fr} .hero h1{font-size:24px} }
+</style>
+</head>
+<body>
+
+<!-- ============ SIGN IN ============ -->
+<div class="login" id="loginView" hidden>
+  <form class="box" id="loginForm">
+    <div class="brand">Star<span style="color:var(--orange)">home</span></div>
+    <h1>My Starhome</h1>
+    <p>Book, reschedule and track your laundry &amp; cleaning orders.</p>
+    <div class="f"><label for="lgPhone">Phone number</label><input id="lgPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="082 123 4567" required></div>
+    <div class="f"><label for="lgPin">PIN</label><input id="lgPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="current-password" placeholder="••••••" required></div>
+    <div class="err" id="lgErr"></div>
+    <button class="btn primary block" id="lgBtn" type="submit">Sign in</button>
+    <div class="help">No login yet, or forgot your PIN?<br><a id="lgHelp" target="_blank" rel="noopener">💬 WhatsApp us for access</a></div>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="appView" hidden>
+  <div class="hero">
+    <div class="wrap">
+      <div class="bar"><a class="brand" id="siteLink" target="_blank" rel="noopener">Star<span>home</span></a><button class="ghost" id="btnOut">Sign out</button></div>
+      <h1 id="hello">Hi 👋</h1>
+      <p>Your bookings, quotes and orders in one place.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="tiles">
+      <button class="tile" data-book="Laundry"><div class="ic">🧺</div><b>Book a laundry pickup</b><span>Free pickup &amp; delivery</span></button>
+      <button class="tile" data-book="Cleaning"><div class="ic">🧹</div><b>Book a clean</b><span>Vetted, insured cleaners</span></button>
+    </div>
+    <div id="content"><div class="loading">Loading your orders…</div></div>
+    <div class="foot">
+      Need help with an order?
+      <div class="btns"><a class="btn wa" id="ftWa" target="_blank" rel="noopener">💬 WhatsApp</a><a class="btn" id="ftCall">📞 Call</a><button class="btn" id="btnPin">🔒 Change PIN</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sh"><h3 id="shTitle"></h3><button class="x" id="shClose" aria-label="Close">✕</button></div>
+  <div class="sb" id="shBody"></div>
+  <div class="sf" id="shFoot"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const BOOT = <?!= bootstrap ?>;
+const TOKEN_KEY = 'starhome_client_token';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const lsGet = k => { try { return localStorage.getItem(k) || ''; } catch (_) { return ''; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (_) {} };
+const lsDel = k => { try { localStorage.removeItem(k); } catch (_) {} };
+const waNum = p => { let d = String(p || '').replace(/\D/g, ''); if (d[0] === '0') d = '27' + d.slice(1); return d; };
+const fmtR = n => { const v = Math.round((Number(n) || 0) * 100) / 100; const [a, b] = v.toFixed(v % 1 ? 2 : 0).split('.'); return 'R' + a.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (b ? '.' + b : ''); };
+const parseYmd = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, m - 1, d); };
+const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); return ymd(d); };
+const longDay = s => parseYmd(s).toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long' });
+const shortDay = s => parseYmd(s).toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' });
+const slotLabel = s => s.replace('-', ' – ');
+
+let TOKEN = '';
+let D = null; // portal data
+
+function raw(fn, ...args) {
+  return new Promise((res, rej) =>
+    google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(e instanceof Error ? e : new Error(String(e))))[fn](...args));
+}
+function api(fn, ...args) {
+  return raw(fn, TOKEN, ...args).catch(e => {
+    if (/sign in again|no longer active/i.test(e.message)) { lsDel(TOKEN_KEY); TOKEN = ''; showLogin(e.message); }
+    throw e;
+  });
+}
+
+function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3500); }
+function openSheet() { $('sheet').classList.add('open'); $('scrim').classList.add('open'); $('sheet').setAttribute('aria-hidden', 'false'); }
+function closeSheet() { $('sheet').classList.remove('open'); $('scrim').classList.remove('open'); $('sheet').setAttribute('aria-hidden', 'true'); }
+
+/* ---------------- sign in ---------------- */
+function showLogin(msg) {
+  closeSheet();
+  $('appView').hidden = true; $('loginView').hidden = false;
+  $('lgErr').textContent = msg || '';
+}
+
+$('loginForm').onsubmit = async e => {
+  e.preventDefault();
+  $('lgBtn').disabled = true; $('lgErr').textContent = '';
+  try {
+    const r = await raw('portalLogin', $('lgPhone').value, $('lgPin').value);
+    TOKEN = r.token; lsSet(TOKEN_KEY, r.token); $('lgPin').value = '';
+    startApp();
+  } catch (err) { $('lgErr').textContent = err.message; }
+  finally { $('lgBtn').disabled = false; }
+};
+
+$('btnOut').onclick = async () => {
+  if (!confirm('Sign out?')) return;
+  try { await raw('portalLogout', TOKEN); } catch (_) {}
+  lsDel(TOKEN_KEY); TOKEN = '';
+  showLogin('You have signed out.');
+};
+
+/* ---------------- main ---------------- */
+async function startApp() {
+  $('loginView').hidden = true; $('appView').hidden = false;
+  await refresh();
+}
+
+async function refresh() {
+  try {
+    D = await api('portalGetData');
+    render();
+  } catch (e) {
+    $('content').innerHTML = `<div class="empty">Couldn't load your orders: ${esc(e.message)}</div>`;
+  }
+}
+
+function render() {
+  $('hello').textContent = 'Hi ' + (D.profile.name || '').split(' ')[0] + ' 👋';
+  const today = ymd(new Date());
+  const upcoming = D.bookings.filter(b => b.date >= today && b.status !== 'Cancelled' && b.status !== 'Completed')
+    .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+  const past = D.bookings.filter(b => !upcoming.includes(b));
+  const quotes = D.quotes.filter(q => q.status !== 'Booked');
+
+  let h = '';
+  if (quotes.length) {
+    h += '<h2>Quotes for you</h2>' + quotes.map(q => `
+      <div class="card">
+        <div class="row1"><div class="badge ${esc(q.service)}">🧾</div>
+          <div style="flex:1"><h3>${q.service === 'Laundry' ? 'Laundry & dry cleaning' : 'Cleaning'} quote</h3>
+            <div class="when">${fmtR(q.total)}</div>
+            <div class="meta">${esc(q.id)} · valid until ${esc(shortDay(q.validUntil || today))}</div></div>
+          <span class="pill st-${esc(q.status)}">${q.status === 'Sent' ? 'New' : esc(q.status)}</span></div>
+        <div class="acts"><button class="btn" data-qview="${esc(q.id)}">View</button><button class="btn orange" data-qbook="${esc(q.id)}">Accept &amp; book</button></div>
+      </div>`).join('');
+  }
+
+  h += '<h2>Upcoming</h2>';
+  h += upcoming.length ? upcoming.map(b => `
+    <div class="card">
+      <div class="row1"><div class="badge ${esc(b.service)}">${b.service === 'Laundry' ? '🧺' : '🧹'}</div>
+        <div style="flex:1;min-width:0"><h3>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home cleaning'}</h3>
+          <div class="when">${esc(longDay(b.date))}</div>
+          <div class="meta">${b.exactTime ? esc(b.start) + ' – ' + esc(b.end) : esc(b.timeWindow)}${b.address ? '<br>📍 ' + esc([b.address, b.suburb].filter(Boolean).join(', ')) : ''}
+            ${b.estimate ? '<br>💰 ' + esc(b.estimate) : ''}${b.staff && b.status === 'Confirmed' ? '<br>👤 ' + (b.service === 'Laundry' ? 'Driver' : 'Cleaner') + ': ' + esc(b.staff) : ''}</div></div>
+        <span class="pill st-${esc(b.status)}">${b.status === 'Pending' ? 'Awaiting confirmation' : esc(b.status)}</span></div>
+      ${b.canChange
+        ? `<div class="acts"><button class="btn" data-move="${esc(b.id)}">Reschedule</button><button class="btn danger" data-cancel="${esc(b.id)}">Cancel</button></div>`
+        : `<div class="meta" style="margin-top:10px">Need a change this close to the time? <a href="https://wa.me/${waNum(BOOT.whatsapp)}?text=${encodeURIComponent('Hi Starhome, about my booking ' + b.id + ':')}" target="_blank" rel="noopener">WhatsApp us</a>.</div>`}
+    </div>`).join('') : '<div class="empty">No upcoming bookings. Tap a button above to book.</div>';
+
+  if (past.length) {
+    h += '<h2>Past orders</h2>' + past.slice(0, 15).map(b => `
+      <div class="past"><div class="badge ${esc(b.service)}" style="width:38px;height:38px;font-size:18px">${b.service === 'Laundry' ? '🧺' : '🧹'}</div>
+        <div class="grow"><b>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home cleaning'} · ${esc(shortDay(b.date))}</b>
+          <span class="muted">${esc(b.status)}${b.estimate ? ' · ' + esc(b.estimate) : ''}</span></div>
+        ${b.status !== 'Cancelled' ? `<button class="btn" data-again="${esc(b.id)}">Book again</button>` : ''}</div>`).join('');
+  }
+  $('content').innerHTML = h;
+
+  $('content').querySelectorAll('[data-move]').forEach(x => x.onclick = () => showMove(D.bookings.find(b => b.id === x.dataset.move)));
+  $('content').querySelectorAll('[data-cancel]').forEach(x => x.onclick = () => cancelBooking(D.bookings.find(b => b.id === x.dataset.cancel)));
+  $('content').querySelectorAll('[data-again]').forEach(x => x.onclick = () => { const b = D.bookings.find(y => y.id === x.dataset.again); showBook(b.service, b); });
+  $('content').querySelectorAll('[data-qview]').forEach(x => x.onclick = () => showQuote(D.quotes.find(q => q.id === x.dataset.qview), false));
+  $('content').querySelectorAll('[data-qbook]').forEach(x => x.onclick = () => showQuote(D.quotes.find(q => q.id === x.dataset.qbook), true));
+}
+
+/* ---------------- shared form bits ---------------- */
+function timeField(service, value) {
+  const opts = service === 'Laundry'
+    ? D.slots.map(s => `<option value="${esc(s)}" ${s === value ? 'selected' : ''}>${esc(slotLabel(s))}</option>`)
+    : D.windows.map(w => `<option value="${esc(w)}" ${w === value ? 'selected' : ''}>${esc(w)}</option>`);
+  return `<div class="f"><label>${service === 'Laundry' ? 'Pickup time' : 'Time'}</label><select id="bTime">${opts.join('')}</select></div>`;
+}
+const dateField = (v) => `<div class="f"><label>Date</label><input id="bDate" type="date" min="${tomorrow()}" value="${esc(v || tomorrow())}"></div>`;
+const addressFields = (a, s) => `<div class="f"><label>Address</label><input id="bAddr" value="${esc(a || '')}" placeholder="Street address" autocomplete="street-address"></div>
+  <div class="f"><label>Suburb</label><input id="bSub" value="${esc(s || '')}" placeholder="e.g. Sandton"></div>`;
+
+/* ---------------- book (with calculator) ---------------- */
+let BK = null;
+
+function compute() {
+  const r2 = n => Math.round(n * 100) / 100;
+  const lines = BK.lines.filter(l => l.qty > 0).map(l => Object.assign({}, l, { total: r2(l.qty * l.price) }));
+  const subtotal = r2(lines.reduce((s, l) => s + l.total, 0));
+  const laundry = BK.service === 'Laundry';
+  const topUp = laundry && subtotal > 0 ? Math.max(0, r2(D.rules.minCharge - subtotal)) : 0;
+  const base = subtotal + topUp;
+  const express = laundry && BK.express ? r2(base * D.rules.express) : 0;
+  return { lines, subtotal, topUp, express, total: r2(base + express) };
+}
+
+function showBook(service, from) {
+  BK = { service, lines: [], express: false };
+  if (from && from.details) {
+    // "Book again": re-use the items from a previous order where they match today's price list
+    from.details.split('|')[0].split(';').forEach(part => {
+      const m = part.trim().match(/^([\d.]+)\s+(\S+)\s+(.+)$/);
+      if (!m) return;
+      const p = D.prices.find(x => x.service === service && x.item === m[3].replace(' · EXPRESS same-day', '').trim());
+      if (p) BK.lines.push({ item: p.item, unit: p.unit, price: p.price, qty: Number(m[1]) });
+    });
+  }
+  $('shTitle').textContent = service === 'Laundry' ? 'Book a laundry pickup' : 'Book a clean';
+  renderBook();
+  openSheet();
+}
+
+function renderBook() {
+  const svc = BK.service;
+  const cats = {};
+  D.prices.filter(p => p.service === svc).forEach(p => (cats[p.category] = cats[p.category] || []).push(p));
+  $('shBody').innerHTML =
+    `<div class="seg" id="bSvc"><button data-s="Laundry" class="${svc === 'Laundry' ? 'on' : ''}">🧺 Laundry</button><button data-s="Cleaning" class="${svc === 'Cleaning' ? 'on' : ''}">🧹 Cleaning</button></div>` +
+    '<div class="two">' + dateField() + timeField(svc) + '</div>' +
+    addressFields(D.profile.address, D.profile.suburb) +
+    `<div class="calc"><div class="f" style="margin:0 0 6px"><label>Price calculator (optional)</label></div>
+      <select id="bPick"><option value="">+ Add ${svc === 'Laundry' ? 'items or kg' : 'rooms or services'}…</option>` +
+      Object.keys(cats).map(c => `<optgroup label="${esc(c)}">` + cats[c].map(p =>
+        `<option value="${esc(p.item)}">${esc(p.item)}${p.price ? ' — ' + fmtR(p.price) + '/' + esc(p.unit) : ''}</option>`).join('') + '</optgroup>').join('') +
+      `</select><div id="bLines"></div>` +
+      (svc === 'Laundry' ? `<label class="chk" style="margin:8px 0"><input type="checkbox" id="bExpress" ${BK.express ? 'checked' : ''}> Express same-day (+${Math.round(D.rules.express * 100)}%)</label>` : '') +
+      `<div id="bEst"></div></div>` +
+    `<div class="f"><label>Notes (optional)</label><textarea id="bNotes" placeholder="${svc === 'Laundry' ? 'Gate code, special care, delivery preferences…' : 'Pets, access, focus areas…'}"></textarea></div>` +
+    `<div class="note">We'll confirm your booking by WhatsApp or email.${svc === 'Laundry' ? ' Laundry is weighed at collection, so the final price may differ slightly.' : ''}</div>` +
+    '<div class="err" id="bErr"></div>';
+  $('shFoot').innerHTML = '<button class="btn primary block" id="bSubmit">Request booking</button>';
+
+  $('bSvc').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.s !== BK.service) { BK = { service: b.dataset.s, lines: [], express: false }; $('shTitle').textContent = BK.service === 'Laundry' ? 'Book a laundry pickup' : 'Book a clean'; renderBook(); } });
+  $('bPick').onchange = e => {
+    const p = D.prices.find(x => x.service === BK.service && x.item === e.target.value);
+    if (!p) return;
+    const ex = BK.lines.find(l => l.item === p.item);
+    if (ex) ex.qty += 1; else BK.lines.push({ item: p.item, unit: p.unit, price: p.price, qty: p.unit === 'kg' ? 5 : 1 });
+    e.target.value = '';
+    renderLines();
+  };
+  if ($('bExpress')) $('bExpress').onchange = e => { BK.express = e.target.checked; renderEst(); };
+  $('bSubmit').onclick = submitBooking;
+  renderLines();
+}
+
+function renderLines() {
+  $('bLines').innerHTML = BK.lines.map((l, i) => `
+    <div class="cline"><div class="nm">${esc(l.item)}<small>${l.price ? fmtR(l.price) + ' per ' + esc(l.unit) : 'priced on confirmation'}</small></div>
+      <div class="step"><button data-d="${i}" aria-label="Less">−</button><input data-q="${i}" type="number" min="0" step="${l.unit === 'kg' ? '0.5' : '1'}" value="${l.qty}"><button data-u="${i}" aria-label="More">+</button></div></div>`).join('');
+  const stepBy = l => l.unit === 'kg' ? 1 : 1;
+  $('bLines').querySelectorAll('[data-d]').forEach(b => b.onclick = () => { const l = BK.lines[+b.dataset.d]; l.qty = Math.max(0, l.qty - stepBy(l)); if (!l.qty) BK.lines.splice(+b.dataset.d, 1); renderLines(); });
+  $('bLines').querySelectorAll('[data-u]').forEach(b => b.onclick = () => { const l = BK.lines[+b.dataset.u]; l.qty += stepBy(l); renderLines(); });
+  $('bLines').querySelectorAll('[data-q]').forEach(inp => inp.oninput = () => { BK.lines[+inp.dataset.q].qty = Math.max(0, Number(inp.value) || 0); renderEst(); });
+  renderEst();
+}
+
+function renderEst() {
+  const c = compute();
+  if (!c.lines.length) { $('bEst').innerHTML = '<div class="muted" style="margin-top:4px">Add items to see an estimate — or skip this and we\'ll quote at confirmation.</div>'; return; }
+  const row = (l, v) => v ? `<div class="est"><span>${l}</span><span>${fmtR(v)}</span></div>` : '';
+  $('bEst').innerHTML = row('Items', c.subtotal) + row('Minimum charge top-up (' + fmtR(D.rules.minCharge) + ' min)', c.topUp) +
+    row('Express same-day', c.express) +
+    `<div class="est big"><span>Estimated total</span><span>${c.total ? fmtR(c.total) : 'On confirmation'}</span></div>`;
+}
+
+async function submitBooking() {
+  const d = {
+    service: BK.service, date: $('bDate').value, time: $('bTime').value,
+    address: $('bAddr').value.trim(), suburb: $('bSub').value.trim(), notes: $('bNotes').value.trim(),
+    lines: BK.lines.filter(l => l.qty > 0), express: BK.express,
+  };
+  if (!d.address) { $('bErr').textContent = 'Please add the address.'; return; }
+  $('bSubmit').disabled = true; $('bErr').textContent = '';
+  try {
+    await api('portalCreateBooking', d);
+    closeSheet();
+    toast('Booking requested ✅ We\'ll confirm shortly.');
+    refresh();
+  } catch (e) { $('bErr').textContent = e.message; }
+  finally { if ($('bSubmit')) $('bSubmit').disabled = false; }
+}
+
+/* ---------------- reschedule & cancel ---------------- */
+function showMove(b) {
+  $('shTitle').textContent = 'Reschedule';
+  $('shBody').innerHTML =
+    `<div class="note">${b.service === 'Laundry' ? 'Laundry pickup' : 'Home cleaning'} currently on <b>${esc(longDay(b.date))}</b>, ${b.exactTime ? esc(b.start + '–' + b.end) : esc(b.timeWindow)}. Your new time will be confirmed by our team.</div>` +
+    '<div class="two">' + dateField(b.date > ymd(new Date()) ? b.date : tomorrow()) + timeField(b.service, b.exactTime ? b.start + '-' + b.end : b.timeWindow) + '</div>' +
+    '<div class="f"><label>Note (optional)</label><textarea id="mNote" placeholder="Anything we should know?"></textarea></div><div class="err" id="mErr"></div>';
+  $('shFoot').innerHTML = '<button class="btn primary block" id="mGo">Request new time</button>';
+  $('mGo').onclick = async () => {
+    $('mGo').disabled = true; $('mErr').textContent = '';
+    try { await api('portalReschedule', b.id, $('bDate').value, $('bTime').value, $('mNote').value.trim()); closeSheet(); toast('Reschedule requested — we\'ll confirm shortly.'); refresh(); }
+    catch (e) { $('mErr').textContent = e.message; }
+    finally { if ($('mGo')) $('mGo').disabled = false; }
+  };
+  openSheet();
+}
+
+async function cancelBooking(b) {
+  if (!confirm('Cancel your ' + (b.service === 'Laundry' ? 'laundry pickup' : 'clean') + ' on ' + longDay(b.date) + '?')) return;
+  try { await api('portalCancelBooking', b.id); toast('Booking cancelled'); refresh(); }
+  catch (e) { toast(e.message); }
+}
+
+/* ---------------- quotes ---------------- */
+function quoteTable(q) {
+  const row = (l, v, neg) => v ? `<div class="est"><span>${l}</span><span>${neg ? '− ' : ''}${fmtR(v)}</span></div>` : '';
+  return '<div class="calc">' + q.lines.map(l => `<div class="est"><span>${esc(l.qty)} ${esc(l.unit)} · ${esc(l.item)}</span><span>${fmtR(l.total)}</span></div>`).join('') +
+    row('Minimum charge top-up', q.topUp) + row('Express same-day', q.expressAmt) + row('Discount', q.discount, true) +
+    `<div class="est big"><span>Total</span><span>${fmtR(q.total)}</span></div></div>` +
+    (q.notes ? `<div class="note">${esc(q.notes)}</div>` : '');
+}
+
+function showQuote(q, booking) {
+  $('shTitle').textContent = booking ? 'Accept & book' : 'Quote ' + q.id;
+  $('shBody').innerHTML = quoteTable(q) +
+    (booking ? '<div class="two">' + dateField() + timeField(q.service) + '</div>' + addressFields(D.profile.address, D.profile.suburb) +
+      '<div class="f"><label>Notes (optional)</label><textarea id="qNotes"></textarea></div><div class="err" id="qErr"></div>' : '');
+  $('shFoot').innerHTML = booking
+    ? '<button class="btn orange block" id="qGo">Accept quote &amp; request booking</button>'
+    : `<button class="btn orange block" id="qToBook">Accept &amp; book</button>`;
+  if ($('qToBook')) $('qToBook').onclick = () => showQuote(q, true);
+  if ($('qGo')) $('qGo').onclick = async () => {
+    const d = { date: $('bDate').value, time: $('bTime').value, address: $('bAddr').value.trim(), suburb: $('bSub').value.trim(), notes: $('qNotes').value.trim() };
+    if (!d.address) { $('qErr').textContent = 'Please add the address.'; return; }
+    $('qGo').disabled = true; $('qErr').textContent = '';
+    try { await api('portalAcceptQuote', q.id, d); closeSheet(); toast('Quote accepted ✅ We\'ll confirm your booking shortly.'); refresh(); }
+    catch (e) { $('qErr').textContent = e.message; }
+    finally { if ($('qGo')) $('qGo').disabled = false; }
+  };
+  openSheet();
+}
+
+/* ---------------- change PIN ---------------- */
+$('btnPin').onclick = () => {
+  $('shTitle').textContent = 'Change PIN';
+  $('shBody').innerHTML =
+    '<div class="f"><label>Current PIN</label><input id="p0" type="password" inputmode="numeric" maxlength="6"></div>' +
+    '<div class="f"><label>New PIN (4–6 digits)</label><input id="p1" type="password" inputmode="numeric" maxlength="6"></div>' +
+    '<div class="f"><label>Repeat new PIN</label><input id="p2" type="password" inputmode="numeric" maxlength="6"></div><div class="err" id="pErr"></div>';
+  $('shFoot').innerHTML = '<button class="btn primary block" id="pGo">Save new PIN</button>';
+  $('pGo').onclick = async () => {
+    if ($('p1').value !== $('p2').value) { $('pErr').textContent = 'The new PINs don\'t match.'; return; }
+    $('pGo').disabled = true;
+    try { await api('portalChangePin', $('p0').value, $('p1').value); closeSheet(); toast('PIN changed'); }
+    catch (e) { $('pErr').textContent = e.message; }
+    finally { if ($('pGo')) $('pGo').disabled = false; }
+  };
+  openSheet();
+};
+
+/* ---------------- wiring ---------------- */
+document.querySelectorAll('[data-book]').forEach(b => b.onclick = () => D && showBook(b.dataset.book));
+$('shClose').onclick = closeSheet;
+$('scrim').onclick = closeSheet;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+$('siteLink').href = BOOT.website;
+$('lgHelp').href = 'https://wa.me/' + waNum(BOOT.whatsapp) + '?text=' + encodeURIComponent('Hi Starhome, please set me up with a My Starhome login.');
+$('ftWa').href = 'https://wa.me/' + waNum(BOOT.whatsapp);
+$('ftCall').href = 'tel:' + BOOT.phone.replace(/\s/g, '');
+
+(async function boot() {
+  const saved = lsGet(TOKEN_KEY);
+  if (saved) {
+    try { if (await raw('portalCheck', saved)) { TOKEN = saved; return startApp(); } } catch (_) {}
+    lsDel(TOKEN_KEY);
+  }
+  showLogin();
+})();
+</script>
+</body>
+</html>
