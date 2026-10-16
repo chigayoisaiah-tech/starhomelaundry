@@ -1657,7 +1657,28 @@
 #cleaning h2 { font-size: 1.7rem; }
 #cleaning .cta-band { padding: 3.5rem 1.25rem; }
 }
+        /* My Account (client portal) link */
+        .account-link {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.55rem 1rem; border-radius: 50px; margin-left: 0.5rem;
+            border: 2px solid var(--color-primary, #0A4D68); color: var(--color-primary, #0A4D68);
+            font-weight: 700; font-size: 0.9rem; text-decoration: none; white-space: nowrap;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .account-link:hover { background: var(--color-primary, #0A4D68); color: #fff; }
+        .account-link::after { display: none !important; }
+        /* Icon-only until there's room for the label, so the nav never wraps */
+        @media (max-width: 1499px) {
+            .account-link { width: 42px; height: 42px; padding: 0; justify-content: center; font-size: 1.05rem; flex-shrink: 0; }
+            .account-link .acc-text { display: none; }
+        }
+        @media (max-width: 768px) {
+            .account-link { width: 36px; height: 36px; font-size: 0.95rem; margin-left: 0.25rem; }
+        }
+        .login-links a { color: inherit; opacity: 0.85; }
     </style>
+    <!-- Starhome booking system settings (Web app URL) -->
+    <script src="starhome-config.js"></script>
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
@@ -1685,6 +1706,7 @@
             </ul>
             <a href="#booking" class="cta-button" data-for="laundry">Book Pickup</a>
             <a href="book.html" class="cta-button" data-for="cleaning">Book a Clean</a>
+            <a href="#" class="account-link" data-app-link="portal" title="My Starhome — manage your bookings">👤<span class="acc-text"> My Account</span></a>
         </nav>
     </header>
 
@@ -2077,6 +2099,10 @@
                     </div>
                 </div>
 
+                <!-- Anti-spam honeypot: leave hidden & empty -->
+                <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
+                       style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+
                 <button type="submit" class="submit-btn">Confirm Booking</button>
             </form>
         </div>
@@ -2399,6 +2425,11 @@
             &nbsp;|&nbsp;
             <a href="#cleaning">Home Cleaning</a>
         </p>
+        <p class="login-links" style="margin-top:0.5rem;font-size:0.85rem;">
+            <a href="#" data-app-link="portal">👤 Client login</a>
+            &nbsp;|&nbsp;
+            <a href="#" data-app-link="admin">🔒 Staff login</a>
+        </p>
     </footer>
 
     <script>
@@ -2407,10 +2438,40 @@
         const TEMPLATE_TO_STARHOME = 'template_u75u2n4';
         const TEMPLATE_TO_CUSTOMER = 'template_pup00cd';
 
+        // Starhome booking system (Google Apps Script Web app /exec URL) — set in starhome-config.js
+        const CALENDAR_API_URL     = window.STARHOME_APP_URL || '';
+
+        // Login links (My Account / Client login / Staff login) point at the same Web app
+        document.querySelectorAll('[data-app-link]').forEach(function (a) {
+            if (CALENDAR_API_URL.indexOf('https://script.google.com/') === 0) {
+                a.href = CALENDAR_API_URL + '?page=' + a.dataset.appLink;
+            } else {
+                a.style.display = 'none';   // hidden until the URL is pasted in
+            }
+        });
+
         emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
-        const today = new Date().toISOString().split('T')[0];
+        // Local (SA) date — toISOString() is UTC and can be a day behind after midnight
+        const _now = new Date();
+        const today = _now.getFullYear() + '-' + String(_now.getMonth() + 1).padStart(2, '0') + '-' + String(_now.getDate()).padStart(2, '0');
         document.getElementById('pickup-date').setAttribute('min', today);
+
+        // Sends the booking to the admin calendar. Never throws — the booking flow
+        // (WhatsApp + EmailJS) carries on even if the calendar can't be reached.
+        function sendToCalendar(payload) {
+            if (CALENDAR_API_URL.indexOf('https://script.google.com/') !== 0) {
+                console.warn('[Starhome] CALENDAR_API_URL not set');
+                return Promise.resolve({ ok: false });
+            }
+            return fetch(CALENDAR_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .catch(err => { console.error('[Starhome] Calendar sync failed', err); return { ok: false }; });
+        }
 
         function genRef() {
             const d = new Date();
@@ -2467,6 +2528,8 @@
         document.getElementById('bookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            if (this.elements['website'] && this.elements['website'].value) { this.reset(); return; } // bot
+
             const services = document.querySelectorAll('input[name="services"]:checked');
             if (services.length === 0) {
                 alert('Please select at least one service');
@@ -2476,7 +2539,7 @@
             const formData = new FormData(this);
             const data = {};
             for (let [key, value] of formData.entries()) {
-                if (key !== 'services') data[key] = value;
+                if (key !== 'services' && key !== 'website') data[key] = value;
             }
             const selectedServices = Array.from(services).map(cb =>
                 document.querySelector('label[for="' + cb.id + '"]').textContent.trim()
@@ -2548,6 +2611,24 @@
                 console.error('EmailJS error:', err);
                 emailStatus = 'error';
             }
+
+            const slot = String(data['pickup-time'] || '').split('-');
+            await sendToCalendar({
+                source:     'website',
+                skipEmails: emailStatus === 'ok',      // EmailJS already emailed Starhome + customer
+                ref:        bookingRef,
+                service:    'Laundry',
+                name:       data.name,
+                phone:      data.phone,
+                email:      data.email,
+                address:    data.address,
+                date:       data['pickup-date'],
+                startTime:  slot[0] || '',
+                endTime:    slot[1] || '',
+                details:    'Services: ' + servicesText + ' | Delivery: ' + deliveryLabel +
+                            (data.notes ? ' | Notes: ' + data.notes : ''),
+                estimate:   data['delivery-option'] === 'express' ? 'Express same-day (+50%)' : ''
+            });
 
             setSubmitState(false);
             showBanner(bookingRef, starhomeWAURL, customerWAURL, emailStatus);

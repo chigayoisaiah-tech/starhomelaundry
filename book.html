@@ -31,7 +31,10 @@
     <div class="logo">
       <span class="star-icon">★</span> Starhome Cleaners
     </div>
-    <a href="index.html#cleaning" class="btn-primary">Back to Home</a>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="#" data-app-link="portal" class="btn-primary" style="background:transparent;color:inherit;border:2px solid currentColor">👤 My Account</a>
+      <a href="index.html#cleaning" class="btn-primary">Back to Home</a>
+    </div>
   </div>
 </header>
 
@@ -54,9 +57,6 @@
   </div>
 
 </main>
-
-<script src="book.js"></script>
-
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -103,11 +103,23 @@
 
   <div class="footer-bottom">
     © 2026 Starhome Cleaners. All rights reserved.
+    <div style="margin-top:6px;font-size:0.85em">
+      <a href="#" data-app-link="portal" style="color:inherit">Client login</a> &nbsp;|&nbsp;
+      <a href="#" data-app-link="admin" style="color:inherit">Staff login</a>
+    </div>
   </div>
 </footer>
 
 <!-- BOOKING LOGIC -->
-<script src="book.js">
+<script src="starhome-config.js"></script>
+<script src="book.js"></script>
+<script>
+  // My Account / login links → Starhome booking system (URL in starhome-config.js)
+  document.querySelectorAll('[data-app-link]').forEach(function (a) {
+    var url = window.STARHOME_APP_URL || '';
+    if (url.indexOf('https://script.google.com/') === 0) a.href = url + '?page=' + a.dataset.appLink;
+    else a.style.display = 'none';
+  });
 </script>
 
 <script
