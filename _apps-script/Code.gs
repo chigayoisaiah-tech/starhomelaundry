@@ -352,6 +352,7 @@ function doPost(e) {
     const d = parseRequest_(e);
 
     if (d.action === 'login') return json_(siteLogin_(d.id, d.secret));  // website "Sign in" box
+    if (d.action === 'signup') return json_(d.website ? { ok: false, error: 'Could not sign up' } : siteSignup_(d));  // website "Sign up"
 
     if (d.website) return json_({ ok: true }); // honeypot: bots fill hidden "website" field
 
@@ -1018,9 +1019,55 @@ function siteLogin_(id, secret) {
     let page, r;
     if (id.indexOf('@') > 0) { r = authLogin(id, secret); page = 'admin'; }
     else { r = portalLogin(id, secret); page = 'portal'; }
-    const code = newToken_();
-    CacheService.getScriptCache().put('SSO_' + code, JSON.stringify({ page: page, token: r.token }), 120);
-    return { ok: true, page: page, code: code, name: r.name };
+    return { ok: true, page: page, code: ssoCode_(page, r.token), name: r.name };
+  } catch (err) {
+    return { ok: false, error: (err && err.message) || String(err) };
+  }
+}
+
+function ssoCode_(page, token) {
+  const code = newToken_();
+  CacheService.getScriptCache().put('SSO_' + code, JSON.stringify({ page: page, token: token }), 120);
+  return code;
+}
+
+// New client signs themselves up on the website (name, phone, optional email, own PIN).
+// Creates their My Starhome login and signs them straight in. Staff/admin logins
+// can't be created this way — those are only added from the Sheet / admin app.
+function siteSignup_(d) {
+  try {
+    const name = String(d.name || '').trim();
+    const phone = String(d.phone || '').trim();
+    const email = String(d.email || '').trim();
+    const pin = String(d.pin || '').trim();
+    if (name.length < 2) throw new Error('Enter your name');
+    const ck = clientKey_({ phone: phone });
+    if (!ck || ck.charAt(0) !== 'p') throw new Error('Enter a valid phone number');
+    if (email && !isEmail_(email)) throw new Error('Enter a valid email address, or leave it blank');
+    if (!/^\d{4,6}$/.test(pin)) throw new Error('Choose a PIN of 4–6 digits');
+    const t = throttle_('s:' + ck);
+    const existing = readPortal_().filter(a => a.key === ck)[0];
+    if (existing) {
+      t.fail();
+      throw new Error(existing.active
+        ? 'This phone number already has an account — please sign in instead.'
+        : 'This account has been switched off — please WhatsApp us on ' + CONFIG.WHATSAPP + '.');
+    }
+    const sh = getPortalSheet_();
+    const salt = newSalt_();
+    const row = Math.max(sh.getLastRow(), 1) + 1;
+    sh.getRange(row, 1, 1, PORTAL_HEADERS.length).setValues([[
+      ck, clean_(name), "'" + phone, clean_(email), true, new Date(), '', salt, hashSecret_(salt, pin),
+    ]]);
+    t.ok();
+    logActivity_('staff', null, 'New client sign-up on the website: ' + name + ' (' + phone + ')');
+    try {
+      MailApp.sendEmail(CONFIG.ADMIN_EMAIL, 'New My Starhome sign-up: ' + name,
+        name + ' signed up on the website.\nPhone: ' + phone + (email ? '\nEmail: ' + email : '') +
+        '\n\nThey can now book and manage orders in My Starhome.');
+    } catch (_) {}
+    const r = portalLogin(phone, pin);
+    return { ok: true, page: 'portal', code: ssoCode_('portal', r.token), name: r.name };
   } catch (err) {
     return { ok: false, error: (err && err.message) || String(err) };
   }

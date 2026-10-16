@@ -191,6 +191,40 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
 .swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .swatches button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
 .req{background:#fff8eb;border:1px solid #ffe2b3;color:#7a4a00;border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:4px}
+.est{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start;max-width:1000px}
+.est-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:4px 18px 18px}
+.est-chips{display:flex;flex-wrap:wrap;gap:8px}
+.est-chip{height:38px;padding:0 14px;border-radius:19px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:500;cursor:pointer;font-size:14px}
+.est-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.est-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line2)}
+.est-row:last-child{border-bottom:0}
+.est-lbl{font-weight:600;font-size:14px;text-transform:none;letter-spacing:0;color:var(--ink)}
+.est-lbl small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.step{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:19px;overflow:hidden;height:38px}
+.step button{width:40px;height:100%;border:0;background:#fff;font-size:20px;cursor:pointer;color:var(--ink)}
+.step button:active{background:var(--line2)}
+.step span{min-width:34px;text-align:center;font-weight:700;font-size:16px}
+.est-sum{position:sticky;top:0;background:var(--ink);color:#fff;border-radius:14px;padding:18px}
+.est-sum .big{font-size:38px;font-weight:700;letter-spacing:-.5px;margin:2px 0 4px}
+.est-sum .svc{opacity:.8;font-size:13px}
+.est-sum ul{list-style:none;padding:0;margin:14px 0;font-size:13px;border-top:1px solid rgba(255,255,255,.18)}
+.est-sum li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.est-sum li.disc{color:#86efac}
+.est-sum .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.est-sum .acts .btn{justify-content:center;width:100%}
+.est-sum .acts .full{grid-column:1/-1}
+.est-sum .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+.tgl{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:500}
+.tgl input{width:18px;height:18px}
+@media (max-width:900px){
+  .est{grid-template-columns:1fr;gap:12px}
+  .est-sum{position:sticky;top:auto;bottom:-80px;padding:10px 12px;box-shadow:0 -6px 20px rgba(0,0,0,.15)}
+  .est-sum .big{font-size:26px;margin:0 0 8px}
+  .est-sum .acts{grid-template-columns:1.5fr 1fr 1fr;gap:6px}
+  .est-sum .acts .full{grid-column:auto}
+  .est-sum .acts .btn{padding:0 8px;font-size:13px}
+  .est-sum ul,.est-sum .was{display:none}
+}
 .info{background:#eff6ff;border:1px solid #dbeafe;color:#1e40af;border-radius:8px;padding:9px 11px;font-size:12px}
 .sec{font-size:11px;font-weight:700;color:var(--muted);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.06em}
 .list .item{padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer}
@@ -256,6 +290,7 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
     <div class="logo">SH</div>
     <button class="nav active" data-tab="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendar</button>
     <button class="nav" data-tab="quotes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Quotes</button>
+    <button class="nav" data-tab="estimate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h4"/></svg>Estimate</button>
     <button class="nav" data-tab="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.5"/></svg>Clients</button>
     <button class="nav" data-tab="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17c.7-1.8 2.2-2.5 4-2.5s3.3.7 4 2.5"/></svg>Staff</button>
     <button class="nav" data-tab="notifs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Alerts<span class="badge js-unread" hidden>0</span></button>
@@ -305,6 +340,17 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
       <div class="vbody"><div class="chips" id="qChips"></div><div id="qList"></div></div>
     </section>
 
+    <!-- ================= CLEANING ESTIMATE ================= -->
+    <section class="view" id="view-estimate" hidden>
+      <div class="vhead">
+        <h1>Cleaning estimate</h1>
+        <span class="muted hide-sm">Quick price — no customer details needed</span>
+        <div class="spacer"></div>
+        <button class="btn sm" id="eReset">Reset</button>
+      </div>
+      <div class="vbody"><div class="est" id="estWrap"></div></div>
+    </section>
+
     <!-- ================= CLIENTS ================= -->
     <section class="view" id="view-clients" hidden>
       <div class="vhead">
@@ -351,6 +397,7 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
 <nav class="bnav">
   <button data-tab="calendar" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendar</button>
   <button data-tab="quotes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Quotes</button>
+  <button data-tab="estimate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h4"/></svg>Estimate</button>
   <button data-tab="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/></svg>Clients</button>
   <button data-tab="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/></svg>Staff</button>
   <button data-tab="notifs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Alerts<span class="badge js-unread" hidden>0</span></button>
@@ -467,6 +514,175 @@ function quickLinks(o) {
 }
 
 /* =====================================================================
+ *  CLEANING ESTIMATE  (quick calculator — same maths as the website's book.html)
+ *  Prices come from the Prices sheet (Cleaning rows); the numbers below are
+ *  only used if a row is missing.
+ * ===================================================================== */
+const EST_DEFAULTS = {
+  'Standard clean - base': 200, 'Bedroom (standard)': 60, 'Bathroom (standard)': 80,
+  'Deep clean - base': 800, 'Bedroom (deep)': 120, 'Bathroom (deep)': 150,
+  'Oven cleaning': 150, 'Window cleaning': 150, 'Wall cleaning': 200, 'Detergents supplied': 150,
+  'Moving - small': 1000, 'Moving - medium': 1500, 'Moving - large': 3000,
+  'Care giving - 3 hours': 300, 'Care giving - 4 hours': 350, 'Care giving - 5 hours': 500,
+  'Care giving - 6 hours': 450, 'Care giving - 8 hours': 500,
+};
+const EST_SERVICES = [
+  { k: 'standard', label: '🧹 Standard clean' }, { k: 'deep', label: '✨ Deep clean' },
+  { k: 'moving', label: '🚚 Moving' }, { k: 'care', label: '🤝 Care giving' }, { k: 'garden', label: '🌿 Garden' },
+];
+const EST_FREQ = [
+  { v: 1, label: 'Once' }, { v: 0.85, label: 'Weekly −15%' }, { v: 0.9, label: 'Bi-weekly −10%' }, { v: 0.95, label: 'Monthly −5%' },
+];
+const EST_EXTRAS = [
+  { k: 'oven', item: 'Oven cleaning' }, { k: 'windows', item: 'Window cleaning' },
+  { k: 'walls', item: 'Wall cleaning' }, { k: 'detergent', item: 'Detergents supplied' },
+];
+const EST_MOVES = [{ k: 'small', item: 'Moving - small', label: 'Small' }, { k: 'medium', item: 'Moving - medium', label: 'Medium' }, { k: 'large', item: 'Moving - large', label: 'Large' }];
+const EST_CARE = [3, 4, 5, 6, 8];
+const estNew = () => ({ svc: 'standard', bed: 2, bath: 1, freq: 1, move: 'medium', careH: 4, night: false, extras: { oven: 0, windows: 0, walls: 0, detergent: 0 } });
+let E = estNew();
+let estPricesTried = false;
+
+function estPrice(item) {
+  const p = (S.prices || []).find(x => x.service === 'Cleaning' && x.item === item);
+  return p && Number(p.price) ? Number(p.price) : (EST_DEFAULTS[item] || 0);
+}
+
+// Returns { name, lines:[{item,qty,unit,price}], subtotal, discount, total, note }
+function estCalc() {
+  const L = [], add = (item, qty, unit) => { if (qty > 0) L.push({ item, qty, unit, price: estPrice(item) }); };
+  let name = '', freqApplies = false, extrasOk = false, night = 0, note = '';
+  if (E.svc === 'standard' || E.svc === 'deep') {
+    const d = E.svc === 'deep';
+    name = d ? 'Deep cleaning' : 'Standard cleaning';
+    add(d ? 'Deep clean - base' : 'Standard clean - base', 1, 'visit');
+    add(d ? 'Bedroom (deep)' : 'Bedroom (standard)', E.bed, 'room');
+    add(d ? 'Bathroom (deep)' : 'Bathroom (standard)', E.bath, 'room');
+    freqApplies = true; extrasOk = true;
+  } else if (E.svc === 'moving') {
+    const m = EST_MOVES.find(x => x.k === E.move);
+    name = 'Moving (' + m.label.toLowerCase() + ')';
+    add(m.item, 1, 'move'); extrasOk = true;
+  } else if (E.svc === 'care') {
+    name = 'Care giving (' + E.careH + ' hours' + (E.night ? ', night' : '') + ')';
+    add('Care giving - ' + E.careH + ' hours', 1, 'visit');
+    freqApplies = true;
+    if (E.night) night = Math.round(L[0].price * 0.15);
+  } else {
+    name = 'Garden landscaping';
+    note = 'Priced after an on-site garden assessment.';
+  }
+  const serviceSub = L.reduce((s, l) => s + l.qty * l.price, 0) + night;
+  if (night) L.push({ item: 'Night shift (+15%)', qty: 1, unit: 'visit', price: night });
+  if (extrasOk) EST_EXTRAS.forEach(x => add(x.item, E.extras[x.k], 'item'));
+  const subtotal = L.reduce((s, l) => s + l.qty * l.price, 0);
+  const discount = freqApplies ? serviceSub - Math.round(serviceSub * E.freq) : 0;
+  return { name, lines: L, subtotal, discount, total: subtotal - discount, note, freqApplies, extrasOk };
+}
+
+function estText(r) {
+  const f = EST_FREQ.find(x => x.v === E.freq);
+  return 'Hi! Here is your ' + BOOT.business + ' estimate:\n' +
+    r.name + (r.freqApplies && E.freq !== 1 ? ' — ' + f.label.replace('−', '') + ' off' : '') + '\n' +
+    r.lines.map(l => '• ' + l.item + (l.qty > 1 ? ' × ' + l.qty : '') + ': ' + fmtR(l.qty * l.price)).join('\n') +
+    (r.discount ? '\n• Regular-clean discount: −' + fmtR(r.discount) : '') +
+    (r.note ? '\n' + r.note : '\nEstimated total: ' + fmtR(r.total)) +
+    '\n\nFinal price is confirmed on the day. Reply to book!';
+}
+
+function estStepper(key, val, min, max) {
+  return `<div class="step"><button type="button" data-st="${key}" data-d="-1" aria-label="Less">−</button><span>${val}</span><button type="button" data-st="${key}" data-d="1" aria-label="More">+</button></div>`;
+}
+
+async function renderEstimate() {
+  if (!estPricesTried && !(S.prices && S.prices.length)) {           // load the Prices sheet once
+    estPricesTried = true;
+    try { const r = await api('adminGetQuotes'); S.quotes = S.quotes || r.quotes; S.prices = r.prices; } catch (_) {}
+  }
+  const r = estCalc();
+  const chip = (attr, v, label, on) => `<button type="button" class="est-chip ${on ? 'on' : ''}" data-${attr}="${v}">${label}</button>`;
+  let form = '<div class="sec">Service</div><div class="est-chips">' +
+    EST_SERVICES.map(x => chip('svc', x.k, x.label, E.svc === x.k)).join('') + '</div>';
+  if (E.svc === 'standard' || E.svc === 'deep') {
+    form += '<div class="sec">Home size</div>' +
+      `<div class="est-row"><div class="est-lbl">Bedrooms<small>${fmtR(estPrice(E.svc === 'deep' ? 'Bedroom (deep)' : 'Bedroom (standard)'))} each</small></div>${estStepper('bed', E.bed)}</div>` +
+      `<div class="est-row"><div class="est-lbl">Bathrooms<small>${fmtR(estPrice(E.svc === 'deep' ? 'Bathroom (deep)' : 'Bathroom (standard)'))} each</small></div>${estStepper('bath', E.bath)}</div>`;
+  }
+  if (E.svc === 'moving') {
+    form += '<div class="sec">Move size</div><div class="est-chips">' +
+      EST_MOVES.map(m => chip('move', m.k, m.label + ' · ' + fmtR(estPrice(m.item)), E.move === m.k)).join('') + '</div>';
+  }
+  if (E.svc === 'care') {
+    form += '<div class="sec">Hours</div><div class="est-chips">' +
+      EST_CARE.map(h => chip('care', h, h + ' hrs · ' + fmtR(estPrice('Care giving - ' + h + ' hours')), E.careH === h)).join('') + '</div>' +
+      `<div class="est-row"><label class="tgl"><input type="checkbox" id="eNight" ${E.night ? 'checked' : ''}> Night shift (+15%)</label></div>`;
+  }
+  if (r.freqApplies) {
+    form += '<div class="sec">How often</div><div class="est-chips">' +
+      EST_FREQ.map(f => chip('freq', f.v, f.label, E.freq === f.v)).join('') + '</div>';
+  }
+  if (r.extrasOk) {
+    form += '<div class="sec">Extras</div>' + EST_EXTRAS.map(x =>
+      `<div class="est-row"><div class="est-lbl">${esc(x.item)}<small>${fmtR(estPrice(x.item))}</small></div>${estStepper('x_' + x.k, E.extras[x.k])}</div>`).join('');
+  }
+  if (E.svc === 'garden') form += '<div class="info" style="margin-top:14px">Garden landscaping is priced after an on-site assessment — send the client a visit request instead.</div>';
+
+  const sum = `<div class="est-sum">
+      <div class="svc">${esc(r.name)}</div>
+      <div class="big">${r.note ? 'On assessment' : fmtR(r.total)}</div>
+      ${r.discount ? `<div class="svc was">was ${fmtR(r.subtotal)}</div>` : ''}
+      <ul>${r.lines.map(l => `<li><span>${esc(l.item)}${l.qty > 1 ? ' × ' + l.qty : ''}</span><b>${fmtR(l.qty * l.price)}</b></li>`).join('')}
+        ${r.discount ? `<li class="disc"><span>Regular-clean discount</span><b>−${fmtR(r.discount)}</b></li>` : ''}</ul>
+      <div class="acts">
+        <button class="btn primary full" id="eQuote" ${r.note ? 'disabled' : ''}>📄 Turn into a quote</button>
+        <a class="btn wa" id="eWa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(estText(r))}">💬 WhatsApp</a>
+        <button class="btn ghost" id="eCopy">📋 Copy</button>
+      </div>
+    </div>`;
+  $('estWrap').innerHTML = `<div class="est-box">${form}</div>${sum}`;
+
+  const wrap = $('estWrap');
+  wrap.querySelectorAll('[data-svc]').forEach(b => b.onclick = () => { E.svc = b.dataset.svc; renderEstimate(); });
+  wrap.querySelectorAll('[data-move]').forEach(b => b.onclick = () => { E.move = b.dataset.move; renderEstimate(); });
+  wrap.querySelectorAll('[data-care]').forEach(b => b.onclick = () => { E.careH = Number(b.dataset.care); renderEstimate(); });
+  wrap.querySelectorAll('[data-freq]').forEach(b => b.onclick = () => { E.freq = Number(b.dataset.freq); renderEstimate(); });
+  wrap.querySelectorAll('[data-st]').forEach(b => b.onclick = () => {
+    const k = b.dataset.st, d = Number(b.dataset.d);
+    if (k === 'bed') E.bed = Math.min(12, Math.max(0, E.bed + d));
+    else if (k === 'bath') E.bath = Math.min(10, Math.max(0, E.bath + d));
+    else { const x = k.slice(2); E.extras[x] = Math.min(20, Math.max(0, E.extras[x] + d)); }
+    renderEstimate();
+  });
+  if ($('eNight')) $('eNight').onchange = e => { E.night = e.target.checked; renderEstimate(); };
+  $('eCopy').onclick = () => {
+    const t = estText(r);
+    const done = () => toast('Estimate copied');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, () => estCopyFallback(t, done));
+    else estCopyFallback(t, done);
+  };
+  $('eQuote').onclick = async () => {
+    if (!(S.prices && S.prices.length)) await loadQuotes();
+    setTab('quotes');
+    showQuote(null, {
+      service: 'Cleaning', name: '',
+      lines: r.lines.map(l => ({ item: l.item, unit: l.unit, qty: l.qty, price: l.price })),
+      discount: r.discount || 0,
+      notes: r.name + (r.discount ? ' — includes regular-clean discount' : '') + '. Final price confirmed on the day.',
+    });
+  };
+}
+
+function estCopyFallback(t, done) {
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (_) { toast('Could not copy — use WhatsApp instead'); }
+  ta.remove();
+}
+
+$('eReset').onclick = () => { E = estNew(); renderEstimate(); };
+
+/* =====================================================================
  *  TABS
  * ===================================================================== */
 function setTab(t) {
@@ -476,6 +692,7 @@ function setTab(t) {
   $('fab').hidden = !['calendar', 'quotes', 'staff'].includes(t);
   if (t === 'calendar') render();
   if (t === 'quotes') loadQuotes();
+  if (t === 'estimate') renderEstimate();
   if (t === 'clients') loadClients();
   if (t === 'staff') loadStaff();
   if (t === 'notifs') loadNotifs();
