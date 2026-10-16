@@ -376,12 +376,11 @@ function doPost(e) {
     logActivity_('new', b, 'New website request: ' + jobLabel_(b) + ' on ' + fmtShort_(b.date) + ', ' + timeText_(b) +
       (b.suburb ? ' — ' + b.suburb : ''));
 
-    // The site may already email via EmailJS — skipEmails avoids duplicates
+    // Starhome is ALWAYS alerted from here (the website's EmailJS alert can't be relied on).
+    // The customer email is skipped only when the site says EmailJS already sent it.
     const skip = d.skipEmails === true || d.skipEmails === 'true';
-    if (!skip) {
-      notifyAdminNew_(b);
-      sendCustomerEmail_(b, 'received');
-    }
+    try { notifyAdminNew_(b); } catch (e) { console.error('Admin alert failed: ' + e); }
+    if (!skip) sendCustomerEmail_(b, 'received');
 
     return json_({ ok: true, id: b.id });
   } catch (err) {
