@@ -2626,21 +2626,10 @@
             setSubmitState(true);
             this.reset();
 
-            let emailStatus = 'ok';
-            try {
-                await Promise.all([
-                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_STARHOME, starhomeParams),
-                    emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_CUSTOMER, customerParams)
-                ]);
-            } catch (err) {
-                console.error('EmailJS error:', err);
-                emailStatus = 'error';
-            }
-
             const slot = String(data['pickup-time'] || '').split('-');
-            await sendToCalendar({
+            const cal = await sendToCalendar({
                 source:     'website',
-                skipEmails: emailStatus === 'ok',      // EmailJS already emailed Starhome + customer
+                skipEmails: false,                     // booking system emails Starhome + customer
                 ref:        bookingRef,
                 service:    'Laundry',
                 name:       data.name,
@@ -2654,6 +2643,21 @@
                             (data.notes ? ' | Notes: ' + data.notes : ''),
                 estimate:   data['delivery-option'] === 'express' ? 'Express same-day (+50%)' : ''
             });
+
+
+            // Backup: only if the booking system couldn't be reached, email via EmailJS
+            let emailStatus = 'ok';
+            if (!(cal && cal.ok)) {
+                try {
+                    await Promise.all([
+                        emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_STARHOME, starhomeParams),
+                        emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_TO_CUSTOMER, customerParams)
+                    ]);
+                } catch (err) {
+                    console.error('EmailJS error:', err);
+                    emailStatus = 'error';
+                }
+            }
 
             setSubmitState(false);
             showBanner(bookingRef, starhomeWAURL, customerWAURL, emailStatus);

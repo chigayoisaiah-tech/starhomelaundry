@@ -656,23 +656,12 @@ window.reserveService = async function () {
     bathrooms: state.bathrooms
   };
 
-  // 1) Emails (as before)
-  let emailOk = true;
-  try {
-    await Promise.all([
-      emailjs.send('service_lp7z0ve', 'template_4h13jjh', templateParams), // admin
-      emailjs.send('service_lp7z0ve', 'template_4t8pk4z', templateParams)  // customer
-    ]);
-  } catch (error) {
-    console.error('EmailJS error:', error);
-    emailOk = false;
-  }
-
-  // 2) Booking calendar (sends its own emails only if EmailJS failed)
+  // 1) Booking system: saves the booking and emails Starhome + the customer
+  //    (customer email includes the "what's included" checklist and price sneak peek)
   const isCare = state.service === 'care';
   const cal = await sendToCalendar({
     source: 'website',
-    skipEmails: emailOk,
+    skipEmails: false,
     ref: bookingRef,
     service: 'Cleaning',
     name: state.name,
@@ -686,6 +675,20 @@ window.reserveService = async function () {
     details: bookingDetailsText(extrasList),
     estimate: total === null ? 'On-site assessment' : 'R' + total
   });
+
+  // 2) Backup: only if the booking system couldn't be reached, email via EmailJS
+  let emailOk = false;
+  if (!(cal && cal.ok)) {
+    try {
+      await Promise.all([
+        emailjs.send('service_lp7z0ve', 'template_4h13jjh', templateParams), // admin
+        emailjs.send('service_lp7z0ve', 'template_4t8pk4z', templateParams)  // customer
+      ]);
+      emailOk = true;
+    } catch (error) {
+      console.error('EmailJS error:', error);
+    }
+  }
 
   if (emailOk || (cal && cal.ok)) {
     alert(
