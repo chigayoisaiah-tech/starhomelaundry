@@ -80,6 +80,11 @@ h2{font-family:Fraunces,Georgia,serif;font-size:20px;margin:26px 0 10px;color:va
 .chk{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
 
 /* calculator */
+.hsGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.hsOpt{display:flex;align-items:center;gap:8px;padding:11px 12px;border:1.5px solid #f0d7bd;border-radius:12px;background:#fff;cursor:pointer;text-align:left;font-weight:600;color:var(--ink)}
+.hsOpt .i{font-size:18px}
+.hsOpt.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.hsH{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px}
 .calc{background:var(--cream);border:1px solid #f5dfc8;border-radius:14px;padding:12px;margin-bottom:12px}
 .calc select{width:100%;padding:10px;border:1.5px solid #f0d7bd;border-radius:10px;background:#fff;margin-bottom:8px}
 .cline{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed #f0d7bd}
@@ -129,7 +134,7 @@ h2{font-family:Fraunces,Georgia,serif;font-size:20px;margin:26px 0 10px;color:va
   <form class="box" id="loginForm">
     <div class="brand">Star<span style="color:var(--orange)">home</span></div>
     <h1>My Starhome</h1>
-    <p>Book, reschedule and track your laundry &amp; cleaning orders.</p>
+    <p>Book, reschedule and track your laundry &amp; home services orders.</p>
     <div class="f"><label for="lgPhone">Phone number</label><input id="lgPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="082 123 4567" required></div>
     <div class="f"><label for="lgPin">PIN</label><input id="lgPin" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="current-password" placeholder="••••••" required></div>
     <div class="err" id="lgErr"></div>
@@ -150,7 +155,7 @@ h2{font-family:Fraunces,Georgia,serif;font-size:20px;margin:26px 0 10px;color:va
   <div class="wrap">
     <div class="tiles">
       <button class="tile" data-book="Laundry"><div class="ic">🧺</div><b>Book a laundry pickup</b><span>Free pickup &amp; delivery</span></button>
-      <button class="tile" data-book="Cleaning"><div class="ic">🧹</div><b>Book a clean</b><span>Vetted, insured cleaners</span></button>
+      <button class="tile" data-book="Cleaning"><div class="ic">🧹</div><b>Home services</b><span>Cleaning, moving &amp; care giving</span></button>
     </div>
     <div id="content"><div class="loading">Loading your orders…</div></div>
     <div class="foot">
@@ -256,7 +261,7 @@ function render() {
     h += '<h2>Quotes for you</h2>' + quotes.map(q => `
       <div class="card">
         <div class="row1"><div class="badge ${esc(q.service)}">🧾</div>
-          <div style="flex:1"><h3>${q.service === 'Laundry' ? 'Laundry & dry cleaning' : 'Cleaning'} quote</h3>
+          <div style="flex:1"><h3>${q.service === 'Laundry' ? 'Laundry & dry cleaning' : 'Home services'} quote</h3>
             <div class="when">${fmtR(q.total)}</div>
             <div class="meta">${esc(q.id)} · valid until ${esc(shortDay(q.validUntil || today))}</div></div>
           <span class="pill st-${esc(q.status)}">${q.status === 'Sent' ? 'New' : esc(q.status)}</span></div>
@@ -268,7 +273,7 @@ function render() {
   h += upcoming.length ? upcoming.map(b => `
     <div class="card">
       <div class="row1"><div class="badge ${esc(b.service)}">${b.service === 'Laundry' ? '🧺' : '🧹'}</div>
-        <div style="flex:1;min-width:0"><h3>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home cleaning'}</h3>
+        <div style="flex:1;min-width:0"><h3>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home services'}</h3>
           <div class="when">${esc(longDay(b.date))}</div>
           <div class="meta">${b.exactTime ? esc(b.start) + ' – ' + esc(b.end) : esc(b.timeWindow)}${b.address ? '<br>📍 ' + esc([b.address, b.suburb].filter(Boolean).join(', ')) : ''}
             ${b.estimate ? '<br>💰 ' + esc(b.estimate) : ''}${b.staff && b.status === 'Confirmed' ? '<br>👤 ' + (b.service === 'Laundry' ? 'Driver' : 'Cleaner') + ': ' + esc(b.staff) : ''}</div></div>
@@ -281,7 +286,7 @@ function render() {
   if (past.length) {
     h += '<h2>Past orders</h2>' + past.slice(0, 15).map(b => `
       <div class="past"><div class="badge ${esc(b.service)}" style="width:38px;height:38px;font-size:18px">${b.service === 'Laundry' ? '🧺' : '🧹'}</div>
-        <div class="grow"><b>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home cleaning'} · ${esc(shortDay(b.date))}</b>
+        <div class="grow"><b>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home services'} · ${esc(shortDay(b.date))}</b>
           <span class="muted">${esc(b.status)}${b.estimate ? ' · ' + esc(b.estimate) : ''}</span></div>
         ${b.status !== 'Cancelled' ? `<button class="btn" data-again="${esc(b.id)}">Book again</button>` : ''}</div>`).join('');
   }
@@ -330,12 +335,13 @@ function showBook(service, from) {
       if (p) BK.lines.push({ item: p.item, unit: p.unit, price: p.price, qty: Number(m[1]) });
     });
   }
-  $('shTitle').textContent = service === 'Laundry' ? 'Book a laundry pickup' : 'Book a clean';
+  $('shTitle').textContent = service === 'Laundry' ? 'Book a laundry pickup' : 'Home services';
   renderBook();
   openSheet();
 }
 
 function renderBook() {
+  if (BK.service === 'Cleaning') return renderHome();
   const svc = BK.service;
   const cats = {};
   D.prices.filter(p => p.service === svc).forEach(p => (cats[p.category] = cats[p.category] || []).push(p));
@@ -355,7 +361,7 @@ function renderBook() {
     '<div class="err" id="bErr"></div>';
   $('shFoot').innerHTML = '<button class="btn primary block" id="bSubmit">Request booking</button>';
 
-  $('bSvc').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.s !== BK.service) { BK = { service: b.dataset.s, lines: [], express: false }; $('shTitle').textContent = BK.service === 'Laundry' ? 'Book a laundry pickup' : 'Book a clean'; renderBook(); } });
+  $('bSvc').querySelectorAll('button').forEach(b => b.onclick = () => { if (b.dataset.s !== BK.service) { BK = { service: b.dataset.s, lines: [], express: false }; $('shTitle').textContent = BK.service === 'Laundry' ? 'Book a laundry pickup' : 'Home services'; renderBook(); } });
   $('bPick').onchange = e => {
     const p = D.prices.find(x => x.service === BK.service && x.item === e.target.value);
     if (!p) return;
@@ -389,6 +395,102 @@ function renderEst() {
     `<div class="est big"><span>Estimated total</span><span>${c.total ? fmtR(c.total) : 'On confirmation'}</span></div>`;
 }
 
+/* ---------------- home services: cleaning, moving, care giving ----------------
+   Prices stay hidden from the client; the calculator works them out in the
+   background and only the estimated total is shown. */
+const hsCats = () => { const c = {}; D.prices.filter(p => p.service === 'Cleaning').forEach(p => (c[p.category] = c[p.category] || []).push(p)); return c; };
+const hsIsExtras = c => /extra|add-?on/i.test(c);
+const hsFind = (items, re) => items.find(p => re.test(p.item));
+const hsRoomBased = items => !!(hsFind(items, /bed/i) || hsFind(items, /bath/i));
+const hsIcon = c => /deep/i.test(c) ? '✨' : /stand|general|regular/i.test(c) ? '🧹' : /mov/i.test(c) ? '🚚' : /care/i.test(c) ? '🤝' : '🏠';
+const hsLabel = s => { const t = s.indexOf(' - ') > -1 ? s.split(' - ').slice(1).join(' - ') : s; return t.charAt(0).toUpperCase() + t.slice(1); };
+
+function hsInit() {
+  const cats = hsCats();
+  const main = Object.keys(cats).filter(c => !hsIsExtras(c));
+  const H = { cat: main[0] || '', beds: 1, baths: 1, pick: '', extras: {} };
+  BK.lines.forEach(l => { // "Book again": rebuild the choices from the previous order
+    const p = D.prices.find(x => x.service === 'Cleaning' && x.item === l.item);
+    if (!p) return;
+    if (hsIsExtras(p.category)) { H.extras[p.item] = l.qty; return; }
+    H.cat = p.category;
+    if (/bed/i.test(p.item)) H.beds = l.qty;
+    else if (/bath/i.test(p.item)) H.baths = l.qty;
+    else if (!/base/i.test(p.item)) H.pick = p.item;
+  });
+  BK.home = H;
+}
+
+function hsSync() {
+  const H = BK.home, cats = hsCats(), items = cats[H.cat] || [];
+  const line = (p, qty) => ({ item: p.item, unit: p.unit, price: p.price, qty: qty });
+  const lines = [];
+  if (hsRoomBased(items)) {
+    const base = hsFind(items, /base/i), bed = hsFind(items, /bed/i), bath = hsFind(items, /bath/i);
+    if (base) lines.push(line(base, 1));
+    if (bed && H.beds > 0) lines.push(line(bed, H.beds));
+    if (bath && H.baths > 0) lines.push(line(bath, H.baths));
+    Object.keys(cats).filter(hsIsExtras).forEach(c => cats[c].forEach(p => { if (H.extras[p.item] > 0) lines.push(line(p, H.extras[p.item])); }));
+  } else {
+    const p = items.find(x => x.item === H.pick) || items[0];
+    if (p) { H.pick = p.item; lines.push(line(p, 1)); }
+  }
+  BK.lines = lines;
+}
+
+function renderHome() {
+  if (!BK.home) hsInit();
+  $('shBody').innerHTML =
+    `<div class="seg" id="bSvc"><button data-s="Laundry">🧺 Laundry</button><button data-s="Cleaning" class="on">🏠 Home services</button></div>` +
+    '<div class="calc" id="hsCalc"></div>' +
+    '<div class="two">' + dateField() + timeField('Cleaning') + '</div>' +
+    addressFields(D.profile.address, D.profile.suburb) +
+    `<div class="f"><label>Notes (optional)</label><textarea id="bNotes" placeholder="Pets, access, focus areas, what needs moving…"></textarea></div>` +
+    `<div class="note">We'll confirm your booking and final price by WhatsApp or email.</div>` +
+    '<div class="err" id="bErr"></div>';
+  $('shFoot').innerHTML = '<button class="btn primary block" id="bSubmit">Request booking</button>';
+  $('bSvc').querySelectorAll('button').forEach(b => b.onclick = () => {
+    if (b.dataset.s !== BK.service) { BK = { service: b.dataset.s, lines: [], express: false }; $('shTitle').textContent = BK.service === 'Laundry' ? 'Book a laundry pickup' : 'Home services'; renderBook(); }
+  });
+  $('bSubmit').onclick = submitBooking;
+  renderHomeCalc();
+}
+
+function renderHomeCalc() {
+  const H = BK.home, cats = hsCats(), main = Object.keys(cats).filter(c => !hsIsExtras(c));
+  if (!cats[H.cat]) H.cat = main[0] || '';
+  const items = cats[H.cat] || [], rooms = hsRoomBased(items);
+  const extras = [].concat(...Object.keys(cats).filter(hsIsExtras).map(c => cats[c]));
+  const stepper = (key, label, val, min) => `<div class="cline"><div class="nm">${esc(label)}</div>
+    <div class="step"><button data-hd="${key}" data-min="${min}" aria-label="Less">−</button><input data-hq="${key}" data-min="${min}" type="number" min="${min}" step="1" value="${val}"><button data-hu="${key}" aria-label="More">+</button></div></div>`;
+  let html = '<div class="hsH" style="margin-top:0">Choose a service</div><div class="hsGrid" id="hsCat">' +
+    main.map(c => `<button type="button" class="hsOpt ${c === H.cat ? 'on' : ''}" data-c="${esc(c)}"><span class="i">${hsIcon(c)}</span>${esc(c)}</button>`).join('') + '</div>';
+  if (rooms) {
+    html += '<div class="hsH">Your home</div>' + stepper('beds', 'Bedrooms', H.beds, 0) + stepper('baths', 'Bathrooms', H.baths, 0);
+    if (extras.length) html += '<div class="hsH">Extras</div>' + extras.map((p, i) => stepper('x' + i, p.item, H.extras[p.item] || 0, 0)).join('');
+  } else if (items.length) {
+    html += '<div class="hsH">Choose an option</div><div class="hsGrid" id="hsPick">' +
+      items.map(p => `<button type="button" class="hsOpt ${p.item === H.pick || (!H.pick && p === items[0]) ? 'on' : ''}" data-p="${esc(p.item)}">${esc(hsLabel(p.item))}</button>`).join('') + '</div>';
+  }
+  html += '<div id="bEst" style="margin-top:10px"></div>';
+  $('hsCalc').innerHTML = html;
+
+  const get = k => k === 'beds' ? H.beds : k === 'baths' ? H.baths : (H.extras[extras[+k.slice(1)].item] || 0);
+  const set = (k, v) => { v = Math.max(0, Math.round(Number(v) || 0)); if (k === 'beds') H.beds = v; else if (k === 'baths') H.baths = v; else H.extras[extras[+k.slice(1)].item] = v; const inp = $('hsCalc').querySelector(`[data-hq="${k}"]`); if (inp && +inp.value !== v) inp.value = v; renderHomeEst(); };
+  $('hsCalc').querySelectorAll('[data-c]').forEach(b => b.onclick = () => { H.cat = b.dataset.c; H.pick = ''; renderHomeCalc(); });
+  $('hsCalc').querySelectorAll('[data-p]').forEach(b => b.onclick = () => { H.pick = b.dataset.p; renderHomeCalc(); });
+  $('hsCalc').querySelectorAll('[data-hd]').forEach(b => b.onclick = () => set(b.dataset.hd, get(b.dataset.hd) - 1));
+  $('hsCalc').querySelectorAll('[data-hu]').forEach(b => b.onclick = () => set(b.dataset.hu, get(b.dataset.hu) + 1));
+  $('hsCalc').querySelectorAll('[data-hq]').forEach(inp => inp.onchange = () => set(inp.dataset.hq, inp.value));
+  renderHomeEst();
+}
+
+function renderHomeEst() {
+  hsSync();
+  const c = compute();
+  $('bEst').innerHTML = `<div class="est big"><span>Estimated total</span><span>${c.total ? fmtR(c.total) : 'On confirmation'}</span></div>`;
+}
+
 async function submitBooking() {
   const d = {
     service: BK.service, date: $('bDate').value, time: $('bTime').value,
@@ -410,7 +512,7 @@ async function submitBooking() {
 function showMove(b) {
   $('shTitle').textContent = 'Reschedule';
   $('shBody').innerHTML =
-    `<div class="note">${b.service === 'Laundry' ? 'Laundry pickup' : 'Home cleaning'} currently on <b>${esc(longDay(b.date))}</b>, ${b.exactTime ? esc(b.start + '–' + b.end) : esc(b.timeWindow)}. Your new time will be confirmed by our team.</div>` +
+    `<div class="note">${b.service === 'Laundry' ? 'Laundry pickup' : 'Home services'} currently on <b>${esc(longDay(b.date))}</b>, ${b.exactTime ? esc(b.start + '–' + b.end) : esc(b.timeWindow)}. Your new time will be confirmed by our team.</div>` +
     '<div class="two">' + dateField(b.date > ymd(new Date()) ? b.date : tomorrow()) + timeField(b.service, b.exactTime ? b.start + '-' + b.end : b.timeWindow) + '</div>' +
     '<div class="f"><label>Note (optional)</label><textarea id="mNote" placeholder="Anything we should know?"></textarea></div><div class="err" id="mErr"></div>';
   $('shFoot').innerHTML = '<button class="btn primary block" id="mGo">Request new time</button>';
