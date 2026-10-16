@@ -45,7 +45,7 @@ const CONFIG = {
 
   // Optional: paste your Web app /exec URL here after deploying,
   // so menu links and emails point at the live admin app.
-  WEB_APP_URL: '',
+  WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbyx357GxGWv1O7km22GbVHTJXlPJ8-E-7VIWFgeil9GadUTXxSMjWP9ej1N7mxFbGTQ/exec',
 
   // Time windows customers can request (label -> [start hour, end hour])
   TIME_WINDOWS: {
@@ -1803,6 +1803,7 @@ function sendCustomerEmail_(b, type) {
     '<h2 style="margin-top:0;color:#0b5394">' + esc_(T.heading) + '</h2>' +
     '<p style="font-size:15px;line-height:1.5">' + T.body + '</p>' +
     summaryTable_(b) +
+    (cleanKind_(b) && (type === 'received' || type === 'confirmed') ? cleanSneakPeek_(b, cleanKind_(b)) + cleanChecklistHtml_(b, cleanKind_(b)) : '') +
     '<p style="font-size:14px">Questions? Call <b>' + CONFIG.PHONE + '</b> or WhatsApp <b>' + CONFIG.WHATSAPP + '</b>.</p>' +
     '</div>' +
     '<div style="background:#f5f7fa;padding:12px 22px;font-size:12px;color:#777">' +
@@ -1816,6 +1817,92 @@ function sendCustomerEmail_(b, type) {
     name: CONFIG.BUSINESS_NAME,
     replyTo: CONFIG.ADMIN_EMAIL,
   });
+}
+
+/* ---------- Cleaning bookings: "what's included" checklist + price sneak peek ---------- */
+const CLEAN_CHECKLISTS = {
+  standard: [
+    ['Kitchen', ['Emptying trash cans/bins', 'Clean counter tops, sinks and cupboards', 'Clean stove, microwave & fridge', 'Wiping tables and chairs', 'Washing dishes', 'Wiping floors & cleaning windows']],
+    ['Living area', ['Cleaning electronic gadgets', 'Cleaning wall electrical switches', 'Cleaning furniture & wall frames', 'Vacuum & mop floor surfaces', 'Clean interior windows', 'Dusting sofas']],
+    ['Bathroom', ['Clean counters & cabinets', 'Wiping & shining mirrors', 'Clean & disinfect toilet seats', 'Clean & disinfect shower & bathtub', 'Clean interior windows & sills', 'Mopping floors & empty bins']],
+    ['Bedroom', ['Vacuum carpets or mop floors', 'Make beds', 'Fold clothes', 'Cleaning and dusting furniture', 'Clean interior windows', 'Arrange wardrobe on request']],
+  ],
+  deep: [
+    ['Kitchen', ['Emptying trash cans/bins', 'Clean counter tops, sinks and cupboards', 'Clean stove, microwave & fridge', 'Wiping tables and chairs', 'Washing dishes', 'Scrubbing floors & cleaning windows']],
+    ['Living area', ['Cleaning electronic gadgets', 'Cleaning wall electrical switches', 'Cleaning furniture & wall frames', 'Vacuum & scrubbing floor surfaces', 'Clean interior & exterior windows']],
+    ['Bathroom', ['Clean counters & cabinets', 'Wiping & shining mirrors', 'Clean & disinfect toilet seats', 'Clean & disinfect shower & bathtub', 'Clean interior windows & sills', 'Scrubbing floors & empty bins']],
+    ['Bedroom', ['Vacuum carpets or mop floors', 'Make beds', 'Fold clothes', 'Clean interior & exterior windows']],
+  ],
+  moving: [
+    ['Loading', ['Careful loading of furniture, boxes & appliances', 'Furniture wrapped & protected with blankets', 'Heavy and bulky items handled by our team']],
+    ['Transport', ['Vehicle sized to your move', 'Direct trip from pickup to drop-off', 'Items strapped & secured for the trip']],
+    ['Offloading', ['Offloading into the rooms you choose', 'Furniture placed where you want it', 'Basic bed re-assembly on request']],
+  ],
+  care: [
+    ['Personal care', ['Help with bathing, dressing & grooming', 'Toileting & hygiene support', 'Help with walking, mobility & transfers']],
+    ['Daily living', ['Preparing light, healthy meals', 'Help with eating if needed', 'Light tidying of the client\'s room', 'Washing the client\'s clothes & bedding']],
+    ['Wellbeing', ['Medication reminders (as prescribed)', 'Companionship, conversation & activities', 'Updates to the family on how the day went']],
+    ['Elderly & special needs', ['Patient, respectful support adapted to each person', 'Day or night shifts (night shift +15%)']],
+  ],
+};
+const SERVICE_TITLES = { standard: 'General Cleaning', deep: 'Deep Cleaning', moving: 'Moving', care: 'Care Giving' };
+const KIND_NOTES = {
+  moving: 'Please note: please pack and label your boxes before moving day. Extra stops, stairs or long carries, and extra trips may be charged extra.',
+  care: 'Please note: our caregivers do not perform medical or nursing procedures. Please share any care plan, allergies and emergency contacts before the first visit.',
+};
+const CARPET_NOTE = 'Please note: carpets are vacuumed normally. Professional wet & dry carpet deep cleaning is charged extra.';
+
+// 'deep', 'standard' (general cleaning), 'moving', 'care' or '' (laundry…)
+function cleanKind_(b) {
+  if (!b || b.service === 'Laundry') return '';
+  const t = String(b.details || '') + ' ' + String(b.notes || '');
+  if (/deep/i.test(t)) return 'deep';
+  if (/standard|general clean/i.test(t)) return 'standard';
+  if (/moving|move size/i.test(t)) return 'moving';
+  if (/care ?giv|elderly|special needs|care \d+h/i.test(t)) return 'care';
+  return '';
+}
+
+// Booking details without internal price lines, e.g. "3 bed, 2 bath · Weekly · Extras: Oven cleaning x1"
+function publicDetails_(b) {
+  return String(b.details || '').split('|').map(p => p.trim())
+    .filter(p => p && !/^((deep|standard) clean(ing)?|moving|care giving)$/i.test(p) && !/R\s?\d/.test(p) && !/^notes:/i.test(p))
+    .join(' · ');
+}
+
+function cleanSneakPeek_(b, kind) {
+  const title = (SERVICE_TITLES[kind] || 'Cleaning').toUpperCase();
+  const price = String(b.estimate || '').replace(/\s*\(.*\)\s*$/, '') || 'Confirmed on assessment';
+  const det = publicDetails_(b);
+  const wa = 'https://wa.me/27' + String(CONFIG.WHATSAPP).replace(/\D/g, '').replace(/^0/, '');
+  return '<div style="background:#14213d;background:linear-gradient(135deg,#14213d,#0b5394);border-radius:14px;padding:22px;margin:18px 0;color:#fff">' +
+    '<div style="font-size:12px;letter-spacing:1px;opacity:.8">YOUR ' + title + ' · SNEAK PEEK</div>' +
+    '<div style="background:#fff;color:#14213d;border-radius:12px;padding:18px;margin-top:10px">' +
+      '<div style="color:#0b5394;font-weight:bold;font-size:14px">' + title + '</div>' +
+      (det ? '<div style="font-size:15px;margin-top:6px">' + esc_(det) + '</div>' : '') +
+      '<div style="color:#6b7280;font-size:13px;margin-top:14px">Estimated total</div>' +
+      '<div style="font-size:40px;font-weight:bold;line-height:1.1">' + esc_(price) + '</div>' +
+      '<div style="color:#6b7280;font-size:12px;margin-top:8px">Final price confirmed on the day.</div>' +
+    '</div>' +
+    '<div style="margin-top:14px">' +
+      '<a href="' + CONFIG.WEBSITE + '/book.html" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;font-weight:bold;padding:10px 16px;border-radius:20px;margin:4px 6px 0 0">Book again</a>' +
+      '<a href="' + wa + '" style="display:inline-block;background:#fff;color:#14213d;text-decoration:none;font-weight:bold;padding:10px 16px;border-radius:20px;margin:4px 0 0">WhatsApp ' + esc_(CONFIG.WHATSAPP) + '</a>' +
+    '</div></div>';
+}
+
+function cleanChecklistHtml_(b, kind) {
+  const list = CLEAN_CHECKLISTS[kind] || CLEAN_CHECKLISTS.standard;
+  const ownSupplies = !/detergent/i.test(String(b.details || ''));
+  return '<h3 style="color:#0b5394;margin:22px 0 6px">' + (SERVICE_TITLES[kind] || 'General Cleaning') + ' — what\'s included</h3>' +
+    '<table cellpadding="0" cellspacing="0" style="width:100%;font-size:14px"><tr>' +
+    list.map(([room, items], i) =>
+      (i === 2 ? '</tr><tr>' : '') +
+      '<td valign="top" style="width:50%;padding:6px 10px 10px 0"><b>' + esc_(room) + '</b>' +
+      '<ul style="margin:4px 0 0;padding-left:18px;line-height:1.5">' + items.map(t => '<li>' + esc_(t) + '</li>').join('') + '</ul></td>').join('') +
+    '</tr></table>' +
+    '<p style="font-size:13px;background:#fff8e1;border-radius:8px;padding:10px 12px;margin:10px 0">' + esc_(KIND_NOTES[kind] || CARPET_NOTE) +
+      (kind === 'standard' ? '<br><br><b>NB:</b> For general cleaning we use your cleaning brooms, mops' + (ownSupplies ? ' and detergents.' : ' (detergents supplied by us).') : '') + '</p>' +
+    '<p style="font-size:14px;line-height:1.5">We hope all is in order. Please feel free to contact us if you need any clarification.<br><br>Regards<br><b>Starhome Cleaners Team</b></p>';
 }
 
 function summaryTable_(b) {
