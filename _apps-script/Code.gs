@@ -30,7 +30,7 @@
 
 const CONFIG = {
   BUSINESS_NAME: 'Starhome Cleaners & Laundry',
-  ADMIN_EMAIL: 'your-email@gmail.com',        // <-- CHANGE THIS: where alerts & digests go
+  ADMIN_EMAIL: 'info@starhomecleaners.co.za',        // where alerts & digests go
   CALENDAR_NAME: 'Starhome Bookings',
   SHEET_NAME: 'Bookings',
   STAFF_SHEET_NAME: 'Staff',
