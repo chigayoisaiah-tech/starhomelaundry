@@ -276,7 +276,7 @@ function render() {
         <div style="flex:1;min-width:0"><h3>${b.service === 'Laundry' ? 'Laundry pickup' : 'Home services'}</h3>
           <div class="when">${esc(longDay(b.date))}</div>
           <div class="meta">${b.exactTime ? esc(b.start) + ' – ' + esc(b.end) : esc(b.timeWindow)}${b.address ? '<br>📍 ' + esc([b.address, b.suburb].filter(Boolean).join(', ')) : ''}
-            ${b.estimate ? '<br>💰 ' + esc(b.estimate) : ''}${b.staff && b.status === 'Confirmed' ? '<br>👤 ' + (b.service === 'Laundry' ? 'Driver' : 'Cleaner') + ': ' + esc(b.staff) : ''}</div></div>
+            ${b.estimate ? '<br>💰 ' + esc(b.estimate) : ''}${b.staff && b.status === 'Confirmed' ? '<br>👤 ' + (b.staff.indexOf(',') > -1 ? 'Team' : b.service === 'Laundry' ? 'Driver' : 'Cleaner') + ': ' + esc(b.staff) : ''}</div></div>
         <span class="pill st-${esc(b.status)}">${b.status === 'Pending' ? 'Awaiting confirmation' : esc(b.status)}</span></div>
       ${b.canChange
         ? `<div class="acts"><button class="btn" data-move="${esc(b.id)}">Reschedule</button><button class="btn danger" data-cancel="${esc(b.id)}">Cancel</button></div>`

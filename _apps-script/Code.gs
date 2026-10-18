@@ -18,7 +18,10 @@
  *        Notifications – live activity feed with unread badge
  *   6. Changes update the Google Calendar and email the customer
  *      (Confirmed / Rescheduled / Cancelled)
- *   7. Staff with an email in the Staff tab are added as guests to their jobs
+ *   7. Staff with an email in the Staff tab are added as guests to their jobs.
+ *      A job can have several staff. Each one is told automatically about
+ *      new / moved / cancelled jobs by email + SMS (SMSPortal or BulkSMS —
+ *      Sheet menu: Starhome → Set up SMS). WhatsApp is one tap in the admin app.
  *   8. Hourly: reminder emails ~24h before CONFIRMED jobs
  *   9. Daily 06:00: digest email to you (today, tomorrow, pending)
  *
@@ -51,10 +54,12 @@ const CONFIG = {
   TIME_WINDOWS: {
     'Morning (08:00–12:00)': [8, 12],
     'Afternoon (12:00–16:00)': [12, 16],
+    'Full day (08:00–17:00)': [8, 17],
   },
 
-  DAY_START_HOUR: 7,           // admin calendar shows 07:00 ...
-  DAY_END_HOUR: 18,            // ... to 18:00
+  DAY_START_HOUR: 6,           // admin calendar shows 06:00 ...
+  DAY_END_HOUR: 20,            // ... to 20:00
+  NOTIFY_STAFF: true,          // email + SMS staff about their jobs
   REMINDER_HOURS_BEFORE: 24,   // customer reminder lead time
   DIGEST_HOUR: 6,              // daily digest to you (06:00)
   LOG_KEEP_ROWS: 500,          // activity entries kept
@@ -255,6 +260,9 @@ function onOpen() {
     .addItem('Send due reminders now', 'sendReminders')
     .addItem('Email me today\'s digest now', 'dailyDigest')
     .addSeparator()
+    .addItem('Set up SMS (SMSPortal / BulkSMS)', 'setupSms')
+    .addItem('Send a test SMS', 'sendTestSms')
+    .addSeparator()
     .addItem('Add test booking', 'addTestBooking')
     .addToUi();
 }
@@ -369,7 +377,7 @@ function doPost(e) {
     d.endTime = d.startTime ? en : '';
     const windows = Object.keys(CONFIG.TIME_WINDOWS);
     if (d.startTime && windows.indexOf(d.timeWindow) < 0) {
-      d.timeWindow = Number(d.startTime.slice(0, 2)) < 12 ? windows[0] : windows[windows.length - 1];
+      d.timeWindow = windowFor_(d.startTime);
     }
 
     const b = createBooking_(d, 'Pending', validRef_(d.ref));
@@ -406,8 +414,9 @@ function adminGetData(key, fromYmd, toYmd) {
     .sort((a, b) => getTimes_(a).start - getTimes_(b).start);
 
   return {
-    staff: getStaff_().filter(s => s.active).map(s => ({ name: s.name, role: s.role, colour: s.colour })),
+    staff: getStaff_().filter(s => s.active).map(s => ({ name: s.name, role: s.role, colour: s.colour, phone: s.phone, email: s.email })),
     bookings: inRange.map(toClient_),
+    sms: smsReady_(),
     pending: pending.map(toClient_),
     notif: notifSummary_(),
   };
@@ -421,7 +430,7 @@ function adminGetBooking(key, id) {
   return toClient_(readRow_(sh, row));
 }
 
-function adminUpdateBooking(key, id, changes, notify) {
+function adminUpdateBooking(key, id, changes, notify, notifyStaff) {
   checkKey_(key);
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
@@ -441,18 +450,22 @@ function adminUpdateBooking(key, id, changes, notify) {
       else if (k === 'service') val = normaliseService_(val);
       else if (k === 'status') { if (STATUSES.indexOf(val) < 0) return; }
       else if (k === 'timeWindow') { if (!CONFIG.TIME_WINDOWS[val]) return; }
+      else if (k === 'staff') val = staffJoin_(val);
       else val = clean_(val);
       sh.getRange(row, C[header]).setValue(val);
     });
 
     SpreadsheetApp.flush();
-    return toClient_(afterChange_(sh, row, before, notify !== false));
+    STAFF_NOTICE_ = null;
+    const out = toClient_(afterChange_(sh, row, before, notify !== false, '', notifyStaff !== false));
+    out.staffNotice = STAFF_NOTICE_;
+    return out;
   } finally {
     lock.releaseLock();
   }
 }
 
-function adminCreateBooking(key, d, notify) {
+function adminCreateBooking(key, d, notify, notifyStaff) {
   checkKey_(key);
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
@@ -468,7 +481,11 @@ function adminCreateBooking(key, d, notify) {
       if (status === 'Confirmed') sendCustomerEmail_(b, 'confirmed');
       else if (status === 'Pending') sendCustomerEmail_(b, 'received');
     }
-    return toClient_(b);
+    STAFF_NOTICE_ = null;
+    if (notifyStaff !== false && status === 'Confirmed') notifyStaffList_(b, staffList_(b.staff), 'assigned');
+    const out = toClient_(b);
+    out.staffNotice = STAFF_NOTICE_;
+    return out;
   } finally {
     lock.releaseLock();
   }
@@ -511,7 +528,7 @@ function adminGetStaff(key) {
   const bookings = readAll_().filter(b => b.date instanceof Date && b.staff);
 
   return getStaff_().map(s => {
-    const mine = bookings.filter(b => b.staff === s.name);
+    const mine = bookings.filter(b => hasStaff_(b, s.name));
     const upcoming = mine.filter(b => ymd_(b.date) >= today && (b.status === 'Confirmed' || b.status === 'Pending'))
       .sort((a, b) => getTimes_(a).start - getTimes_(b).start);
     return {
@@ -558,7 +575,11 @@ function adminSaveStaff(key, s, originalName) {
         const col = sh.getRange(2, C['Staff'], lastB - 1, 1);
         const vals = col.getValues();
         const changed = [];
-        vals.forEach((r, i) => { if (String(r[0]).trim() === orig) { r[0] = name; changed.push(i + 2); } });
+        vals.forEach((r, i) => {
+          const team = staffList_(r[0]);
+          const at = team.indexOf(orig);
+          if (at >= 0) { team[at] = name; r[0] = staffJoin_(team); changed.push(i + 2); }
+        });
         if (changed.length) {
           col.setValues(vals);
           changed.forEach(r => syncEvent_(sh, r));
@@ -568,7 +589,7 @@ function adminSaveStaff(key, s, originalName) {
       // email may have changed -> refresh guest lists on upcoming jobs
       const sh = getSheet_();
       const today = ymd_(new Date());
-      readAll_().filter(b => b.staff === name && b.date instanceof Date && ymd_(b.date) >= today)
+      readAll_().filter(b => hasStaff_(b, name) && b.date instanceof Date && ymd_(b.date) >= today)
         .forEach(b => syncEvent_(sh, b.row));
     }
 
@@ -1248,7 +1269,7 @@ function portalBooking_(b) {
     date: ymd_(b.date), start: t ? hm_(t.start) : '', end: t ? hm_(t.end) : '',
     exactTime: !!b.startTime, timeWindow: b.window,
     address: b.address, suburb: b.suburb, details: b.details, estimate: b.estimate,
-    staff: b.staff ? b.staff.split(' ')[0] : '', canChange: !!changeable,
+    staff: staffList_(b.staff).map(n => n.split(' ')[0]).join(', '), canChange: !!changeable,
   };
 }
 
@@ -1261,8 +1282,7 @@ function portalSlot_(service, date, time) {
   const m = String(time || '').match(/^(\d{2}:\d{2})-(\d{2}:\d{2})$/);
   if (service === 'Laundry' && m && CONFIG.LAUNDRY_SLOTS.indexOf(time) >= 0) {
     out.startTime = m[1]; out.endTime = m[2];
-    const w = Object.keys(CONFIG.TIME_WINDOWS);
-    out.timeWindow = Number(m[1].slice(0, 2)) < 12 ? w[0] : w[w.length - 1];
+    out.timeWindow = windowFor_(m[1]);
   } else if (CONFIG.TIME_WINDOWS[time]) {
     out.timeWindow = time;
   } else {
@@ -1397,6 +1417,7 @@ function createBooking_(d, status, id) {
   if (!date) throw new Error('Invalid date');
   const windows = Object.keys(CONFIG.TIME_WINDOWS);
   const sh = getSheet_();
+  ensureSchema_(sh);
   const rec = {
     'Booking ID': id || makeId_(),
     'Created': new Date(),
@@ -1412,7 +1433,7 @@ function createBooking_(d, status, id) {
     'Estimate': clean_(d.estimate),
     'Status': status,
     'Notes': clean_(d.notes),
-    'Staff': clean_(d.staff),
+    'Staff': staffJoin_(d.staff),
     'Start Time': normTime_(d.startTime),
     'End Time': normTime_(d.endTime),
   };
@@ -1423,12 +1444,15 @@ function createBooking_(d, status, id) {
 }
 
 // After any admin change: sync calendar, log it, email the customer if needed
-function afterChange_(sh, row, before, notify, actor) {
+function afterChange_(sh, row, before, notify, actor, notifyStaff) {
   syncEvent_(sh, row);
   const b = readRow_(sh, row);
   const statusChanged = before.status !== b.status;
   const timeChanged = slotKey_(before) !== slotKey_(b);
-  const staffChanged = before.staff !== b.staff;
+  const staffChanged = staffJoin_(before.staff) !== staffJoin_(b.staff);
+  if (notifyStaff !== false) {
+    try { notifyStaffChange_(before, b); } catch (e) { console.error('Staff notify failed: ' + e); }
+  }
   const when = fmtShort_(b.date) + ' ' + timeText_(b) + (actor ? ' (' + actor + ')' : '');
 
   if (statusChanged && b.status === 'Confirmed') {
@@ -1487,6 +1511,13 @@ function handleEdit(e) {
     if (!singleCell) continue;
 
     const b = readRow_(sh, row);
+    try {
+      const old = Object.assign({}, b);
+      if (statusEdited) old.status = e.oldValue || '';
+      if (touches('Staff')) old.staff = e.oldValue || '';
+      if (timeEdited) old.date = null;   // forces "moved"
+      if (statusEdited || touches('Staff') || timeEdited) notifyStaffChange_(old, b);
+    } catch (err) { console.error('Staff notify failed: ' + err); }
     if (statusEdited && b.status !== e.oldValue) {
       if (b.status === 'Confirmed') {
         sh.getRange(row, C['Reminder Sent']).setValue('');
@@ -1620,17 +1651,19 @@ function syncEvent_(sh, row) {
   syncGuests_(ev, b);
 }
 
-// Assigned staff member (if they have an email in the Staff tab) is added as a guest
+// Assigned staff (those with an email in the Staff tab) are added as guests
 function syncGuests_(ev, b) {
   try {
     const staff = getStaff_();
-    const want = ((staff.filter(s => s.name === b.staff)[0] || {}).email || '').toLowerCase();
+    const team = staffList_(b.staff);
+    const want = staff.filter(s => team.indexOf(s.name) >= 0).map(s => s.email.toLowerCase()).filter(Boolean);
     const staffEmails = staff.map(s => s.email.toLowerCase()).filter(Boolean);
     ev.getGuestList().forEach(g => {
       const em = g.getEmail().toLowerCase();
-      if (staffEmails.indexOf(em) >= 0 && em !== want) ev.removeGuest(g.getEmail());
+      if (staffEmails.indexOf(em) >= 0 && want.indexOf(em) < 0) ev.removeGuest(g.getEmail());
     });
-    if (want && !ev.getGuestList().some(g => g.getEmail().toLowerCase() === want)) ev.addGuest(want);
+    const have = ev.getGuestList().map(g => g.getEmail().toLowerCase());
+    want.forEach(em => { if (have.indexOf(em) < 0) ev.addGuest(em); });
   } catch (err) {
     console.warn('Guest sync skipped: ' + err);
   }
@@ -1945,6 +1978,240 @@ function getSheet_() {
   const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
   if (!sh) throw new Error('Sheet "' + CONFIG.SHEET_NAME + '" not found — run setup() first.');
   return sh;
+}
+
+/* =====================================================================
+ *  STAFF TEAMS  (a booking can have several staff: "Paloma, Grace")
+ * ===================================================================== */
+
+function staffList_(s) {
+  const arr = Array.isArray(s) ? s : String(s == null ? '' : s).split(',');
+  const out = [];
+  arr.forEach(x => { const n = String(x).trim().replace(/^'/, ''); if (n && out.indexOf(n) < 0) out.push(n.slice(0, 60)); });
+  return out;
+}
+function staffJoin_(s) { return staffList_(s).join(', '); }
+function hasStaff_(b, name) { return staffList_(b.staff).indexOf(name) >= 0; }
+
+// Morning for starts before 12:00, otherwise Afternoon
+function windowFor_(start) {
+  const w = Object.keys(CONFIG.TIME_WINDOWS);
+  return Number(String(start).slice(0, 2)) < 12 ? w[0] : (w[1] || w[0]);
+}
+
+// Keeps the Time Window dropdown in the sheet in step with CONFIG.TIME_WINDOWS
+let SCHEMA_OK_ = false;
+function ensureSchema_(sh) {
+  if (SCHEMA_OK_) return;
+  SCHEMA_OK_ = true;
+  const p = PropertiesService.getScriptProperties();
+  const want = Object.keys(CONFIG.TIME_WINDOWS).join('|');
+  if (p.getProperty('WINDOWS_V') === want) return;
+  sh = sh || getSheet_();
+  const n = Math.max(sh.getMaxRows() - 1, 1);
+  sh.getRange(2, C['Time Window'], n, 1).setDataValidation(SpreadsheetApp.newDataValidation()
+    .requireValueInList(Object.keys(CONFIG.TIME_WINDOWS), true).setAllowInvalid(false).build());
+  p.setProperty('WINDOWS_V', want);
+}
+
+/* =====================================================================
+ *  STAFF NOTIFICATIONS  (email + SMS; WhatsApp is one tap in the admin app)
+ * ===================================================================== */
+
+let STAFF_NOTICE_ = null;   // summary of the last notify run, returned to the admin app
+
+// Works out who needs to hear what, comparing the booking before and after a change
+function notifyStaffChange_(before, b) {
+  if (!CONFIG.NOTIFY_STAFF) return;
+  const was = staffList_(before.staff), now = staffList_(b.staff);
+  const wasLive = before.status === 'Confirmed', isLive = b.status === 'Confirmed';
+  const moved = !before.date || slotKey_(before) !== slotKey_(b);
+  const changedJob = ['service', 'name', 'phone', 'address', 'suburb', 'details', 'notes']
+    .some(k => String(before[k] || '') !== String(b[k] || ''));
+
+  if (b.status === 'Cancelled' && before.status !== 'Cancelled') {
+    return notifyStaffList_(b, was.length ? was : now, 'cancelled');
+  }
+  if (wasLive && !isLive) {
+    // e.g. the client moved their booking online -> back to Pending
+    if (b.status === 'Pending') return notifyStaffList_(b, was, 'onhold');
+    return;
+  }
+  if (!isLive) return;
+  if (!wasLive) return notifyStaffList_(b, now, 'assigned');
+
+  const added = now.filter(n => was.indexOf(n) < 0);
+  const removed = was.filter(n => now.indexOf(n) < 0);
+  const kept = now.filter(n => was.indexOf(n) >= 0);
+  if (added.length) notifyStaffList_(b, added, 'assigned');
+  if (removed.length) notifyStaffList_(b, removed, 'removed');
+  if (kept.length && moved) notifyStaffList_(b, kept, 'rescheduled');
+  else if (kept.length && (changedJob || added.length || removed.length)) notifyStaffList_(b, kept, 'updated');
+}
+
+function notifyStaffList_(b, names, kind) {
+  if (!CONFIG.NOTIFY_STAFF || !names || !names.length) return;
+  const staff = getStaff_();
+  const sent = [], missed = [];
+  names.forEach(name => {
+    const s = staff.filter(x => x.name === name)[0];
+    if (!s) return;
+    const how = [];
+    if (s.email) {
+      try { sendStaffEmail_(b, s, kind); how.push('email'); }
+      catch (e) { console.error('Staff email to ' + s.email + ' failed: ' + e); }
+    }
+    if (s.phone) {
+      const r = sendSms_(s.phone, staffJobText_(b, kind, s.name));
+      if (r.ok) how.push('SMS'); else if (r.error !== 'SMS not set up') console.warn('SMS to ' + name + ' failed: ' + r.error);
+    }
+    if (how.length) sent.push(name + ' (' + how.join(' + ') + ')'); else missed.push(name);
+  });
+  const label = { assigned: 'new job', rescheduled: 'job moved', updated: 'job updated', cancelled: 'job cancelled', removed: 'taken off job', onhold: 'job on hold' }[kind] || kind;
+  if (sent.length) logActivity_('staff', b, 'Staff told (' + label + '): ' + sent.join(', ') + ' — ' + jobLabel_(b));
+  if (missed.length) logActivity_('staff', b, 'Could not reach ' + missed.join(', ') + ' (' + label + ') — add an email or set up SMS');
+  STAFF_NOTICE_ = STAFF_NOTICE_ || { sent: [], missed: [] };
+  STAFF_NOTICE_.sent = STAFF_NOTICE_.sent.concat(sent);
+  STAFF_NOTICE_.missed = STAFF_NOTICE_.missed.concat(missed);
+}
+
+const STAFF_HEADS_ = {
+  assigned: 'New job', rescheduled: 'Job moved', updated: 'Job updated',
+  cancelled: 'Job CANCELLED', removed: 'You are off this job', onhold: 'Job on hold',
+};
+
+// Short text for SMS / WhatsApp
+function staffJobText_(b, kind, name) {
+  const t = getTimes_(b);
+  const when = fmtShort_(b.date) + ' ' + (t ? hm_(t.start) + '-' + hm_(t.end) : b.window);
+  const others = staffList_(b.staff).filter(n => n !== name);
+  const job = b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning';
+  let txt = 'Starhome ' + (STAFF_HEADS_[kind] || 'Job') + ': ' + job + ' for ' + b.name + ', ' + when;
+  if (kind === 'cancelled' || kind === 'removed') return txt + '. Ref ' + b.id;
+  if (kind === 'onhold') return txt + ' - the client is changing the time, wait for our confirmation. Ref ' + b.id;
+  txt += '. ' + fullAddress_(b);
+  if (b.phone) txt += '. Client ' + b.phone;
+  if (others.length) txt += '. With ' + others.join(', ');
+  return txt + '. Ref ' + b.id;
+}
+
+function sendStaffEmail_(b, s, kind) {
+  const t = getTimes_(b);
+  const head = STAFF_HEADS_[kind] || 'Job update';
+  const others = staffList_(b.staff).filter(n => n !== s.name);
+  const addr = fullAddress_(b);
+  const row = (k, v) => v ? '<tr><td style="color:#666;padding:4px 12px 4px 0;vertical-align:top">' + k + '</td><td style="padding:4px 0"><b>' + v + '</b></td></tr>' : '';
+  const off = kind === 'cancelled' || kind === 'removed';
+  const note = {
+    assigned: 'You have been booked for this job.',
+    rescheduled: 'The time of this job has changed — please check the new time.',
+    updated: 'Some details of this job have changed.',
+    cancelled: 'This job has been cancelled — you do not need to go.',
+    removed: 'You have been taken off this job — you do not need to go.',
+    onhold: 'The client is changing the time. Please wait for our confirmation before you go.',
+  }[kind] || '';
+  const html =
+    '<div style="font-family:Arial,sans-serif;max-width:600px">' +
+    '<h2 style="color:' + (off ? '#b91c1c' : '#0b5394') + ';margin:0 0 6px">' + esc_(head) + '</h2>' +
+    '<p style="margin:0 0 14px">Hi ' + esc_(s.name.split(' ')[0]) + ', ' + esc_(note) + '</p>' +
+    '<table style="font-size:14px;border-collapse:collapse">' +
+    row('When', esc_(fmtDate_(b.date) + (t ? ', ' + hm_(t.start) + '–' + hm_(t.end) : ''))) +
+    row('Job', esc_(b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning')) +
+    (off ? '' :
+      row('Client', esc_(b.name) + (b.phone ? ' · <a href="tel:' + esc_(b.phone) + '">' + esc_(b.phone) + '</a>' : '')) +
+      row('Address', addr ? '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr) + '">' + esc_(addr) + '</a>' : '') +
+      row('Team', esc_(others.length ? 'You, ' + others.join(', ') : 'Just you')) +
+      row('Details', esc_(b.details)) +
+      row('Notes', esc_(b.notes))) +
+    row('Ref', esc_(b.id)) +
+    '</table>' +
+    '<p style="font-size:13px;color:#666;margin-top:16px">Questions? Call the office on ' + esc_(CONFIG.PHONE) + '.</p></div>';
+  MailApp.sendEmail({
+    to: s.email,
+    subject: head + ': ' + (b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning') + ' – ' + fmtShort_(b.date) + (t ? ' ' + hm_(t.start) : '') + ' – ' + (b.suburb || b.name),
+    htmlBody: html,
+    name: CONFIG.BUSINESS_NAME,
+    replyTo: CONFIG.ADMIN_EMAIL,
+  });
+}
+
+/* ---------- SMS (SMSPortal or BulkSMS) ----------
+ * Credentials live in Script Properties (never in this file):
+ *   SMS_PROVIDER = smsportal | bulksms,  SMS_KEY = client id / token id,  SMS_SECRET = secret
+ * Set them from the Sheet: Starhome → Set up SMS.
+ */
+function smsConfig_() {
+  const p = PropertiesService.getScriptProperties();
+  return {
+    provider: String(p.getProperty('SMS_PROVIDER') || '').toLowerCase(),
+    key: p.getProperty('SMS_KEY') || '', secret: p.getProperty('SMS_SECRET') || '',
+  };
+}
+function smsReady_() { const c = smsConfig_(); return !!(c.provider && c.key && c.secret); }
+
+function smsNumber_(phone) {
+  let d = String(phone || '').replace(/\D/g, '');
+  if (d.indexOf('00') === 0) d = d.slice(2);
+  if (d[0] === '0') d = '27' + d.slice(1);
+  return d.length >= 11 && d.length <= 15 ? d : '';
+}
+
+function sendSms_(phone, text) {
+  const c = smsConfig_();
+  if (!c.provider || !c.key || !c.secret) return { ok: false, error: 'SMS not set up' };
+  const to = smsNumber_(phone);
+  if (!to) return { ok: false, error: 'No valid mobile number' };
+  const msg = String(text || '').slice(0, 459);   // max 3 SMS parts
+  let url, body;
+  if (c.provider === 'bulksms') {
+    url = 'https://api.bulksms.com/v1/messages';
+    body = [{ to: '+' + to, body: msg }];
+  } else {
+    url = 'https://rest.smsportal.com/v1/bulkmessages';
+    body = { Messages: [{ Content: msg, Destination: to }] };
+  }
+  try {
+    const r = UrlFetchApp.fetch(url, {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      headers: { Authorization: 'Basic ' + Utilities.base64Encode(c.key + ':' + c.secret), Accept: 'application/json' },
+      payload: JSON.stringify(body),
+    });
+    const code = r.getResponseCode();
+    return code >= 200 && code < 300 ? { ok: true } : { ok: false, error: 'HTTP ' + code + ' ' + r.getContentText().slice(0, 200) };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// Sheet menu: store SMS credentials in Script Properties
+function setupSms() {
+  const ui = SpreadsheetApp.getUi();
+  const p = PropertiesService.getScriptProperties();
+  const a = ui.prompt('Set up SMS (1/3)', 'Provider — type smsportal or bulksms\n(leave blank and press OK to switch SMS off):', ui.ButtonSet.OK_CANCEL);
+  if (a.getSelectedButton() !== ui.Button.OK) return;
+  const provider = a.getResponseText().trim().toLowerCase();
+  if (!provider) {
+    ['SMS_PROVIDER', 'SMS_KEY', 'SMS_SECRET'].forEach(k => p.deleteProperty(k));
+    return ui.alert('SMS switched off. Staff will still get emails.');
+  }
+  if (['smsportal', 'bulksms'].indexOf(provider) < 0) return ui.alert('Please type smsportal or bulksms.');
+  const k = ui.prompt('Set up SMS (2/3)', provider === 'smsportal'
+    ? 'SMSPortal API Client ID (SMSPortal → Settings → API Keys):'
+    : 'BulkSMS API Token ID (BulkSMS → Settings → API Tokens):', ui.ButtonSet.OK_CANCEL);
+  if (k.getSelectedButton() !== ui.Button.OK || !k.getResponseText().trim()) return;
+  const s = ui.prompt('Set up SMS (3/3)', provider === 'smsportal' ? 'SMSPortal API Secret:' : 'BulkSMS Token Secret:', ui.ButtonSet.OK_CANCEL);
+  if (s.getSelectedButton() !== ui.Button.OK || !s.getResponseText().trim()) return;
+  p.setProperties({ SMS_PROVIDER: provider, SMS_KEY: k.getResponseText().trim(), SMS_SECRET: s.getResponseText().trim() });
+  ui.alert('Saved. Use Starhome → Send a test SMS to check it works.');
+}
+
+function sendTestSms() {
+  const ui = SpreadsheetApp.getUi();
+  if (!smsReady_()) return ui.alert('Set up SMS first: Starhome → Set up SMS.');
+  const n = ui.prompt('Send a test SMS', 'Mobile number to send to (e.g. 082 123 4567):', ui.ButtonSet.OK_CANCEL);
+  if (n.getSelectedButton() !== ui.Button.OK) return;
+  const r = sendSms_(n.getResponseText(), 'Test from ' + CONFIG.BUSINESS_NAME + ' - staff SMS alerts are working.');
+  ui.alert(r.ok ? 'Sent! Check the phone.' : 'Not sent: ' + r.error);
 }
 
 function getStaffSheet_() {

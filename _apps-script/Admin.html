@@ -130,6 +130,46 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
 .chipstat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:140px}
 .chipstat b{display:block;font-size:18px}
 
+/* ---- team picker, time presets, agenda list ---- */
+.team{display:flex;flex-wrap:wrap;gap:6px}
+.f .team label,.team label{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border:1px solid var(--line);border-radius:20px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;user-select:none;text-transform:none;letter-spacing:0;color:var(--ink)}
+.team label .muted{font-size:11px}
+.team label.on .muted{color:#cbd5e1}
+.team label .av{width:24px;height:24px;font-size:10px}
+.team label input{position:absolute;opacity:0;pointer-events:none}
+.f .team label.on,.team label.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.team .none{color:var(--muted);font-size:12px;align-self:center}
+.presets{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1;margin-top:-2px}
+.presets button{height:30px;padding:0 12px;border-radius:15px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:500;cursor:pointer;color:var(--ink)}
+.presets button.on{background:#e0f2fe;border-color:#7dd3fc;color:#075985}
+.crew{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.crew .row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+.crew .row b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crew .row a{text-decoration:none}
+.agenda{max-width:820px;margin:0 auto;padding:12px 14px 100px}
+.agenda h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.agenda h3.today{color:var(--brand)}
+.agenda h3 .n{font-weight:500;text-transform:none;letter-spacing:0}
+.aitem{display:flex;gap:10px;align-items:stretch;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer;overflow:hidden}
+.aitem:active{background:#f8fafc}
+.aitem .bar{width:6px;flex:none}
+.aitem .bar.Cleaning{background:var(--clean)} .aitem .bar.Laundry{background:var(--laundry)}
+.aitem .bar.Pending{background:var(--pending)} .aitem .bar.Completed{background:var(--done)} .aitem .bar.Cancelled{background:#fca5a5}
+.aitem .tm{flex:none;width:58px;padding:10px 0;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.aitem .tm small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.aitem .bd{flex:1;min-width:0;padding:10px 10px 10px 0}
+.aitem .bd b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aitem .bd .m{font-size:12px;color:var(--muted);margin-top:2px}
+.aitem .who2{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chipname{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px 2px 3px;border-radius:10px;background:#f1f5f9;color:#334155}
+.chipname i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.agenda .empty{color:var(--muted);font-size:13px;padding:6px 2px 4px}
+.board.listmode{background:var(--bg)}
+.board.listmode .grid{display:none}
+#agenda{display:none}
+.board.listmode #agenda{display:block}
+.staffsel{max-width:200px}
+
 /* ---- staff cards ---- */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
 .scard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
@@ -281,6 +321,24 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
   .qline .unit,.qline .lt{display:none}
   .minigrid{grid-template-columns:repeat(2,1fr)}
   #mLogout{display:inline-flex !important}
+  /* calendar on phones */
+  #view-calendar .top{display:grid;grid-template-columns:auto 1fr auto auto;gap:6px}
+  #view-calendar .top .spacer,#view-calendar .top .legend{display:none}
+  #view-calendar .datenav{grid-column:1/-1;order:0}
+  #btnToday{order:1} #btnPending{order:2;justify-self:start} #btnRefresh{order:3} #viewSeg{order:4}
+  .staffsel{order:5;grid-column:1/-1;max-width:none;width:100%}
+  .seg button{padding:0 10px}
+  .board{-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scroll-padding-left:44px}
+  .col{scroll-snap-align:start}
+  .colhead{padding:8px 4px 6px}
+  .avatar{width:32px;height:32px;font-size:12px;margin-bottom:4px;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ring,#cbd5e1)}
+  .hr{padding-right:4px;font-size:9px}
+  .hr b{font-size:11px}
+  .card{padding:4px 6px;font-size:11px}
+  .card .n{font-size:12px}
+  .dayhead b{font-size:16px;width:30px;height:30px}
+  .df .btn{flex:1 1 auto;justify-content:center}
+  .df .spacer{display:none}
 }
 </style>
 </head>
@@ -321,11 +379,12 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
           <span><i class="dot" style="background:var(--pending)"></i>Pending</span>
         </div>
         <label class="chk hide-sm"><input type="checkbox" id="showCancelled"> Cancelled</label>
+        <select class="btn staffsel" id="fStaffSel" aria-label="Show staff"><option value="">All staff</option></select>
         <button class="btn icon" id="btnRefresh" title="Refresh">⟳</button>
-        <div class="seg" id="viewSeg"><button data-v="day" class="on">Day</button><button data-v="week">Week</button></div>
+        <div class="seg" id="viewSeg"><button data-v="day" class="on">Day</button><button data-v="week">Week</button><button data-v="list">List</button></div>
         <button class="btn dark hide-sm" id="btnAdd">+ Booking</button>
       </div>
-      <div class="board" id="board"><div class="loading" id="loading"></div><div class="grid" id="grid"></div></div>
+      <div class="board" id="board"><div class="loading" id="loading"></div><div class="grid" id="grid"></div><div id="agenda"></div></div>
     </section>
 
     <!-- ================= QUOTES ================= -->
@@ -434,7 +493,7 @@ const BOOT = <?!= bootstrap ?>;
  * ===================================================================== */
 const S = {
   tab: 'calendar', view: 'day', date: BOOT.today,
-  staff: [], bookings: [], pending: [], service: '', showCancelled: false, drag: null, scrolled: false,
+  staff: [], bookings: [], pending: [], service: '', showCancelled: false, drag: null, scrolled: false, who: '', sms: false,
   quotes: null, prices: [], clients: null, staffAll: null, notifs: null,
   unread: 0, lastNotifTime: '',
 };
@@ -475,11 +534,17 @@ const initials = n => String(n || '?').split(/\s+/).filter(Boolean).slice(0, 2).
 const hourPx = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour')) || 64;
 const waNum = p => { let d = String(p || '').replace(/\D/g, ''); if (d[0] === '0') d = '27' + d.slice(1); return d; };
 const staffColour = name => (S.staff.find(s => s.name === name) || {}).colour || '';
+// A booking can have several staff, stored as "Paloma, Grace"
+const team = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+const hasStaff = (b, name) => team(b.staff).includes(name);
+const teamText = s => team(s).join(', ') || 'Unassigned';
+const isPhone = () => window.matchMedia('(max-width:760px)').matches;
+const TIME_PRESETS = [['Morning', '08:00', '12:00'], ['Afternoon', '12:00', '16:00'], ['Full day', '08:00', '17:00']];
 const findBooking = id => S.bookings.find(b => b.id === id) || S.pending.find(b => b.id === id);
 const fmtR = n => { const v = Math.round((Number(n) || 0) * 100) / 100; const [a, b] = v.toFixed(v % 1 ? 2 : 0).split('.'); return 'R' + a.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (b ? '.' + b : ''); };
 const PALETTE = ['#3b82f6', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6', '#6366f1', '#84cc16', '#f97316'];
 const colourFor = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return PALETTE[h % PALETTE.length]; };
-const svcLabel = s => s === 'Laundry' ? 'Laundry pickup' : 'Home cleaning';
+const svcLabel = s => s === 'Laundry' ? 'Laundry pickup' : 'Home services';
 
 function timeAgo(iso) {
   const t = new Date(iso).getTime(), s = Math.max(0, (Date.now() - t) / 1000);
@@ -538,6 +603,37 @@ function quickLinks(o) {
     (addr ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" rel="noopener">📍 Map</a>` : '') +
     '</div>';
 }
+
+// Short job text for staff (same wording as the automatic SMS)
+function staffJobMsg(b, name) {
+  const others = team(b.staff).filter(n => n !== name);
+  const addr = [b.address, b.suburb].filter(Boolean).join(', ');
+  return 'Hi ' + String(name).split(' ')[0] + ', Starhome job: ' + (b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning') +
+    ' for ' + b.name + ', ' + fmtShortDay(b.date) + ' ' + b.start + '-' + b.end + '. ' + addr +
+    (b.phone ? '. Client ' + b.phone : '') + (others.length ? '. With ' + others.join(', ') : '') + '. Ref ' + b.id;
+}
+
+// One-tap WhatsApp / SMS / call for each assigned staff member
+function crewLinks(b) {
+  const t = team(b.staff);
+  if (!t.length) return '';
+  return '<div class="sec" style="margin-top:4px">Team on this job</div><div class="crew">' + t.map(n => {
+    const s = S.staff.find(x => x.name === n) || {};
+    const msg = encodeURIComponent(staffJobMsg(b, n));
+    const num = s.phone ? waNum(s.phone) : '';
+    return `<div class="row"><span class="av" style="width:28px;height:28px;font-size:11px;background:${esc(s.colour || '#94a3b8')}">${esc(initials(n))}</span><b>${esc(n)}</b>` +
+      (num ? `<a class="btn sm wa" href="https://wa.me/${num}?text=${msg}" target="_blank" rel="noopener">💬 WhatsApp</a>` +
+             `<a class="btn sm" href="sms:+${num}?&body=${msg}">SMS</a><a class="btn sm icon" href="tel:+${num}" aria-label="Call">📞</a>`
+           : '<span class="muted">No phone saved</span>') + '</div>';
+  }).join('') + '</div>';
+}
+
+const staffNoticeText = r => {
+  const n = r && r.staffNotice;
+  if (!n) return '';
+  return (n.sent.length ? ' · staff told: ' + n.sent.map(x => x.split(' (')[0]).join(', ') : '') +
+    (n.missed.length ? ' · no contact for ' + n.missed.join(', ') : '');
+};
 
 /* =====================================================================
  *  CLEANING ESTIMATE  (quick calculator — same maths as the website's book.html)
@@ -891,6 +987,7 @@ function handleNotif(notif) {
  * ===================================================================== */
 function range() {
   if (S.view === 'day') return [S.date, S.date];
+  if (S.view === 'list') return [S.date, addDays(S.date, 6)];
   const f = weekStart(S.date); return [f, addDays(f, 6)];
 }
 
@@ -899,7 +996,8 @@ async function load(silent) {
   try {
     const [from, to] = range();
     const res = await api('adminGetData', from, to);
-    S.staff = res.staff; S.bookings = res.bookings; S.pending = res.pending;
+    S.staff = res.staff; S.bookings = res.bookings; S.pending = res.pending; S.sms = !!res.sms;
+    fillStaffSel();
     handleNotif(res.notif);
     if (S.tab === 'calendar') render(); else updatePendingCount();
   } catch (e) {
@@ -911,8 +1009,25 @@ async function load(silent) {
 
 function updatePendingCount() { $('pendCount').textContent = S.pending.length; }
 
+function fillStaffSel() {
+  const el = $('fStaffSel');
+  if (S.who && S.who !== '-' && !S.staff.some(s => s.name === S.who)) S.who = '';
+  el.innerHTML = '<option value="">All staff</option><option value="-">Unassigned</option>' +
+    S.staff.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  el.value = S.who;
+}
+
+// Does a booking belong in the current staff filter?
+function whoMatch(b) {
+  if (!S.who) return true;
+  const names = S.staff.map(s => s.name);
+  if (S.who === '-') return !team(b.staff).some(n => names.includes(n));
+  return hasStaff(b, S.who);
+}
+
 function render() {
   const [from, to] = range();
+  $('board').classList.toggle('listmode', S.view === 'list');
   $('dateLabel').textContent = S.view === 'day'
     ? fmtDay(S.date)
     : parseYmd(from).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' }) + ' – ' +
@@ -921,21 +1036,50 @@ function render() {
   updatePendingCount();
 
   const list = S.bookings.filter(b => (!S.service || b.service === S.service) && (S.showCancelled || b.status !== 'Cancelled'));
+  if (S.view === 'list') return drawAgenda(list.filter(whoMatch), from);
   let cols;
   if (S.view === 'day') {
     const names = S.staff.map(s => s.name);
     cols = [{ title: 'Unassigned', sub: 'New requests', empty: true, date: S.date, staff: '' }]
       .concat(S.staff.map(s => ({ title: s.name, sub: s.role, colour: s.colour, date: S.date, staff: s.name })));
-    cols.forEach(c => c.items = list.filter(b => b.date === S.date && (c.staff ? b.staff === c.staff : !names.includes(b.staff))));
+    if (S.who) cols = cols.filter(c => S.who === '-' ? c.empty : c.staff === S.who);
+    // a job with several staff shows in each of their columns
+    cols.forEach(c => c.items = list.filter(b => b.date === S.date &&
+      (c.staff ? hasStaff(b, c.staff) : !team(b.staff).some(n => names.includes(n)))));
   } else {
     cols = [];
     for (let i = 0; i < 7; i++) {
       const d = addDays(from, i);
-      cols.push({ isDay: true, date: d, staff: null, title: parseYmd(d).toLocaleDateString('en-ZA', { weekday: 'short' }), num: parseYmd(d).getDate(), items: list.filter(b => b.date === d) });
+      cols.push({ isDay: true, date: d, staff: null, title: parseYmd(d).toLocaleDateString('en-ZA', { weekday: 'short' }), num: parseYmd(d).getDate(), items: list.filter(b => b.date === d && whoMatch(b)) });
     }
   }
   cols.forEach(c => { const n = c.items.filter(b => b.status !== 'Cancelled').length; c.count = n + (n === 1 ? ' job' : ' jobs'); });
   draw(cols);
+}
+
+// List view: a simple day-by-day agenda (best on phones)
+function drawAgenda(list, from) {
+  const chip = n => `<span class="chipname"><i style="background:${esc(staffColour(n) || '#cbd5e1')}"></i>${esc(n)}</span>`;
+  let h = '<div class="agenda">';
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(from, i);
+    const items = list.filter(b => b.date === d).sort((a, b) => toMin(a.start) - toMin(b.start));
+    const n = items.filter(b => b.status !== 'Cancelled').length;
+    h += `<h3 class="${d === todayLive() ? 'today' : ''}">${esc(fmtDay(d))}${d === todayLive() ? ' · Today' : ''} <span class="n">· ${n} ${n === 1 ? 'job' : 'jobs'}</span></h3>`;
+    if (!items.length) { h += `<div class="empty">No jobs</div>`; continue; }
+    h += items.map(b => {
+      const cls = ['Pending', 'Completed', 'Cancelled'].includes(b.status) ? b.status : b.service;
+      const t = team(b.staff);
+      return `<div class="aitem" data-id="${esc(b.id)}"><div class="bar ${cls}"></div>
+        <div class="tm">${esc(b.start)}<small>${esc(b.end)}</small></div>
+        <div class="bd"><b>${esc(b.name)}${b.status !== 'Confirmed' ? ` <span class="pill st-${esc(b.status)}">${esc(b.status)}</span>` : ''}</b>
+          <div class="m">${svcLabel(b.service)}${b.suburb ? ' · ' + esc(b.suburb) : ''}</div>
+          <div class="who2">${t.length ? t.map(chip).join('') : '<span class="chipname">👤 Unassigned</span>'}</div></div></div>`;
+    }).join('');
+  }
+  h += '</div>';
+  $('agenda').innerHTML = h;
+  $('agenda').querySelectorAll('.aitem').forEach(el => el.onclick = () => openBooking(el.dataset.id));
 }
 
 function layout(items) {
@@ -960,9 +1104,14 @@ function layout(items) {
 }
 
 function draw(cols) {
-  const px = hourPx(), hours = H1 - H0, minW = S.view === 'day' ? 170 : 150;
+  const px = hourPx(), hours = H1 - H0;
+  const phone = isPhone(), gut = phone ? 44 : 64;
+  // phones: two staff columns (or three days) per screen, swipe sideways for more
+  const minW = phone
+    ? Math.max(110, Math.floor(($('board').clientWidth - gut) / (S.view === 'day' ? Math.min(cols.length, 2) : 3)))
+    : (S.view === 'day' ? 170 : 150);
   const g = $('grid');
-  g.style.gridTemplateColumns = `64px repeat(${cols.length}, minmax(${minW}px, 1fr))`;
+  g.style.gridTemplateColumns = `${gut}px repeat(${cols.length}, minmax(${minW}px, 1fr))`;
 
   let h = '<div class="corner"></div>';
   cols.forEach(c => {
@@ -997,13 +1146,14 @@ function draw(cols) {
       const ht = Math.max((it.e - it.s) / 60 * px - 3, 24);
       const w = 100 / it.lanes, left = it.lane * w;
       const cls = ['Pending', 'Completed', 'Cancelled'].includes(b.status) ? b.status : b.service;
-      const sc = S.view === 'week' && b.staff ? staffColour(b.staff) : '';
+      const sc = S.view === 'week' && b.staff ? staffColour(team(b.staff)[0]) : '';
+      const crew = team(b.staff);
       h += `<div class="card ${cls}" draggable="true" data-id="${esc(b.id)}" title="${esc(b.name)} · ${esc(b.start)}–${esc(b.end)}"
                style="top:${top + 1}px;height:${ht}px;left:calc(${left}% + 3px);width:calc(${w}% - 6px);${sc ? 'border-left-color:' + esc(sc) : ''}">
           <div class="t">${esc(b.start)} – ${esc(b.end)}${b.status === 'Pending' ? '<span class="pill">PENDING</span>' : ''}${b.status === 'Completed' ? ' ✔' : ''}</div>
           <div class="n">${esc(b.name)}</div>
           <div class="s">${svcLabel(b.service)}${b.suburb ? ' · ' + esc(b.suburb) : ''}</div>
-          ${S.view === 'week' ? `<div class="s">👤 ${esc(b.staff || 'Unassigned')}</div>` : ''}
+          ${S.view === 'week' ? `<div class="s">👤 ${esc(teamText(b.staff))}</div>` : crew.length > 1 ? `<div class="s">👥 ${esc(crew.join(', '))}</div>` : ''}
         </div>`;
     });
     if (c.date === todayLive() && nowM >= H0 * 60 && nowM <= H1 * 60) {
@@ -1016,7 +1166,8 @@ function draw(cols) {
   g.querySelectorAll('.card').forEach(el => {
     el.addEventListener('click', e => { e.stopPropagation(); openBooking(el.dataset.id); });
     el.addEventListener('dragstart', e => {
-      S.drag = { id: el.dataset.id, offset: e.offsetY };
+      const from = cols[+el.parentNode.dataset.ci];
+      S.drag = { id: el.dataset.id, offset: e.offsetY, from: from ? from.staff : null };
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', el.dataset.id);
       setTimeout(() => el.classList.add('dragging'), 0);
@@ -1049,13 +1200,18 @@ function draw(cols) {
 
 async function onDrop(c, y, px) {
   if (!S.drag) return;
-  const b = findBooking(S.drag.id); S.drag = null;
+  const b = findBooking(S.drag.id), from = S.drag.from === undefined ? null : S.drag.from; S.drag = null;
   if (!b) return;
   const dur = Math.max(toMin(b.end) - toMin(b.start), 30);
   let s = snap(H0 * 60 + y / px * 60, 15);
   s = Math.max(H0 * 60, Math.min(s, H1 * 60 - 15));
   const changes = { date: c.date, startTime: toHM(s), endTime: toHM(Math.min(s + dur, 23 * 60 + 45)) };
-  if (c.staff !== null) changes.staff = c.staff;
+  if (c.staff !== null && from !== null && c.staff !== from) {
+    // dragged from one staff column to another: swap that person, keep the rest of the team
+    let t = team(b.staff).filter(n => n !== from);
+    if (c.staff && !t.includes(c.staff)) t.push(c.staff);
+    changes.staff = t.join(', ');
+  }
 
   const moved = changes.date !== b.date || changes.startTime !== b.start;
   if (!moved && (changes.staff === undefined || changes.staff === b.staff)) return;
@@ -1067,8 +1223,8 @@ async function onDrop(c, y, px) {
   Object.assign(b, { date: changes.date, start: changes.startTime, end: changes.endTime, staff: changes.staff !== undefined ? changes.staff : b.staff });
   render();
   try {
-    await api('adminUpdateBooking', b.id, changes, notify);
-    toast((moved ? 'Moved to ' + fmtShortDay(changes.date) + ' ' + changes.startTime : 'Reassigned to ' + (changes.staff || 'Unassigned')) + (notify ? ' · customer emailed' : ''));
+    const r = await api('adminUpdateBooking', b.id, changes, notify, true);
+    toast((moved ? 'Moved to ' + fmtShortDay(changes.date) + ' ' + changes.startTime : 'Reassigned to ' + teamText(changes.staff)) + (notify ? ' · customer emailed' : '') + staffNoticeText(r));
     load(true);
   } catch (e) {
     Object.assign(b, snapshot); render();
@@ -1097,20 +1253,30 @@ function openNew(pre) {
 function showForm(b, isNew) {
   $('dTitle').innerHTML = isNew ? (b.quoteId ? 'Book quote ' + esc(b.quoteId) : 'New booking')
     : esc(b.name) + ` <span class="pill st-${esc(b.status)}">${esc(b.status)}</span>`;
-  const staffOpts = [['', '— Unassigned —']].concat(S.staff.map(s => [s.name, s.name + (s.role ? ' (' + s.role + ')' : '')]));
-  if (b.staff && !S.staff.some(s => s.name === b.staff)) staffOpts.push([b.staff, b.staff + ' (inactive)']);
+  // Team picker: current team first (keeps their order), then everyone else
+  const cur = team(b.staff);
+  const pick = cur.concat(S.staff.map(s => s.name).filter(n => !cur.includes(n)));
+  const teamPicker = '<div class="team" id="fStaff">' + pick.map(n => {
+    const s = S.staff.find(x => x.name === n);
+    return `<label class="${cur.includes(n) ? 'on' : ''}"><input type="checkbox" value="${esc(n)}" ${cur.includes(n) ? 'checked' : ''}>` +
+      `<span class="av" style="background:${esc((s && s.colour) || '#94a3b8')}">${esc(initials(n))}</span>${esc(n)}${s ? (s.role ? ' <span class="muted">' + esc(s.role) + '</span>' : '') : ' <span class="muted">(inactive)</span>'}</label>`;
+  }).join('') + (pick.length ? '' : '<span class="none">No staff yet — add them in the Staff tab</span>') + '</div>';
+  const st0 = b.startTime || b.start, en0 = b.endTime || b.end;
 
   let h = '';
   if (!isNew) {
     h += quickLinks(b);
+    h += crewLinks(b);
     h += `<div class="req">Ref <b>${esc(b.id)}</b> · customer asked for <b>${esc(fmtShortDay(b.date))}, ${esc(b.startTime ? b.start + '–' + b.end : b.timeWindow)}</b>${b.reminderSent ? ' · reminder sent' : ''}</div>`;
   }
   h += '<div class="sec">Schedule</div><div class="fg">' +
     field('Status', sel('fStatus', BOOT.statuses, b.status)) +
-    field('Assigned to', sel('fStaff', staffOpts, b.staff || '')) +
-    field('Date', inp('fDate', b.date, 'date'), true) +
-    field('Start', inp('fStart', b.startTime || b.start, 'time', 'step="900"')) +
-    field('End', inp('fEnd', b.endTime || b.end, 'time', 'step="900"')) +
+    field('Date', inp('fDate', b.date, 'date')) +
+    field('Assigned to <span style="text-transform:none;letter-spacing:0;font-weight:500">· tap to add several</span>', teamPicker, true) +
+    field('Start', inp('fStart', st0, 'time', 'step="900"')) +
+    field('End', inp('fEnd', en0, 'time', 'step="900"')) +
+    '<div class="presets" id="fPresets">' + TIME_PRESETS.map(p =>
+      `<button type="button" data-s="${p[1]}" data-e="${p[2]}" class="${st0 === p[1] && en0 === p[2] ? 'on' : ''}">${p[0]} ${p[1]}–${p[2]}</button>`).join('') + '</div>' +
     '</div><div class="sec">Customer & job</div><div class="fg">' +
     field('Service', sel('fSvc', ['Cleaning', 'Laundry'], b.service)) +
     field('Requested time', sel('fWindow', BOOT.windows, b.timeWindow)) +
@@ -1127,12 +1293,23 @@ function showForm(b, isNew) {
 
   $('dFoot').innerHTML =
     `<label class="chk" style="flex-basis:100%"><input type="checkbox" id="fNotify" checked> Email the customer about this</label>` +
+    `<label class="chk" style="flex-basis:100%"><input type="checkbox" id="fNotifyStaff" checked> Tell assigned staff (email${S.sms ? ' + SMS' : ''}) when confirmed / changed</label>` +
     (!isNew && b.status === 'Pending' ? '<button class="btn primary" id="dConfirm">✓ Confirm</button>' : '') +
     (!isNew && b.status === 'Confirmed' ? '<button class="btn" id="dDone">Mark completed</button>' : '') +
     '<div class="spacer"></div><button class="btn" id="dCancel">Close</button>' +
     `<button class="btn dark" id="dSave">${isNew ? 'Create booking' : 'Save'}</button>`;
 
   $('dCancel').onclick = closeDrawer;
+  $('fStaff').querySelectorAll('input').forEach(x => x.onchange = () => x.parentNode.classList.toggle('on', x.checked));
+  const syncPresets = () => $('fPresets').querySelectorAll('button').forEach(x =>
+    x.classList.toggle('on', x.dataset.s === $('fStart').value && x.dataset.e === $('fEnd').value));
+  $('fPresets').querySelectorAll('button').forEach(x => x.onclick = () => {
+    $('fStart').value = x.dataset.s; $('fEnd').value = x.dataset.e;
+    const w = BOOT.windows.find(w => w.indexOf(x.dataset.s + '–' + x.dataset.e) >= 0);
+    if (w) $('fWindow').value = w;
+    syncPresets();
+  });
+  $('fStart').oninput = $('fEnd').oninput = syncPresets;
   $('dSave').onclick = () => save(b, isNew);
   if ($('dConfirm')) $('dConfirm').onclick = () => save(b, false, { status: 'Confirmed' });
   if ($('dDone')) $('dDone').onclick = () => { $('fNotify').checked = false; save(b, false, { status: 'Completed' }); };
@@ -1141,7 +1318,8 @@ function showForm(b, isNew) {
 
 function collectForm() {
   return {
-    status: $('fStatus').value, staff: $('fStaff').value, date: $('fDate').value,
+    status: $('fStatus').value, date: $('fDate').value,
+    staff: [...$('fStaff').querySelectorAll('input:checked')].map(x => x.value).join(', '),
     startTime: $('fStart').value, endTime: $('fEnd').value,
     service: $('fSvc').value, timeWindow: $('fWindow').value,
     name: $('fName').value.trim(), phone: $('fPhone').value.trim(), email: $('fEmail').value.trim(),
@@ -1154,13 +1332,13 @@ async function save(b, isNew, override) {
   const d = Object.assign(collectForm(), override || {});
   if (!d.name || !d.date) return toast('Name and date are required');
   if (d.startTime && d.endTime && d.endTime <= d.startTime) return toast('End time must be after the start time');
-  const notify = $('fNotify').checked;
+  const notify = $('fNotify').checked, notifyStaff = $('fNotifyStaff').checked;
   const btns = $('dFoot').querySelectorAll('button'); btns.forEach(x => x.disabled = true);
   try {
     if (isNew) {
       if (b.quoteId) d.quoteId = b.quoteId;
-      await api('adminCreateBooking', d, notify);
-      toast('Booking created' + (notify && d.email ? ' · customer emailed' : ''));
+      const r = await api('adminCreateBooking', d, notify, notifyStaff);
+      toast('Booking created' + (notify && d.email ? ' · customer emailed' : '') + staffNoticeText(r));
       if (d.date) S.date = d.date;
       if (b.quoteId) S.quotes = null;
     } else {
@@ -1171,8 +1349,8 @@ async function save(b, isNew, override) {
         if (String(d[k] == null ? '' : d[k]) !== String(cur == null ? '' : cur)) changes[k] = d[k];
       });
       if (!Object.keys(changes).length) { closeDrawer(); return; }
-      await api('adminUpdateBooking', b.id, changes, notify);
-      toast(override && override.status ? 'Marked ' + override.status.toLowerCase() : 'Saved');
+      const r = await api('adminUpdateBooking', b.id, changes, notify, notifyStaff);
+      toast((override && override.status ? 'Marked ' + override.status.toLowerCase() : 'Saved') + staffNoticeText(r));
     }
     closeDrawer();
     S.clients = null;
@@ -1547,7 +1725,7 @@ function showClient(c) {
     '<div class="sec">Booking history</div><div class="list">' +
     c.bookings.map((b, i) => `<div class="item" data-i="${i}">
        <b>${esc(fmtShortDay(b.date))}</b> · ${esc(b.start)}–${esc(b.end)} <span class="pill st-${esc(b.status)}">${esc(b.status)}</span>
-       <div class="meta">${svcLabel(b.service)} · ${esc(b.staff || 'Unassigned')}${b.estimate ? ' · ' + esc(b.estimate) : ''} · ${esc(b.id)}</div></div>`).join('') + '</div>';
+       <div class="meta">${svcLabel(b.service)} · ${esc(teamText(b.staff))}${b.estimate ? ' · ' + esc(b.estimate) : ''} · ${esc(b.id)}</div></div>`).join('') + '</div>';
   $('dFoot').innerHTML = '<button class="btn" id="dCancel">Close</button><div class="spacer"></div>' +
     '<button class="btn" id="cQuote">+ Quote</button><button class="btn dark" id="cBook">+ Booking</button>';
   $('dCancel').onclick = closeDrawer;
@@ -1671,14 +1849,14 @@ function renderStaff() {
       <div class="muted">${s.next ? 'Next: <b style="color:var(--ink)">' + esc(fmtShortDay(s.next.date)) + ' ' + esc(s.next.start) + '</b> — ' + esc(s.next.name) + (s.next.suburb ? ', ' + esc(s.next.suburb) : '') : 'No upcoming jobs'}</div>
       <div class="acts">
         <button class="btn sm" data-edit="${i}">Edit</button>
-        <button class="btn sm" data-cal="${i}">View day</button>
+        <button class="btn sm" data-cal="${i}">View jobs</button>
         ${s.phone ? `<a class="btn sm wa" href="https://wa.me/${waNum(s.phone)}" target="_blank" rel="noopener">💬</a>` : ''}
       </div>
     </div>`).join('');
   $('sList').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => showStaffForm(list[+b.dataset.edit]));
   $('sList').querySelectorAll('[data-cal]').forEach(b => b.onclick = () => {
     const s = list[+b.dataset.cal];
-    S.view = 'day'; S.date = s.next ? s.next.date : todayLive(); syncSeg(); setTab('calendar'); load();
+    S.who = s.name; S.view = isPhone() ? 'list' : 'day'; S.date = s.next ? s.next.date : todayLive(); syncSeg(); setTab('calendar'); load();
   });
 }
 
@@ -1782,6 +1960,8 @@ async function ping() {
  * ===================================================================== */
 function syncSeg() { $('viewSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.v === S.view)); }
 function go(n) { S.date = addDays(S.date, S.view === 'day' ? n : 7 * n); load(); }
+if (isPhone()) S.view = 'list';   // phones open on the simple job list
+syncSeg();
 
 $('navSheet').href = BOOT.sheetUrl;
 $('navSite').href = BOOT.quote.website;
@@ -1792,6 +1972,7 @@ $('prev').onclick = () => go(-1);
 $('next').onclick = () => go(1);
 $('datePick').onchange = e => { if (e.target.value) { S.date = e.target.value; load(); } };
 $('fService').onchange = e => { S.service = e.target.value; render(); };
+$('fStaffSel').onchange = e => { S.who = e.target.value; render(); };
 $('showCancelled').onchange = e => { S.showCancelled = e.target.checked; render(); };
 $('btnRefresh').onclick = () => load();
 $('btnAdd').onclick = () => openNew();
@@ -1818,6 +1999,15 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') go(1);
   if (e.key === 't') $('btnToday').click();
 });
+(() => {
+  let x0 = null, y0 = 0;
+  $('board').addEventListener('touchstart', e => { if (S.view !== 'list') return; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  $('board').addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+  }, { passive: true });
+})();
 window.addEventListener('resize', () => { clearTimeout(window._rz); window._rz = setTimeout(() => { if (S.tab === 'calendar') render(); }, 150); });
 
 setInterval(ping, 60000);                                                           // new-activity check every minute
