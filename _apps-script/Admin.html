@@ -608,9 +608,21 @@ function quickLinks(o) {
 function staffJobMsg(b, name) {
   const others = team(b.staff).filter(n => n !== name);
   const addr = [b.address, b.suburb].filter(Boolean).join(', ');
-  return 'Hi ' + String(name).split(' ')[0] + ', Starhome job: ' + (b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning') +
-    ' for ' + b.name + ', ' + fmtShortDay(b.date) + ' ' + b.start + '-' + b.end + '. ' + addr +
-    (b.phone ? '. Client ' + b.phone : '') + (others.length ? '. With ' + others.join(', ') : '') + '. Ref ' + b.id;
+  const lines = [
+    'Hi ' + String(name).split(' ')[0] + ', here is your Starhome job:',
+    '',
+    '*Ref:* ' + b.id,
+    '*Job:* ' + (b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning'),
+    '*When:* ' + fmtShortDay(b.date) + ' ' + b.start + '-' + b.end,
+    '*Client:* ' + b.name + (b.phone ? ' (' + b.phone + ')' : ''),
+    '*Address:* ' + addr,
+  ];
+  if (others.length) lines.push('*Team:* you, ' + others.join(', '));
+  if (b.status) lines.push('*Status:* ' + b.status);
+  if (b.details) lines.push('', '*Work to be done:*', b.details);
+  if (b.notes) lines.push('', '*Notes:*', b.notes);
+  lines.push('', 'Questions? Call the office.');
+  return lines.join('\n');
 }
 
 // One-tap WhatsApp / SMS / call for each assigned staff member

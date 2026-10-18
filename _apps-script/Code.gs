@@ -2086,13 +2086,27 @@ function staffJobText_(b, kind, name) {
   const when = fmtShort_(b.date) + ' ' + (t ? hm_(t.start) + '-' + hm_(t.end) : b.window);
   const others = staffList_(b.staff).filter(n => n !== name);
   const job = b.service === 'Laundry' ? 'Laundry pickup' : 'Cleaning';
-  let txt = 'Starhome ' + (STAFF_HEADS_[kind] || 'Job') + ': ' + job + ' for ' + b.name + ', ' + when;
-  if (kind === 'cancelled' || kind === 'removed') return txt + '. Ref ' + b.id;
-  if (kind === 'onhold') return txt + ' - the client is changing the time, wait for our confirmation. Ref ' + b.id;
-  txt += '. ' + fullAddress_(b);
-  if (b.phone) txt += '. Client ' + b.phone;
-  if (others.length) txt += '. With ' + others.join(', ');
-  return txt + '. Ref ' + b.id;
+  const head = 'Starhome ' + (STAFF_HEADS_[kind] || 'Job') + ' - Ref ' + b.id;
+  if (kind === 'cancelled' || kind === 'removed') return head + '\n' + job + ' for ' + b.name + ', ' + when + '\nYou do not need to go.';
+  if (kind === 'onhold') return head + '\n' + job + ' for ' + b.name + ', ' + when + '\nThe client is changing the time - wait for our confirmation before you go.';
+  const lines = [
+    head,
+    'Job: ' + job,
+    'When: ' + when,
+    'Client: ' + b.name + (b.phone ? ' ' + b.phone : ''),
+    'Address: ' + fullAddress_(b),
+  ];
+  if (others.length) lines.push('Team: you, ' + others.join(', '));
+  if (b.details) lines.push('Work to be done: ' + clip_(b.details, 400));
+  if (b.notes) lines.push('Notes: ' + clip_(b.notes, 300));
+  lines.push('Office: ' + CONFIG.PHONE);
+  return lines.join('\n');
+}
+
+// Shorten long text for SMS (plain ASCII "..." keeps the cheaper SMS encoding)
+function clip_(s, n) {
+  s = String(s || '').replace(/\s+/g, ' ').trim();
+  return s.length > n ? s.slice(0, n - 3) + '...' : s;
 }
 
 function sendStaffEmail_(b, s, kind) {
@@ -2121,8 +2135,10 @@ function sendStaffEmail_(b, s, kind) {
       row('Client', esc_(b.name) + (b.phone ? ' · <a href="tel:' + esc_(b.phone) + '">' + esc_(b.phone) + '</a>' : '')) +
       row('Address', addr ? '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr) + '">' + esc_(addr) + '</a>' : '') +
       row('Team', esc_(others.length ? 'You, ' + others.join(', ') : 'Just you')) +
-      row('Details', esc_(b.details)) +
-      row('Notes', esc_(b.notes))) +
+      row('Booked slot', esc_(b.window)) +
+      row('Status', esc_(b.status)) +
+      row('Work to be done', esc_(b.details).replace(/\n/g, '<br>')) +
+      row('Notes', esc_(b.notes).replace(/\n/g, '<br>'))) +
     row('Ref', esc_(b.id)) +
     '</table>' +
     '<p style="font-size:13px;color:#666;margin-top:16px">Questions? Call the office on ' + esc_(CONFIG.PHONE) + '.</p></div>';
