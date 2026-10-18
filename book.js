@@ -11,7 +11,7 @@ const backBtn = document.getElementById('backBtn');
 const progressBar = document.getElementById('progressBar');
 
 // Must match the time windows in the booking system (Code.gs → CONFIG.TIME_WINDOWS)
-const TIME_WINDOWS = ['Morning (08:00–12:00)', 'Afternoon (12:00–16:00)'];
+const TIME_WINDOWS = ['Morning (08:00–12:00)', 'Afternoon (12:00–16:00)', 'Full day (08:00–17:00)'];
 
 const FREQUENCIES = [
   { value: 1, label: 'Once' },
