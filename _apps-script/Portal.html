@@ -280,7 +280,7 @@ function render() {
         <span class="pill st-${esc(b.status)}">${b.status === 'Pending' ? 'Awaiting confirmation' : esc(b.status)}</span></div>
       ${b.canChange
         ? `<div class="acts"><button class="btn" data-move="${esc(b.id)}">Reschedule</button><button class="btn danger" data-cancel="${esc(b.id)}">Cancel</button></div>`
-        : `<div class="meta" style="margin-top:10px">Need a change this close to the time? <a href="https://wa.me/${waNum(BOOT.whatsapp)}?text=${encodeURIComponent('Hi Starhome, about my booking ' + b.id + ':')}" target="_blank" rel="noopener">WhatsApp us</a>.</div>`}
+        : `<div class="meta" style="margin-top:10px">Need a change this close to the time? <a href="https:\/\/wa.me/${waNum(BOOT.whatsapp)}?text=${encodeURIComponent('Hi Starhome, about my booking ' + b.id + ':')}" target="_blank" rel="noopener">WhatsApp us</a>.</div>`}
     </div>`).join('') : '<div class="empty">No upcoming bookings. Tap a button above to book.</div>';
 
   if (past.length) {
@@ -584,8 +584,8 @@ $('shClose').onclick = closeSheet;
 $('scrim').onclick = closeSheet;
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 $('siteLink').href = BOOT.website;
-$('lgHelp').href = 'https://wa.me/' + waNum(BOOT.whatsapp) + '?text=' + encodeURIComponent('Hi Starhome, please set me up with a My Starhome login.');
-$('ftWa').href = 'https://wa.me/' + waNum(BOOT.whatsapp);
+$('lgHelp').href = 'https:\/\/wa.me/' + waNum(BOOT.whatsapp) + '?text=' + encodeURIComponent('Hi Starhome, please set me up with a My Starhome login.');
+$('ftWa').href = 'https:\/\/wa.me/' + waNum(BOOT.whatsapp);
 $('ftCall').href = 'tel:' + BOOT.phone.replace(/\s/g, '');
 
 (async function boot() {

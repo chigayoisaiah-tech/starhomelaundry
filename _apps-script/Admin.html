@@ -487,6 +487,10 @@ select.btn{appearance:none;-webkit-appearance:none;padding-right:30px;background
 
 <script>
 const BOOT = <?!= bootstrap ?>;
+// Web links used inside HTML templates are built here: Google's page loader cuts a line at a
+// double slash inside a template, which breaks the whole admin app.
+const URL_WA = 'https:/' + '/wa.me/';
+const URL_MAPS = 'https:/' + '/www.google.com/maps/search/?api=1&query=';
 
 /* =====================================================================
  *  STATE & HELPERS
@@ -595,12 +599,12 @@ function cleanBookingText(o, kind) {
 function quickLinks(o) {
   const kind = cleanKind(o);
   const waMsg = kind ? cleanBookingText(o, kind) : 'Hi ' + (o.name || '') + ', this is ' + BOOT.business + '.';
-  const wa = o.phone ? 'https://wa.me/' + waNum(o.phone) + '?text=' + encodeURIComponent(waMsg) : '';
+  const wa = o.phone ? 'https:\/\/wa.me/' + waNum(o.phone) + '?text=' + encodeURIComponent(waMsg) : '';
   const addr = [o.address, o.suburb].filter(Boolean).join(', ');
   return '<div class="quick">' +
     (o.phone ? `<a href="tel:${esc(o.phone)}">📞 Call</a><a href="${esc(wa)}" target="_blank" rel="noopener">💬 ${kind ? 'Send booking details' : 'WhatsApp'}</a>` : '') +
     (o.email ? `<a href="mailto:${esc(o.email)}">✉️ Email</a>` : '') +
-    (addr ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" rel="noopener">📍 Map</a>` : '') +
+    (addr ? `<a href="${URL_MAPS}${encodeURIComponent(addr)}" target="_blank" rel="noopener">📍 Map</a>` : '') +
     '</div>';
 }
 
@@ -634,7 +638,7 @@ function crewLinks(b) {
     const msg = encodeURIComponent(staffJobMsg(b, n));
     const num = s.phone ? waNum(s.phone) : '';
     return `<div class="row"><span class="av" style="width:28px;height:28px;font-size:11px;background:${esc(s.colour || '#94a3b8')}">${esc(initials(n))}</span><b>${esc(n)}</b>` +
-      (num ? `<a class="btn sm wa" href="https://wa.me/${num}?text=${msg}" target="_blank" rel="noopener">💬 WhatsApp</a>` +
+      (num ? `<a class="btn sm wa" href="${URL_WA}${num}?text=${msg}" target="_blank" rel="noopener">💬 WhatsApp</a>` +
              `<a class="btn sm" href="sms:+${num}?&body=${msg}">SMS</a><a class="btn sm icon" href="tel:+${num}" aria-label="Call">📞</a>`
            : '<span class="muted">No phone saved</span>') + '</div>';
   }).join('') + '</div>';
@@ -840,7 +844,7 @@ async function renderEstimate() {
     renderEstimate();
   });
   if ($('eNight')) $('eNight').onchange = e => { E.night = e.target.checked; renderEstimate(); };
-  $('eWa').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent(estText(r)), '_blank');
+  $('eWa').onclick = () => window.open('https:\/\/wa.me/?text=' + encodeURIComponent(estText(r)), '_blank');
   $('eCard').onclick = () => estShowCard(r);
   $('eCopy').onclick = () => {
     const t = estText(r);
@@ -862,7 +866,7 @@ async function renderEstimate() {
 
 /* ---------- Shareable price card (image + booking link) ---------- */
 function estBookUrl() {
-  const w = (BOOT.quote && BOOT.quote.website) || 'https://starhomecleaners.co.za';
+  const w = (BOOT.quote && BOOT.quote.website) || 'https:\/\/starhomecleaners.co.za';
   return w.replace(/\/$/, '') + '/book.html';
 }
 function estCardLines(r) {
@@ -945,7 +949,7 @@ async function estShowCard(r) {
     document.body.appendChild(a); a.click(); a.remove();
     toast('Image saved — attach it in WhatsApp with the message');
   };
-  $('cWa').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank');
+  $('cWa').onclick = () => window.open('https:\/\/wa.me/?text=' + encodeURIComponent(caption), '_blank');
   $('cCopy').onclick = () => {
     const done = () => toast('Message copied');
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(caption).then(done, () => estCopyFallback(caption, done));
@@ -1630,7 +1634,7 @@ function quoteText(q) {
 async function quoteWhatsApp() {
   const w = window.open('', '_blank'); // open now so pop-up blockers allow it
   if (!(await saveQuote())) { if (w) w.close(); return; }
-  const url = (QE.phone ? 'https://wa.me/' + waNum(QE.phone) : 'https://wa.me/') + '?text=' + encodeURIComponent(quoteText(QE));
+  const url = (QE.phone ? 'https:\/\/wa.me/' + waNum(QE.phone) : 'https:\/\/wa.me/') + '?text=' + encodeURIComponent(quoteText(QE));
   if (w) w.location.href = url; else window.open(url, '_blank');
   try { QE = await api('adminSendQuote', QE.id, 'whatsapp'); syncQuote(); } catch (e) { /* recorded best-effort */ }
 }
@@ -1658,7 +1662,7 @@ async function quotePrint() {
     <div style="font-family:Arial,sans-serif;max-width:720px;margin:0 auto;color:#14213d;padding:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0b5394;padding-bottom:12px">
         <div><div style="font-size:22px;font-weight:700;color:#0b5394">${esc(BOOT.business)}</div>
-          <div style="font-size:12px;color:#555">${esc(BOOT.quote.website.replace('https://', ''))} · ${esc(BOOT.quote.phone)}</div></div>
+          <div style="font-size:12px;color:#555">${esc(BOOT.quote.website.replace(/^https?:\/\//, ''))} · ${esc(BOOT.quote.phone)}</div></div>
         <div style="text-align:right"><div style="font-size:20px;font-weight:700">QUOTE</div>
           <div style="font-size:12px">${esc(q.id)}<br>${esc(fmtShortDay(q.created ? q.created.slice(0, 10) : todayLive()))}</div></div>
       </div>
@@ -1772,7 +1776,7 @@ function wirePortalBlock(c) {
         `<div class="info" style="font-size:13px">Login ready. PIN for ${esc(c.name)}: <b style="font-size:20px;letter-spacing:3px;display:block;margin:6px 0">${esc(r.pin)}</b>` +
         'This PIN is only shown now — send it to the client:</div>' +
         `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-           <a class="btn sm wa" target="_blank" rel="noopener" href="https://wa.me/${waNum(c.phone)}?text=${encodeURIComponent(msg)}">💬 Send by WhatsApp</a>
+           <a class="btn sm wa" target="_blank" rel="noopener" href="${URL_WA}${waNum(c.phone)}?text=${encodeURIComponent(msg)}">💬 Send by WhatsApp</a>
            ${c.email ? `<a class="btn sm" href="mailto:${esc(c.email)}?subject=${encodeURIComponent('Your Starhome login')}&body=${encodeURIComponent(msg)}">✉️ Email</a>` : ''}
          </div>`;
       S.clients = null;
@@ -1862,7 +1866,7 @@ function renderStaff() {
       <div class="acts">
         <button class="btn sm" data-edit="${i}">Edit</button>
         <button class="btn sm" data-cal="${i}">View jobs</button>
-        ${s.phone ? `<a class="btn sm wa" href="https://wa.me/${waNum(s.phone)}" target="_blank" rel="noopener">💬</a>` : ''}
+        ${s.phone ? `<a class="btn sm wa" href="${URL_WA}${waNum(s.phone)}" target="_blank" rel="noopener">💬</a>` : ''}
       </div>
     </div>`).join('');
   $('sList').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => showStaffForm(list[+b.dataset.edit]));
